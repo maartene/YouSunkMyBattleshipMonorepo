@@ -18,15 +18,12 @@ jobs:
           npm install -g @usebruno/cli
           ./smoketest.sh
         
-      - name: Install Swift version
-        uses: swift-actions/setup-swift@v3
-        
-      - name: Verify Swift version
-        run: swift --version
-  
   build-and-test:
     runs-on: macos-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Build and test YouSunkMyBattleshipCommon
         working-directory: YouSunkMyBattleshipCommon
         run: |
