@@ -15,11 +15,11 @@ struct GameView: View {
     
     var body: some View {
         GameStateView(viewModel: viewModel)
-        GameBoardView(viewModel: viewModel, owner: .player1)
+        GameBoardView(viewModel: viewModel, owner: .player1, isDraggable: true)
             .padding()
             .border(Color.green, width: 4)
         if viewModel.state == .play || viewModel.state == .finished {
-            GameBoardView(viewModel: viewModel, owner: .player2)
+            GameBoardView(viewModel: viewModel, owner: .player2, isDraggable: false)
                 .padding()
                 .border(Color.red, width: 4)
         }        

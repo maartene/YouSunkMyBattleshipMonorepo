@@ -29,6 +29,7 @@ final class ViewModelSpy: ViewModel {
     var endDragLocation: CGPoint?
     var tapCoordinate: Coordinate?
     var tapPlayer: Player?
+    private(set) var addCellWasCalled = false
     
     init(state: ViewModelState = .placingShips) {
         self.state = state
@@ -59,7 +60,10 @@ final class ViewModelSpy: ViewModel {
         tapPlayer = boardForPlayer
     }
         
-    func addCell(coordinate: Coordinate, rectangle: CGRect, player: Player) { }
+    func addCell(coordinate: Coordinate, rectangle: CGRect, player: Player) {
+        addCellWasCalled = true
+    }
+    
     func confirmPlacement() { }
     func reset() { }
     

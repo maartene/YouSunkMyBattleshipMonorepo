@@ -1,11 +1,12 @@
 # TECHDEBT
 
 ## ⚠️ TODO
-- When a second game is started, the board glitches. Probably because the viewmodels coordinates are overwritten by the second board
 - GameService should only return a game state. More is not needed.
+- Make fetching game state asynchronous
 
 ## 🚧 DOING
-- Going from GameViewModel to ClientViewModel
+- When a second game is started, the board glitches. Probably because the viewmodels coordinates are overwritten by the second board
+
 
 ## ✅ DONE
 - Multiple expects in tests -> split up tests
@@ -22,3 +23,4 @@
 - ViewModel.cellsForOpponent has feature envy on Game and Board
 - getting row and column labels is not dependent on player
 - interacting with GameService needs to be asynchronous
+- Going from GameViewModel to ClientViewModel

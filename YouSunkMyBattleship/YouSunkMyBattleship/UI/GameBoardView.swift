@@ -11,6 +11,7 @@ import YouSunkMyBattleshipCommon
 struct GameBoardView: View {
     let viewModel: any ViewModel
     let owner: Player
+    let isDraggable: Bool
     let columnLabels = {
         Board.columns.map { String($0) }
     }()
@@ -28,7 +29,7 @@ struct GameBoardView: View {
             }
             ForEach(viewModel.cellsFor(owner).enumerated(), id: \.offset) { row in
                 GridRow(alignment: .bottom) {
-                    BoardRowView(viewModel: viewModel, columns: row.element, rowIndex: row.offset, owner: owner, forceUpdate: { myID = UUID() })
+                    BoardRowView(viewModel: viewModel, columns: row.element, rowIndex: row.offset, owner: owner, isDraggable: isDraggable, forceUpdate: { myID = UUID() })
                 }
             }
         }.gesture(
@@ -48,13 +49,14 @@ struct BoardRowView: View {
     let columns: [String]
     let rowIndex: Int
     let owner: Player
+    let isDraggable: Bool
     let forceUpdate: () -> ()
     
     var body: some View {
         Text(Board.rows[rowIndex])
             .font(.headline)
         ForEach(columns.enumerated(), id: \.offset) { cell in
-            CellView(content: cell.element, coordinate: Coordinate(x: cell.offset, y: rowIndex), owner: owner, viewModel: viewModel, forceUpdate: forceUpdate)
+            CellView(content: cell.element, coordinate: Coordinate(x: cell.offset, y: rowIndex), owner: owner, isDraggable: isDraggable, viewModel: viewModel, forceUpdate: forceUpdate)
         }
     }
 }
@@ -64,13 +66,15 @@ struct CellView: View {
     let viewModel: ViewModel?
     let coordinate: Coordinate
     let owner: Player
+    let isDraggable: Bool
     let forceUpdate: () -> ()
     
-    init(content: String, coordinate: Coordinate, owner: Player, viewModel: ViewModel? = nil, forceUpdate: @escaping () -> () = { }) {
+    init(content: String, coordinate: Coordinate, owner: Player, isDraggable: Bool, viewModel: ViewModel? = nil, forceUpdate: @escaping () -> () = { }) {
         self.content = content
         self.coordinate = coordinate
         self.owner = owner
         self.viewModel = viewModel
+        self.isDraggable = isDraggable
         self.forceUpdate = forceUpdate
     }
     
@@ -78,7 +82,9 @@ struct CellView: View {
         GeometryReader { reader in
             Text(content)
                 .onAppear {
-                    viewModel?.addCell(coordinate: coordinate, rectangle: reader.frame(in: .global), player: owner)
+                    if isDraggable {
+                        viewModel?.addCell(coordinate: coordinate, rectangle: reader.frame(in: .global), player: owner)
+                    }
                 }
                 .onTapGesture {
                     Task {
