@@ -1,4 +1,4 @@
-
+[![CI](https://github.com/maartene/YouSunkMyBattleshipMonorepo/actions/workflows/ci.yml/badge.svg)](https://github.com/maartene/YouSunkMyBattleshipMonorepo/actions/workflows/ci.yml)
 
 # YouSunkMyBattleship
 

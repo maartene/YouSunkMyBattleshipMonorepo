@@ -95,7 +95,7 @@ So that I can track my progress
         And I see "You sank the enemy Destroyer!"
 
 ## Story 5: Determine Game Victory ✅
-Asa player
+As a player
 I want the game to end when all ships are sunk
 So that a winner is declared
 
@@ -113,3 +113,45 @@ Feature: Victory Condition
         When I fire at the last ship's remaining cell    
         Then I see "🎉 VICTORY! You sank the enemy fleet! 🎉"    
         And the game ends
+
+
+## Story 6.1: Play Against CPU Opponent
+As a player
+I want to play against a computer opponent
+So that I can play solo games
+
+### Acceptance Criteria:
+1. CPU places ships randomly at game start
+2. CPU takes turns firing after player
+3. CPU uses random shot selection
+4. Display CPU's move and result
+
+### Scenario:
+Feature: CPU Opponent  
+    Scenario: CPU takes its turn
+        Given it's the CPU's turn
+        When the CPU fires    
+        Then I see "CPU fires at [coordinate]"    
+        And my board updates with hit 💥 or miss ❌
+
+## Story 6.2: DevOps delivery
+As a devops engineer
+I want to deliver the game as a composition of containers
+So that I can play the game relying on a ecosystem of atomic images fully tuned and secured
+
+### Acceptance Criteria:
+1. FrontEnd is on the container CLI as ASCII-UI
+2. The backend lived into isolation on container SERVICE as API server
+3. The database to store the game (future addition) will live in the DB container
+4. The three containers must exist on the proper network bridge and spinning up/down without explosions
+
+### Scenario:
+Feature: Deliver as Docker Compose
+    Scenario: run the CLI as docker compose game
+        Given an user
+        When it runs the game
+        Then a docker compose start phase is well handled by a scrip
+        And the ASCII-UI of the game is displayed to the user
+        And the game runs in CPU VS CPU
+        And it shutdown gracefully without core dumps
+        And an exit 0 return to the user.
