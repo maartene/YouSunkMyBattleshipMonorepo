@@ -1,74 +1,99 @@
-[![CI](https://github.com/maartene/YouSunkMyBattleship/actions/workflows/ci.yml/badge.svg)](https://github.com/maartene/YouSunkMyBattleship/actions/workflows/ci.yml)
-
 # YouSunkMyBattleship
 
-Minimal, testable Battleship game used as the Blue Belt graduation project for the Dojo. The project emphasizes:
+This repository contains a small Battleship game split into three parts:
 
-- Hexagonal architecture (ports & adapters)
-- Outside-in development (feature-first, acceptance-driven)
-- Test doubles (mocks, stubs, fakes where appropriate)
-- Lean UX (fast feedback on core interactions)
+- `YouSunkMyBattleship` — the iOS client application (UI, UI flow tests)
+- `YouSunkMyBattleshipBE` — the backend service (Swift server, game logic and integration tests)
+- `YouSunkMyBattleshipCommon` — shared/common library used by both
+The repo also includes API contract files in `api/contract/YouSunkMyBattleship` and a Docker Compose setup to run the backend locally.
 
-## Goals
-- Deliver a small, well-tested application that demonstrates architectural discipline.
-- Iterate from user-facing behavior to inner layers.
-- Keep design simple and replaceable.
+**Project Goals**
+- Provide a minimal, test-driven Battleship implementation demonstrating clean architecture and good tooling.
+- Keep domain logic separate from transport and UI (hexagonal architecture).
+- Offer reproducible local dev environment via Docker Compose and automated smoketests.
 
-## Key Principles
-- Hexagonal architecture: core domain is independent from UI, persistence, and external services.
-- Outside-in: acceptance tests drive requirements and guide implementation.
-- Test doubles: isolate layers with fakes / mocks for fast, deterministic tests.
-- Lean UX: prefer simple, testable interactions over heavy design.
+**Repository Structure (top-level)**
 
-## Quickstart
-1. Prerequisites
-    - Install Xcode (use the latest stable or at least a recent release).
-    - Command line tools are useful for CI/local test runs.
+- `YouSunkMyBattleship/` — iOS app (Xcode workspace, app sources, tests, UI)
+- `YouSunkMyBattleshipBE/` — backend Swift package and Dockerfiles (service & infra)
+- `YouSunkMyBattleshipCommon/` — shared Swift package (DTOs, model)
+- `api/contract/YouSunkMyBattleship/` — contract files (bruno, schemas, examples)
+- `docker-compose.yml` — Compose file to run the backend and supporting services
+- `smoketest.sh` — simple script that runs quick integration checks against the running stack
 
-2. Clone and open
-    - Clone the repo and change into the project directory:
-      ```
-      git clone <repo-url>
-      cd YouSunkMyBattleship
-      ```
-    - Open the Xcode project or workspace:
-      - If a workspace exists: `open YouSunkMyBattleship.xcworkspace`
-      - Otherwise: `open YouSunkMyBattleship.xcodeproj`
+**Requirements**
+- macOS with Docker Desktop (or an alternative like Podman Desktop) installed (for Docker Compose)
+- Xcode (for building/running the iOS app and iOS tests)
+- Swift toolchain (for building/running backend and packages locally)
 
-3. Build & run in Simulator
-    - In Xcode: choose the "YouSunkMyBattleship" scheme, pick a simulator (e.g., iPhone 14), then press Cmd+R.
-    - From terminal (example):
-      ```
-      xcodebuild -scheme "YouSunkMyBattleship" -destination 'platform=iOS Simulator,name=iPhone 14' build
-      ```
+Getting started — quick steps
 
-4. Run tests
-    - In Xcode: Product → Test (Cmd+U) to run unit and UI tests.
-    - From terminal (example):
-      ```
-      xcodebuild -scheme "YouSunkMyBattleship" -destination 'platform=iOS Simulator,name=iPhone 14' test
-      ```
+1) Start the services with Docker Compose
 
-5. Run on a physical device
-    - Connect the device, select it as the run destination in Xcode.
-    - Ensure a valid signing team is set under the target's Signing & Capabilities.
+From the repository root run:
 
-6. Dependencies
-    - Swift Package Manager packages are resolved automatically by Xcode; use File → Packages → Resolve Package Versions if needed.
-    - If other dependency managers are used, follow the project README or run the appropriate install command.
+```bash
+docker compose up --build -d
+```
 
-7. Troubleshooting
-    - Clean build: Product → Clean Build Folder (Shift+Cmd+K).
-    - Reset simulator content: Simulator → Erase All Content and Settings.
-    - Use Xcode’s Report navigator for build/test logs.
+Notes:
+- If you have an older Docker installation using `docker-compose` (hyphen), use `docker-compose up --build -d`.
+- Use `docker compose logs -f` to follow logs and `docker compose down` to stop and remove containers.
 
-These steps should get the app running locally and tests executing in Xcode or CI.
+2) Run the smoketest
 
-CI
---
+The `smoketest.sh` script runs a set of quick checks against the running backend. Ensure the Compose stack is up before running it.
 
-- The repository includes a GitHub Actions workflow that runs unit (and UI) tests on `macos-latest` using `xcodebuild`.
-- The workflow file is `.github/workflows/ci.yml` and runs the same `xcodebuild -scheme "YouSunkMyBattleship" -destination 'platform=iOS Simulator,name=iPhone 14' test` command shown above.
+```bash
+chmod +x smoketest.sh
+./smoketest.sh
+```
 
-## License
-See LICENSE file for details.
+3) Run the iOS app (development)
+
+- Open the Xcode workspace:
+
+```bash
+open YouSunkMyBattleship/YouSunkMyBattleship.xcworkspace
+```
+
+- Choose the `YouSunkMyBattleship` scheme and a simulator or device, then Run (Cmd+R).
+
+4) Run backend locally (without Docker)
+
+You can also build and run the backend locally using Swift Package Manager:
+
+```bash
+cd YouSunkMyBattleshipBE
+swift build
+swift run
+```
+
+This is useful for fast iteration; the Docker image uses the same package sources.
+
+5) Run tests
+
+- iOS tests: run from Xcode (Product → Test) or via `xcodebuild` using the workspace/scheme.
+- Backend tests: from repository root:
+
+```bash
+cd YouSunkMyBattleshipBE
+swift test
+
+cd ../YouSunkMyBattleshipCommon
+swift test
+```
+
+API contract
+
+The API contract definitions live under `api/contract/YouSunkMyBattleship/` (bruno files and examples). Use these files as the source of truth for message formats and examples.
+
+Troubleshooting & Tips
+
+- If the smoketest fails, check `docker compose logs -f` to inspect backend logs.
+- If Xcode fails to resolve packages, use File → Packages → Resolve Package Versions.
+- For CI parity, the repo includes a GitHub Actions workflow that runs tests on macOS using `xcodebuild`.
+
+License
+
+See the `LICENSE` file in the repository root.
