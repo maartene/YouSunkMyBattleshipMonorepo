@@ -16,6 +16,15 @@ script:pre-request {
   );
   
   const fireResponse1 = await bru.runRequest("Fire hit");
+  
+  const fireResponse2 = await bru.runRequest("Fire hit 2");
+}
+
+tests {
+  test("should return one less ship to distroy", () => {
+    const body = res.getBody()
+    expect(body.shipsToDestroy).to.eq(4)
+  });
 }
 
 settings {
