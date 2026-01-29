@@ -7,6 +7,10 @@ func configure(_ app: Application) throws {
     app.gameRepository = InmemoryGameRepository()
     app.http.server.configuration.hostname = "0.0.0.0"
 
+    app.get { req in
+        return "Health check OK"
+    }
+
     app.post("board") { req in
         let boardDTO = try req.content.decode(BoardDTO.self)
 
