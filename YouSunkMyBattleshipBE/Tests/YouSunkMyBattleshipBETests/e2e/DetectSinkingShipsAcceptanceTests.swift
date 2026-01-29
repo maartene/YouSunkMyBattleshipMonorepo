@@ -6,9 +6,10 @@
 //
 
 import Testing
-@testable import YouSunkMyBattleshipBE
 import VaporTesting
 import YouSunkMyBattleshipCommon
+
+@testable import YouSunkMyBattleshipBE
 
 /// As a player
 /// I want to know when I've sunk an enemy ship
@@ -31,19 +32,23 @@ extension `Feature: Ship Sinking Detection` {
         await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player1)
         await app.gameRepository?.setBoard(.makeFilledBoard(), for: .player2)
     }
-    
+
     func `And I have hit I9`(_ app: Application) async throws {
-        try await app.testing().test(.POST, "fire", beforeRequest: { req in
-            try req.content.encode(Coordinate("I9"))
-        })
+        try await app.testing().test(
+            .POST, "fire",
+            beforeRequest: { req in
+                try req.content.encode(Coordinate("I9"))
+            })
     }
-    
+
     func `When I fire at J9`(_ app: Application) async throws {
-        try await app.testing().test(.POST, "fire", beforeRequest: { req in
-            try req.content.encode(Coordinate("J9"))
-        })
+        try await app.testing().test(
+            .POST, "fire",
+            beforeRequest: { req in
+                try req.content.encode(Coordinate("J9"))
+            })
     }
-    
+
     func `Then both I9 and J9 show 🔥`(_ app: Application) async throws {
         try await app.testing().test(.GET, "gameState") { res in
             let state = try res.content.decode(GameState.self)
@@ -52,16 +57,14 @@ extension `Feature: Ship Sinking Detection` {
             #expect(cells[9][8] == "🔥")
         }
     }
-    
+
     func `And I see "You sank the enemy Destroyer!"`(_ app: Application) async throws {
-        try await app.testing().test(.GET, "shipAt", beforeRequest: { req in
-            try req.content.encode(Coordinate("J9"))
-        }, afterResponse: { res in
+        try await app.testing().test(.GET, "shipAt/J9") { res in
             let shipName = try res.content.decode(String.self)
             #expect(shipName == "Destroyer")
-        })
+        }
     }
-        
+
     func `And I see one less remaining ship to destroy`(_ app: Application) async throws {
         try await app.testing().test(.GET, "gameState") { res in
             let state = try res.content.decode(GameState.self)

@@ -55,7 +55,7 @@ final class RemoteGameService: GameService {
     
     func cellsForPlayer(player: Player) -> [[String]] {
         do {
-            let data = try dataProvider.fetch()
+            let data = try dataProvider.fetch("gameState")
             let state = try decoder.decode(GameState.self, from: data)
             return state.cells[player] ?? []
         } catch {
@@ -65,7 +65,7 @@ final class RemoteGameService: GameService {
     
     func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int {
         do {
-            let data = try dataProvider.fetch()
+            let data = try dataProvider.fetch("gameState")
             let state = try decoder.decode(GameState.self, from: data)
             return state.shipsToDestroy
         } catch {
@@ -84,8 +84,7 @@ final class RemoteGameService: GameService {
     }
     
     func shipAt(coordinate: Coordinate) async throws -> String {
-        let data = try encoder.encode(coordinate)
-        let shipNameData = try await dataProvider.get("shipAt", data: data)
-        return String(data: shipNameData, encoding: .utf8) ?? ""
+        let data = try dataProvider.fetch("shipAt/\(coordinate)")
+        return String(data: data, encoding: .utf8) ?? ""
     }
 }
