@@ -14,6 +14,7 @@ jobs:
       - name: Run smoketest
         run: |
           set -e
+          uname -a
           sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
           sudo docker run hello-world
           chmod +x smoketest.sh
