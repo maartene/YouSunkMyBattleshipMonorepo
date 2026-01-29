@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:YouSunkMyBattleshipBE}",
+            "name": "Debug YouSunkMyBattleshipBE",
+            "target": "YouSunkMyBattleshipBE",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug YouSunkMyBattleshipBE"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:YouSunkMyBattleshipBE}",
+            "name": "Release YouSunkMyBattleshipBE",
+            "target": "YouSunkMyBattleshipBE",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release YouSunkMyBattleshipBE"
+        }
+    ]
+}

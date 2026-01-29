@@ -1,0 +1,694 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		2D8C5A1E2ED8D147008BC07C /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 2D8C5A1D2ED8D147008BC07C /* ViewInspector */; };
+		DEEB3C842F289CEC00E029F9 /* YouSunkMyBattleshipCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DEFB27D62ED8B17900F9C3D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DEFB27C02ED8B17700F9C3D8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DEFB27C72ED8B17700F9C3D8;
+			remoteInfo = YouSunkMyBattleship;
+		};
+		DEFB27E02ED8B17900F9C3D8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DEFB27C02ED8B17700F9C3D8 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DEFB27C72ED8B17700F9C3D8;
+			remoteInfo = YouSunkMyBattleship;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		DE8992DC2F1A405000261E81 /* YouSunkMyBattleship.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = YouSunkMyBattleship.xctestplan; sourceTree = "<group>"; };
+		DEFB27C82ED8B17700F9C3D8 /* YouSunkMyBattleship.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouSunkMyBattleship.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DEFB27D52ED8B17900F9C3D8 /* YouSunkMyBattleshipTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouSunkMyBattleshipTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DEFB27DF2ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = YouSunkMyBattleshipUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DE48BABF2EE1B67C007F047E /* Exceptions for "Assets" folder in "YouSunkMyBattleship" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				AppIcon.icon,
+			);
+			target = DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */;
+		};
+		DE48BAC12EE1B76D007F047E /* Exceptions for "YouSunkMyBattleship" folder in "YouSunkMyBattleship" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */;
+		};
+		DEC194192ED9B36A00AB24C6 /* Exceptions for "docs" folder in "YouSunkMyBattleship" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				architecture.png,
+			);
+			target = DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		DE48BAB42EE1B273007F047E /* Assets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DE48BABF2EE1B67C007F047E /* Exceptions for "Assets" folder in "YouSunkMyBattleship" target */,
+			);
+			path = Assets;
+			sourceTree = "<group>";
+		};
+		DEFB27CA2ED8B17700F9C3D8 /* YouSunkMyBattleship */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DE48BAC12EE1B76D007F047E /* Exceptions for "YouSunkMyBattleship" folder in "YouSunkMyBattleship" target */,
+			);
+			path = YouSunkMyBattleship;
+			sourceTree = "<group>";
+		};
+		DEFB27D82ED8B17900F9C3D8 /* YouSunkMyBattleshipTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = YouSunkMyBattleshipTests;
+			sourceTree = "<group>";
+		};
+		DEFB27E22ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = YouSunkMyBattleshipUITests;
+			sourceTree = "<group>";
+		};
+		DEFB27F22ED8B1AA00F9C3D8 /* docs */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DEC194192ED9B36A00AB24C6 /* Exceptions for "docs" folder in "YouSunkMyBattleship" target */,
+			);
+			path = docs;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DEFB27C52ED8B17700F9C3D8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DEEB3C842F289CEC00E029F9 /* YouSunkMyBattleshipCommon in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DEFB27D22ED8B17900F9C3D8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2D8C5A1E2ED8D147008BC07C /* ViewInspector in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DEFB27DC2ED8B17900F9C3D8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DEEB3C822F289CEC00E029F9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DEFB27BF2ED8B17700F9C3D8 = {
+			isa = PBXGroup;
+			children = (
+				DE8992DC2F1A405000261E81 /* YouSunkMyBattleship.xctestplan */,
+				DE48BAB42EE1B273007F047E /* Assets */,
+				DEFB27F22ED8B1AA00F9C3D8 /* docs */,
+				DEFB27CA2ED8B17700F9C3D8 /* YouSunkMyBattleship */,
+				DEFB27D82ED8B17900F9C3D8 /* YouSunkMyBattleshipTests */,
+				DEFB27E22ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests */,
+				DEEB3C822F289CEC00E029F9 /* Frameworks */,
+				DEFB27C92ED8B17700F9C3D8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DEFB27C92ED8B17700F9C3D8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DEFB27C82ED8B17700F9C3D8 /* YouSunkMyBattleship.app */,
+				DEFB27D52ED8B17900F9C3D8 /* YouSunkMyBattleshipTests.xctest */,
+				DEFB27DF2ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DEFB27E92ED8B17900F9C3D8 /* Build configuration list for PBXNativeTarget "YouSunkMyBattleship" */;
+			buildPhases = (
+				DEFB27C42ED8B17700F9C3D8 /* Sources */,
+				DEFB27C52ED8B17700F9C3D8 /* Frameworks */,
+				DEFB27C62ED8B17700F9C3D8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				DE48BAB42EE1B273007F047E /* Assets */,
+				DEFB27CA2ED8B17700F9C3D8 /* YouSunkMyBattleship */,
+				DEFB27F22ED8B1AA00F9C3D8 /* docs */,
+			);
+			name = YouSunkMyBattleship;
+			packageProductDependencies = (
+				DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */,
+			);
+			productName = YouSunkMyBattleship;
+			productReference = DEFB27C82ED8B17700F9C3D8 /* YouSunkMyBattleship.app */;
+			productType = "com.apple.product-type.application";
+		};
+		DEFB27D42ED8B17900F9C3D8 /* YouSunkMyBattleshipTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DEFB27EC2ED8B17900F9C3D8 /* Build configuration list for PBXNativeTarget "YouSunkMyBattleshipTests" */;
+			buildPhases = (
+				DEFB27D12ED8B17900F9C3D8 /* Sources */,
+				DEFB27D22ED8B17900F9C3D8 /* Frameworks */,
+				DEFB27D32ED8B17900F9C3D8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DEFB27D72ED8B17900F9C3D8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DEFB27D82ED8B17900F9C3D8 /* YouSunkMyBattleshipTests */,
+			);
+			name = YouSunkMyBattleshipTests;
+			packageProductDependencies = (
+				2D8C5A1D2ED8D147008BC07C /* ViewInspector */,
+			);
+			productName = YouSunkMyBattleshipTests;
+			productReference = DEFB27D52ED8B17900F9C3D8 /* YouSunkMyBattleshipTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		DEFB27DE2ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DEFB27EF2ED8B17900F9C3D8 /* Build configuration list for PBXNativeTarget "YouSunkMyBattleshipUITests" */;
+			buildPhases = (
+				DEFB27DB2ED8B17900F9C3D8 /* Sources */,
+				DEFB27DC2ED8B17900F9C3D8 /* Frameworks */,
+				DEFB27DD2ED8B17900F9C3D8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DEFB27E12ED8B17900F9C3D8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DEFB27E22ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests */,
+			);
+			name = YouSunkMyBattleshipUITests;
+			packageProductDependencies = (
+			);
+			productName = YouSunkMyBattleshipUITests;
+			productReference = DEFB27DF2ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DEFB27C02ED8B17700F9C3D8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2610;
+				LastUpgradeCheck = 2620;
+				TargetAttributes = {
+					DEFB27C72ED8B17700F9C3D8 = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					DEFB27D42ED8B17900F9C3D8 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = DEFB27C72ED8B17700F9C3D8;
+					};
+					DEFB27DE2ED8B17900F9C3D8 = {
+						CreatedOnToolsVersion = 26.1.1;
+						TestTargetID = DEFB27C72ED8B17700F9C3D8;
+					};
+				};
+			};
+			buildConfigurationList = DEFB27C32ED8B17700F9C3D8 /* Build configuration list for PBXProject "YouSunkMyBattleship" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = DEFB27BF2ED8B17700F9C3D8;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				2D8C5A1C2ED8D147008BC07C /* XCRemoteSwiftPackageReference "ViewInspector" */,
+				DEEB3C812F289CE100E029F9 /* XCLocalSwiftPackageReference "../YouSunkMyBattleshipCommon" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = DEFB27C92ED8B17700F9C3D8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */,
+				DEFB27D42ED8B17900F9C3D8 /* YouSunkMyBattleshipTests */,
+				DEFB27DE2ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DEFB27C62ED8B17700F9C3D8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DEFB27D32ED8B17900F9C3D8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DEFB27DD2ED8B17900F9C3D8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DEFB27C42ED8B17700F9C3D8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DEFB27D12ED8B17900F9C3D8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DEFB27DB2ED8B17900F9C3D8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DEFB27D72ED8B17900F9C3D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */;
+			targetProxy = DEFB27D62ED8B17900F9C3D8 /* PBXContainerItemProxy */;
+		};
+		DEFB27E12ED8B17900F9C3D8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */;
+			targetProxy = DEFB27E02ED8B17900F9C3D8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		DEFB27E72ED8B17900F9C3D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		DEFB27E82ED8B17900F9C3D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		DEFB27EA2ED8B17900F9C3D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YouSunkMyBattleship/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "You Sunk My Battleship!";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.strategy-games";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.thedreamweb.YouSunkMyBattleship;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		DEFB27EB2ED8B17900F9C3D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = YouSunkMyBattleship/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "You Sunk My Battleship!";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.strategy-games";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.thedreamweb.YouSunkMyBattleship;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		DEFB27ED2ED8B17900F9C3D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.thedreamweb.YouSunkMyBattleshipTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouSunkMyBattleship.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YouSunkMyBattleship";
+			};
+			name = Debug;
+		};
+		DEFB27EE2ED8B17900F9C3D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.thedreamweb.YouSunkMyBattleshipTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/YouSunkMyBattleship.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/YouSunkMyBattleship";
+			};
+			name = Release;
+		};
+		DEFB27F02ED8B17900F9C3D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.thedreamweb.YouSunkMyBattleshipUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YouSunkMyBattleship;
+			};
+			name = Debug;
+		};
+		DEFB27F12ED8B17900F9C3D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = ZXW8GTM6FG;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.thedreamweb.YouSunkMyBattleshipUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = YouSunkMyBattleship;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DEFB27C32ED8B17700F9C3D8 /* Build configuration list for PBXProject "YouSunkMyBattleship" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DEFB27E72ED8B17900F9C3D8 /* Debug */,
+				DEFB27E82ED8B17900F9C3D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DEFB27E92ED8B17900F9C3D8 /* Build configuration list for PBXNativeTarget "YouSunkMyBattleship" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DEFB27EA2ED8B17900F9C3D8 /* Debug */,
+				DEFB27EB2ED8B17900F9C3D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DEFB27EC2ED8B17900F9C3D8 /* Build configuration list for PBXNativeTarget "YouSunkMyBattleshipTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DEFB27ED2ED8B17900F9C3D8 /* Debug */,
+				DEFB27EE2ED8B17900F9C3D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DEFB27EF2ED8B17900F9C3D8 /* Build configuration list for PBXNativeTarget "YouSunkMyBattleshipUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DEFB27F02ED8B17900F9C3D8 /* Debug */,
+				DEFB27F12ED8B17900F9C3D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		DEEB3C812F289CE100E029F9 /* XCLocalSwiftPackageReference "../YouSunkMyBattleshipCommon" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../YouSunkMyBattleshipCommon;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		2D8C5A1C2ED8D147008BC07C /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2D8C5A1D2ED8D147008BC07C /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2D8C5A1C2ED8D147008BC07C /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
+		};
+		DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DEEB3C812F289CE100E029F9 /* XCLocalSwiftPackageReference "../YouSunkMyBattleshipCommon" */;
+			productName = YouSunkMyBattleshipCommon;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = DEFB27C02ED8B17700F9C3D8 /* Project object */;
+}

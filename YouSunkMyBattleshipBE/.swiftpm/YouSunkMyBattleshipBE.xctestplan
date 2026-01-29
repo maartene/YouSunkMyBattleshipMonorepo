@@ -1,0 +1,29 @@
+{
+  "configurations" : [
+    {
+      "id" : "9DA12866-D276-47CA-AC1D-12FB5E243D90",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:",
+      "identifier" : "YouSunkMyBattleshipBE",
+      "name" : "YouSunkMyBattleshipBE"
+    }
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "YouSunkMyBattleshipBETests",
+        "name" : "YouSunkMyBattleshipBETests"
+      }
+    }
+  ],
+  "version" : 1
+}

@@ -1,0 +1,80 @@
+//
+//  GameService.swift
+//  YouSunkMyBattleship
+//
+//  Created by Engels, Maarten MAK on 26/01/2026.
+//
+
+import YouSunkMyBattleshipCommon
+import Foundation
+
+protocol GameService {
+    func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int
+    func cellsForPlayer(player: Player) -> [[String]]
+    func fireAt(coordinate: Coordinate, against player: Player) async throws
+    func setBoardForPlayer(_ player: Player, board: Board) async throws
+}
+
+extension GameService {
+    func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int {
+        5
+    }
+    
+    func cellsForPlayer(player: Player) -> [[String]] {
+        Array(repeating: Array(repeating: "", count: 10), count: 10)
+    }
+    
+    func fireAt(coordinate: Coordinate, against player: Player) async throws {
+        print("WARNING: calling dummy implementation of fireAt")
+    }
+    
+    func setBoardForPlayer(_ player: Player, board: Board) async throws {
+        print("WARNING: calling dummy implementation of setBoardForPlayer")
+    }
+}
+
+final class DummyGameService: GameService {
+    
+}
+
+
+// MARK: RemoteGameService
+final class RemoteGameService: GameService {
+    private let dataProvider: DataProvider
+    private let decoder = JSONDecoder()
+    private let encoder = JSONEncoder()
+    
+    init(dataProvider: DataProvider) {
+        self.dataProvider = dataProvider
+    }
+    
+    func cellsForPlayer(player: Player) -> [[String]] {
+        do {
+            let data = try dataProvider.fetch()
+            let state = try decoder.decode(GameState.self, from: data)
+            return state.cells[player] ?? []
+        } catch {
+            return []
+        }
+    }
+    
+    func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int {
+        do {
+            let data = try dataProvider.fetch()
+            let state = try decoder.decode(GameState.self, from: data)
+            return state.shipsToDestroy
+        } catch {
+            return 5
+        }
+    }
+    
+    func setBoardForPlayer(_ player: Player, board: Board) async throws {
+        let data = try encoder.encode(board.toDTO())
+        try await dataProvider.post(data, to: "board")
+    }
+    
+    func fireAt(coordinate: Coordinate, against player: Player) async throws {
+        let data = try encoder.encode(coordinate)
+        try await dataProvider.post(data, to: "fire")
+    }
+}

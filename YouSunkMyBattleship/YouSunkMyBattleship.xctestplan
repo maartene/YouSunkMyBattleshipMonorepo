@@ -1,0 +1,62 @@
+{
+  "configurations" : [
+    {
+      "id" : "F8CA6528-7217-4073-8421-EE2B94FDFF42",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "performanceAntipatternCheckerEnabled" : true,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:YouSunkMyBattleship.xcodeproj",
+      "identifier" : "DEFB27C72ED8B17700F9C3D8",
+      "name" : "YouSunkMyBattleship"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "skippedTests" : {
+        "suites" : [
+          {
+            "name" : "PlaceShipsTests",
+            "suites" : [
+              {
+                "name" : "GameLogicTests",
+                "testFunctions" : [
+                  "`when a valid ship has been placed, it is removed from the ships to place list`(testcase:)"
+                ]
+              }
+            ]
+          },
+          {
+            "name" : "RemoteGameServiceTests",
+            "suites" : [
+              {
+                "name" : "ActualServerTests"
+              }
+            ]
+          }
+        ]
+      },
+      "target" : {
+        "containerPath" : "container:YouSunkMyBattleship.xcodeproj",
+        "identifier" : "DEFB27D42ED8B17900F9C3D8",
+        "name" : "YouSunkMyBattleshipTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:YouSunkMyBattleship.xcodeproj",
+        "identifier" : "DEFB27DE2ED8B17900F9C3D8",
+        "name" : "YouSunkMyBattleshipUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

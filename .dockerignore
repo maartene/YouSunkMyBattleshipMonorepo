@@ -1,0 +1,7 @@
+.build
+.git
+.gitignore
+*.xcuserdatads
+YouSunkMyBattleship/
+docker-compose.yml
+Dockerfile

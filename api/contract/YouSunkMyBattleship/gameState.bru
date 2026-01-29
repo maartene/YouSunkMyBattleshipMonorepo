@@ -1,0 +1,31 @@
+meta {
+  name: gameState
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:8080/gameState
+  body: none
+  auth: inherit
+}
+
+script:pre-request {
+  const requestResponse = await bru.runRequest(
+    "CreateBoard"
+  );
+}
+
+tests {
+  test("should return two boards, state and ships to destroy", () => {
+    const body = res.getBody()
+    expect(body.state).to.eql({"play": { }})
+    expect(body.shipsToDestroy).to.eql(5)
+    expect(body.cells.length).to.eq(4)
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
