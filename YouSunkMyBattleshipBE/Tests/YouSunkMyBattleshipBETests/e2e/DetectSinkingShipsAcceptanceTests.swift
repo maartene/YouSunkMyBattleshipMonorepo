@@ -20,6 +20,7 @@ import YouSunkMyBattleshipCommon
             try await `And I have hit I9`(app)
             try await `When I fire at J9`(app)
             try await `Then both I9 and J9 show 🔥`(app)
+            try await `And I see "You sank the enemy Destroyer!"`(app)
             try await `And I see one less remaining ship to destroy`(app)
         }
     }
@@ -50,6 +51,15 @@ extension `Feature: Ship Sinking Detection` {
             #expect(cells[8][8] == "🔥")
             #expect(cells[9][8] == "🔥")
         }
+    }
+    
+    func `And I see "You sank the enemy Destroyer!"`(_ app: Application) async throws {
+        try await app.testing().test(.GET, "shipAt", beforeRequest: { req in
+            try req.content.encode(Coordinate("J9"))
+        }, afterResponse: { res in
+            let shipName = try res.content.decode(String.self)
+            #expect(shipName == "Destroyer")
+        })
     }
         
     func `And I see one less remaining ship to destroy`(_ app: Application) async throws {

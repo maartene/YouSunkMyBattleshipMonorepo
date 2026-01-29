@@ -81,6 +81,17 @@ func configure(_ app: Application) throws {
         
         return Response(status: .created)
     }
+    
+    app.get("shipAt") { req in
+        let coordinate = try req.content.decode(Coordinate.self)
+        
+        guard let board = await app.gameRepository?.getBoard(for: .player2) else {
+            throw Abort(.notFound)
+        }
+        
+        let shipName = board.destroyedShips.first { $0.coordinates.contains(coordinate) }?.ship.name ?? ""
+        return shipName
+    }
 }
 
 try configure(app)
