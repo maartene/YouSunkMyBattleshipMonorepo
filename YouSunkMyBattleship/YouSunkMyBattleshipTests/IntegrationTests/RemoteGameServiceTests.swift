@@ -98,14 +98,11 @@ import Foundation
 }
 
 final class MockDataProvider: DataProvider {
-    func fetch() throws -> Data {
+    func fetch(_ endpoint: String) throws -> Data {
         return Data(json.utf8)
     }
     
     func post(_ data: Data, to endpoint: String) throws { }
-    func get(_ endpoint: String, data: Data?) async throws -> Data {
-        return Data(json.utf8)
-    }
     
     let json: String
     
@@ -115,7 +112,7 @@ final class MockDataProvider: DataProvider {
 }
 
 final class ThrowingDataProvider: DataProvider {
-    func fetch() throws -> Data {
+    func fetch(_ endpoint: String) throws -> Data {
         throw URLError(.badServerResponse)
     }
     

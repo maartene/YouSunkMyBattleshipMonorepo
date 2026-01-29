@@ -16,7 +16,7 @@ struct RemoteDataProvider: DataProvider {
     let baseURL: String
     
     func fetch(_ endpoint: String) throws -> Data {
-        let url = URL(string: baseURL + "/" + "endpoint")
+        let url = URL(string: baseURL + "/" + endpoint)
         let data = try Data(contentsOf: url!)
         return data
     }
