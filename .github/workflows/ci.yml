@@ -14,6 +14,7 @@ jobs:
       - name: Run smoketest
         run: |
           set -e
+          podman machine init
           podman machine start
           chmod +x smoketest.sh
           npm install -g @usebruno/cli
