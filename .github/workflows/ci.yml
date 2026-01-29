@@ -24,6 +24,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Swift version
+        uses: swift-actions/setup-swift@v3
+        
+      - name: Verify Swift version
+        run: swift --version
+  
       - name: Build and test YouSunkMyBattleshipCommon
         working-directory: YouSunkMyBattleshipCommon
         run: |

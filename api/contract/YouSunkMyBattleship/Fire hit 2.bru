@@ -1,0 +1,35 @@
+meta {
+  name: Fire hit 2
+  type: http
+  seq: 6
+}
+
+post {
+  url: http://localhost:8080/fire
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "x": 1,
+    "y": 2
+  }
+}
+
+script:pre-request {
+  const requestResponse = await bru.runRequest(
+    "CreateBoard"
+  );
+}
+
+tests {
+  test("should return 201", () => {
+    expect(res.getStatus()).to.equal(201);
+  });
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
