@@ -50,13 +50,6 @@
 			);
 			target = DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */;
 		};
-		DEC194192ED9B36A00AB24C6 /* Exceptions for "docs" folder in "YouSunkMyBattleship" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				architecture.png,
-			);
-			target = DEFB27C72ED8B17700F9C3D8 /* YouSunkMyBattleship */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -84,14 +77,6 @@
 		DEFB27E22ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = YouSunkMyBattleshipUITests;
-			sourceTree = "<group>";
-		};
-		DEFB27F22ED8B1AA00F9C3D8 /* docs */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				DEC194192ED9B36A00AB24C6 /* Exceptions for "docs" folder in "YouSunkMyBattleship" target */,
-			);
-			path = docs;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -135,7 +120,6 @@
 			children = (
 				DE8992DC2F1A405000261E81 /* YouSunkMyBattleship.xctestplan */,
 				DE48BAB42EE1B273007F047E /* Assets */,
-				DEFB27F22ED8B1AA00F9C3D8 /* docs */,
 				DEFB27CA2ED8B17700F9C3D8 /* YouSunkMyBattleship */,
 				DEFB27D82ED8B17900F9C3D8 /* YouSunkMyBattleshipTests */,
 				DEFB27E22ED8B17900F9C3D8 /* YouSunkMyBattleshipUITests */,
@@ -172,7 +156,6 @@
 			fileSystemSynchronizedGroups = (
 				DE48BAB42EE1B273007F047E /* Assets */,
 				DEFB27CA2ED8B17700F9C3D8 /* YouSunkMyBattleship */,
-				DEFB27F22ED8B1AA00F9C3D8 /* docs */,
 			);
 			name = YouSunkMyBattleship;
 			packageProductDependencies = (

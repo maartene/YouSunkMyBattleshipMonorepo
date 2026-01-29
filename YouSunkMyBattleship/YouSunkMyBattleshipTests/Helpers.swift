@@ -164,6 +164,10 @@ final class MockGameService: GameService {
             4
         }
     }
+    
+    func shipAt(coordinate: Coordinate) async throws -> String {
+        "Destroyer"
+    }
 }
 
 final class FinishedGameService: GameService {

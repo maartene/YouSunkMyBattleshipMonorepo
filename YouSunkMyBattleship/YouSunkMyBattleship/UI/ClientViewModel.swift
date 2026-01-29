@@ -108,7 +108,8 @@ final class ClientViewModel: ViewModel {
         case "💥":
             lastMessage = "Hit!"
         case "🔥":
-            lastMessage = "You sank the enemy Destroyer!"
+            let shipName = (try? await gameService.shipAt(coordinate: coordinate)) ?? ""
+            lastMessage = "You sank the enemy \(shipName)!"
         default:
             break
         }

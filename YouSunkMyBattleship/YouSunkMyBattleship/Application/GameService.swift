@@ -13,6 +13,7 @@ protocol GameService {
     func cellsForPlayer(player: Player) -> [[String]]
     func fireAt(coordinate: Coordinate, against player: Player) async throws
     func setBoardForPlayer(_ player: Player, board: Board) async throws
+    func shipAt(coordinate: Coordinate) async throws -> String
 }
 
 extension GameService {
@@ -30,6 +31,10 @@ extension GameService {
     
     func setBoardForPlayer(_ player: Player, board: Board) async throws {
         print("WARNING: calling dummy implementation of setBoardForPlayer")
+    }
+    
+    func shipAt(coordinate: Coordinate) async throws -> String {
+        ""
     }
 }
 
@@ -76,5 +81,11 @@ final class RemoteGameService: GameService {
     func fireAt(coordinate: Coordinate, against player: Player) async throws {
         let data = try encoder.encode(coordinate)
         try await dataProvider.post(data, to: "fire")
+    }
+    
+    func shipAt(coordinate: Coordinate) async throws -> String {
+        let data = try encoder.encode(coordinate)
+        let shipNameData = try await dataProvider.get("shipAt", data: data)
+        return String(data: shipNameData, encoding: .utf8) ?? ""
     }
 }

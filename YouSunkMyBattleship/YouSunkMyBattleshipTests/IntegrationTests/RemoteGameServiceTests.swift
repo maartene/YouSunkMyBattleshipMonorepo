@@ -87,6 +87,13 @@ import Foundation
             
             try await gameService.fireAt(coordinate: Coordinate(x: 0, y: 0), against: .player2)
         }
+        
+        @Test func `can retrieve a ship name`() async throws {
+            let gameService = RemoteGameService(dataProvider: MockDataProvider(json: "Destroyer"))
+            
+            let shipName = try await gameService.shipAt(coordinate: Coordinate("I9"))
+            #expect(shipName == "Destroyer")
+        }
     }
 }
 
@@ -96,6 +103,9 @@ final class MockDataProvider: DataProvider {
     }
     
     func post(_ data: Data, to endpoint: String) throws { }
+    func get(_ endpoint: String, data: Data?) async throws -> Data {
+        return Data(json.utf8)
+    }
     
     let json: String
     
@@ -110,6 +120,10 @@ final class ThrowingDataProvider: DataProvider {
     }
     
     func post(_ data: Data, to endpoint: String) throws {
+        throw URLError(.cancelled)
+    }
+    
+    func get(_ endpoint: String, data: Data?) async throws -> Data {
         throw URLError(.cancelled)
     }
 }
