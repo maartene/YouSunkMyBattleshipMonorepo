@@ -96,4 +96,22 @@ import YouSunkMyBattleshipCommon
             })
         }
     }
+    
+    @Test func `given a ship is still alive, we cant retrieve its name`() async throws {
+        try await withApp(configure: configure) { app in
+            await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player1)
+            await app.gameRepository?.setBoard(.makeFilledBoard(), for: .player2)
+            
+            try await app.testing().test(.POST, "fire", beforeRequest: { req in
+                try req.content.encode(Coordinate("I9"))
+            })
+            
+            try await app.testing().test(.GET, "shipAt", beforeRequest: { req in
+                try req.content.encode(Coordinate("I9"))
+            }, afterResponse: { res in
+                let shipName = try res.content.decode(String.self)
+                #expect(shipName == "")
+            })
+        }
+    }
 }
