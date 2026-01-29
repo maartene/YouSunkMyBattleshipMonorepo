@@ -15,6 +15,7 @@ final class ClientViewModel: ViewModel {
     private(set) var shipsToPlace: [String] = []
     private(set) var state: ViewModelState = .placingShips
     private(set) var lastMessage = ""
+    private(set) var cells: [Player : [[String]]] = [:]
     
     private struct PlayerCoordinate: Hashable {
         let player: Player
@@ -28,6 +29,7 @@ final class ClientViewModel: ViewModel {
     
     init(gameService: GameService) {
         self.gameService = gameService
+        cells[.player1] = cellsForPlayer()
         updateShipsToPlace()
     }
     
@@ -47,6 +49,8 @@ final class ClientViewModel: ViewModel {
         } else {
             endDragPosition = coordinate
         }
+        
+        cells[.player1] = cellsForPlayer()
     }
     
     func endDrag(at location: CGPoint) {
@@ -72,6 +76,8 @@ final class ClientViewModel: ViewModel {
         if boardInProgress.shipsToPlace.isEmpty {
             state = .awaitingConfirmation
         }
+        
+        cells[.player1] = cellsForPlayer()
     }
     
     func addCell(coordinate: Coordinate, rectangle: CGRect, player: Player) {
@@ -81,6 +87,8 @@ final class ClientViewModel: ViewModel {
     func confirmPlacement() async {
         do {
             try await gameService.setBoardForPlayer(owner, board: boardInProgress)
+            cells[.player1] = gameService.cellsForPlayer(player: .player1)
+            cells[.player2] = gameService.cellsForPlayer(player: .player2)
             state = .play
             lastMessage = "Play!"
         } catch {
@@ -89,8 +97,9 @@ final class ClientViewModel: ViewModel {
     }
     
     func reset() {
-        boardInProgress = Board()
+        boardInProgress = Board()        
         state = .placingShips
+        cells[.player1] = cellsForPlayer()
         updateShipsToPlace()
     }
     
@@ -101,8 +110,8 @@ final class ClientViewModel: ViewModel {
         
         try? await gameService.fireAt(coordinate: coordinate, against: boardForPlayer)
         
-        let cell = gameService.cellsForPlayer(player: boardForPlayer)
-        switch cell[coordinate.y][coordinate.x] {
+        cells[.player2] = gameService.cellsForPlayer(player: boardForPlayer)
+        switch cells[.player2]![coordinate.y][coordinate.x] {
         case "❌":
             lastMessage = "Miss!"
         case "💥":
@@ -148,14 +157,14 @@ final class ClientViewModel: ViewModel {
     }
     
     // MARK: Queries
-    func cellsFor(_ player: Player) -> [[String]] {
-        switch player {
-        case .player1:
-            return cellsForPlayer()
-        case .player2:
-            return gameService.cellsForPlayer(player: player)
-        }
-    }
+//    func cellsFor(_ player: Player) -> [[String]] {
+//        switch player {
+//        case .player1:
+//            return cellsForPlayer()
+//        case .player2:
+//            return gameService.cellsForPlayer(player: player)
+//        }
+//    }
     
     private func cellsForPlayer() -> [[String]] {
         if state == .play || state == .finished {

@@ -17,12 +17,13 @@ protocol ViewModel {
     func confirmPlacement() async
     func reset()
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async
-    func cellsFor(_ player: Player) -> [[String]]
     
     var shipsToPlace: [String] { get }
     var state: ViewModelState { get }
     var lastMessage: String { get }
     var numberOfShipsToBeDestroyed: Int { get }
+    var cells: [Player: [[String]]] { get }
+    
 }
 
 enum ViewModelState {

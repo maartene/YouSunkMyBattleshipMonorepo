@@ -100,7 +100,7 @@ import YouSunkMyBattleshipCommon
         @Test func `when a drag starts at 195,301 then the cell at A5 becomes a ship`() {
             viewModel.startDrag(at: CGPoint(x: 195, y: 301))
 
-            #expect(viewModel.cellsFor(.player1)[0][4] == "🚢")
+            #expect(viewModel.cells[.player1]![0][4] == "🚢")
         }
 
         @Test
@@ -111,9 +111,9 @@ import YouSunkMyBattleshipCommon
 
             viewModel.startDrag(at: CGPoint(x: 195, y: 370))
 
-            #expect(viewModel.cellsFor(.player1)[0][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[1][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[2][4] == "🚢")
+            #expect(viewModel.cells[.player1]![0][4] == "🚢")
+            #expect(viewModel.cells[.player1]![1][4] == "🚢")
+            #expect(viewModel.cells[.player1]![2][4] == "🚢")
         }
 
         @Test
@@ -124,9 +124,9 @@ import YouSunkMyBattleshipCommon
 
             viewModel.endDrag(at: CGPoint(x: 195, y: 370))
 
-            #expect(viewModel.cellsFor(.player1)[0][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[1][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[2][4] == "🚢")
+            #expect(viewModel.cells[.player1]![0][4] == "🚢")
+            #expect(viewModel.cells[.player1]![1][4] == "🚢")
+            #expect(viewModel.cells[.player1]![2][4] == "🚢")
         }
 
         @Test
@@ -138,9 +138,9 @@ import YouSunkMyBattleshipCommon
 
             viewModel.startDrag(at: CGPoint(x: 195, y: 389))
 
-            #expect(viewModel.cellsFor(.player1)[0][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[1][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[2][4] == "🚢")
+            #expect(viewModel.cells[.player1]![0][4] == "🚢")
+            #expect(viewModel.cells[.player1]![1][4] == "🚢")
+            #expect(viewModel.cells[.player1]![2][4] == "🚢")
         }
 
         @Test
@@ -153,8 +153,8 @@ import YouSunkMyBattleshipCommon
             viewModel.startDrag(at: CGPoint(x: 312, y: 461))
             viewModel.endDrag(at: CGPoint(x: 344, y: 461))
 
-            #expect(viewModel.cellsFor(.player1)[5][8] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[5][9] == "🚢")
+            #expect(viewModel.cells[.player1]![5][8] == "🚢")
+            #expect(viewModel.cells[.player1]![5][9] == "🚢")
         }
 
         @Test func `given a drag has ended, a new drag can be started`() {
@@ -163,10 +163,10 @@ import YouSunkMyBattleshipCommon
 
             viewModel.startDrag(at: CGPoint(x: 248, y: 461))
 
-            #expect(viewModel.cellsFor(.player1)[0][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[1][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[2][4] == "🚢")
-            #expect(viewModel.cellsFor(.player1)[5][6] == "🚢")
+            #expect(viewModel.cells[.player1]![0][4] == "🚢")
+            #expect(viewModel.cells[.player1]![1][4] == "🚢")
+            #expect(viewModel.cells[.player1]![2][4] == "🚢")
+            #expect(viewModel.cells[.player1]![5][6] == "🚢")
         }
 
         @Test func `when a valid ship has been placed, it is removed from the ships to place list`()

@@ -54,7 +54,7 @@ import YouSunkMyBattleshipCommon
             let viewModel = ClientViewModel(gameService: MockGameService())
             completePlacement(on: viewModel)
             
-            #expect(viewModel.cellsFor(.player1) != viewModel.cellsFor(.player2))
+            #expect(viewModel.cells[.player1] != viewModel.cells[.player2])
         }
         
         @Test func `when the player taps the opponents board at B5, the game service should receive a message to fire at that coordinate`() async {
@@ -75,22 +75,28 @@ import YouSunkMyBattleshipCommon
             #expect(spy.fireAtWasNotCalled())
         }
         
-        @Test func `a cell that has not been tapped, should show as 🌊`() {
+        @Test func `a cell that has not been tapped, should show as 🌊`() async {
             let viewModel = ClientViewModel(gameService: MockGameService())
             
-            #expect(viewModel.cellsFor(.player2)[1][1] == "🌊")
+            await viewModel.tap(Coordinate("A1"), boardForPlayer: .player2)
+            
+            #expect(viewModel.cells[.player2]![1][1] == "🌊")
         }
         
-        @Test func `a cell that was tapped where no ship is, should show as ❌`() {
+        @Test func `a cell that was tapped where no ship is, should show as ❌`() async {
             let viewModel = ClientViewModel(gameService: MockGameService())
             
-            #expect(viewModel.cellsFor(.player2)[1][4] == "❌")
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player2)
+            
+            #expect(viewModel.cells[.player2]![1][4] == "❌")
         }
         
-        @Test func `when the player taps the tracking board at a location where a ship is, the cell shows 💥`() {
+        @Test func `when the player taps the tracking board at a location where a ship is, the cell shows 💥`() async {
             let viewModel = ClientViewModel(gameService: MockGameService())
             
-            #expect(viewModel.cellsFor(.player2)[2][4] == "💥")
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player2)
+            
+            #expect(viewModel.cells[.player2]![2][4] == "💥")
         }
     }
 }
