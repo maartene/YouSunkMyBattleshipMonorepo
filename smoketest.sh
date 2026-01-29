@@ -3,10 +3,10 @@ set -euo pipefail
 
 # detect available compose command (podman/docker, with/without compose subcommand)
 COMPOSE_CMD=""
-if command -v podman >/dev/null 2>&1 && podman compose version >/dev/null 2>&1; then
-  COMPOSE_CMD="podman compose"
-elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
   COMPOSE_CMD="docker compose"
+elif command -v podman >/dev/null 2>&1 && podman compose version >/dev/null 2>&1; then
+  COMPOSE_CMD="podman compose"
 elif command -v podman-compose >/dev/null 2>&1; then
   COMPOSE_CMD="podman-compose"
 elif command -v docker-compose >/dev/null 2>&1; then
