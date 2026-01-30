@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2D8C5A1E2ED8D147008BC07C /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 2D8C5A1D2ED8D147008BC07C /* ViewInspector */; };
+		DE94E8A32F2CC8F100877A5B /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = DE94E8A22F2CC8F100877A5B /* Starscream */; };
 		DEEB3C842F289CEC00E029F9 /* YouSunkMyBattleshipCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */; };
 /* End PBXBuildFile section */
 
@@ -87,6 +88,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DEEB3C842F289CEC00E029F9 /* YouSunkMyBattleshipCommon in Frameworks */,
+				DE94E8A32F2CC8F100877A5B /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +162,7 @@
 			name = YouSunkMyBattleship;
 			packageProductDependencies = (
 				DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */,
+				DE94E8A22F2CC8F100877A5B /* Starscream */,
 			);
 			productName = YouSunkMyBattleship;
 			productReference = DEFB27C82ED8B17700F9C3D8 /* YouSunkMyBattleship.app */;
@@ -247,6 +250,7 @@
 			packageReferences = (
 				2D8C5A1C2ED8D147008BC07C /* XCRemoteSwiftPackageReference "ViewInspector" */,
 				DEEB3C812F289CE100E029F9 /* XCLocalSwiftPackageReference "../YouSunkMyBattleshipCommon" */,
+				DE94E8A12F2CC8F100877A5B /* XCRemoteSwiftPackageReference "Starscream" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DEFB27C92ED8B17700F9C3D8 /* Products */;
@@ -658,6 +662,14 @@
 				minimumVersion = 0.10.3;
 			};
 		};
+		DE94E8A12F2CC8F100877A5B /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.8;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -665,6 +677,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2D8C5A1C2ED8D147008BC07C /* XCRemoteSwiftPackageReference "ViewInspector" */;
 			productName = ViewInspector;
+		};
+		DE94E8A22F2CC8F100877A5B /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DE94E8A12F2CC8F100877A5B /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
 		};
 		DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */ = {
 			isa = XCSwiftPackageProductDependency;

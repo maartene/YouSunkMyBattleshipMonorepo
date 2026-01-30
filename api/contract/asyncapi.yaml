@@ -231,6 +231,7 @@ components:
         message:
           type: string
           description: Human-readable message to show on initial connect.
+          example: 'CONNECTED'
       required:
         - type
 

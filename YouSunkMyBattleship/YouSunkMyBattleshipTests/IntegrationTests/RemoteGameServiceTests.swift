@@ -124,3 +124,14 @@ final class ThrowingDataProvider: DataProvider {
         throw URLError(.cancelled)
     }
 }
+
+@Suite struct WebsocketTests {
+    @Test func `connect to server`() async throws {
+        let dataProvider = WSDataProvider()
+        await dataProvider.connect()
+        
+        let connectMessage = try JSONEncoder().encode(WSDataProvider.ConnectMessage())
+        try await dataProvider.send(text: "Hello!")
+        try await dataProvider.send(text: "Hello! Again!")
+    }
+}
