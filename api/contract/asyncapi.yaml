@@ -1,0 +1,338 @@
+asyncapi: '3.0.0'
+info:
+  title: Battleship WebSocket API
+  version: '0.1.0'
+  description: |
+    AsyncAPI contract for a Battleship game played over a single WebSocket
+    connection. The client is presentation-focused; all game logic, state and
+    bots live on the server.
+
+    This spec is geared towards using the AsyncAPI CLI + generators to mock
+    the server while you build the iOS client.
+
+defaultContentType: application/json
+
+servers:
+  production:
+    host: api.example.com/
+    protocol: wss
+    description: Production Battleship WebSocket endpoint
+  local:
+    host: localhost:8080/
+    protocol: ws
+    description: Local development WebSocket endpoint
+
+channels:
+  game:
+    address: /game
+    description: |
+      Single WebSocket channel. Once connected, the client and server
+      exchange JSON messages defined by the messages below.
+    messages:
+      # Client → Server messages
+      client.connect:
+        $ref: '#/components/messages/ClientConnect'
+      client.placeShips:
+        $ref: '#/components/messages/PlaceShips'
+      client.fireShot:
+        $ref: '#/components/messages/FireShot'
+
+      # Server → Client messages
+      server.connected:
+        $ref: '#/components/messages/ServerConnected'
+      server.gameStateUpdate:
+        $ref: '#/components/messages/GameStateUpdate'
+      server.error:
+        $ref: '#/components/messages/Error'
+
+operations:
+  # --- CLIENT → SERVER ---
+
+  sendClientConnect:
+    action: send
+    channel:
+      $ref: '#/channels/game'
+    summary: Client announces itself after WebSocket connection is established.
+    messages:
+      - $ref: '#/channels/game/messages/client.connect'
+
+  sendPlaceShips:
+    action: send
+    channel:
+      $ref: '#/channels/game'
+    summary: Send initial ship placement to the server.
+    messages:
+      - $ref: '#/channels/game/messages/client.placeShips'
+
+  sendFireShot:
+    action: send
+    channel:
+      $ref: '#/channels/game'
+    summary: Fire a shot at a coordinate (for completeness in gameplay loop).
+    messages:
+      - $ref: '#/channels/game/messages/client.fireShot'
+
+  # --- SERVER → CLIENT ---
+
+  receiveServerConnected:
+    action: receive
+    channel:
+      $ref: '#/channels/game'
+    summary: Sent by server once the connection is accepted and initialized.
+    messages:
+      - $ref: '#/channels/game/messages/server.connected'
+
+  receiveGameStateUpdate:
+    action: receive
+    channel:
+      $ref: '#/channels/game'
+    summary: Sent every time a board changes (player or bot action).
+    messages:
+      - $ref: '#/channels/game/messages/server.gameStateUpdate'
+
+  receiveError:
+    action: receive
+    channel:
+      $ref: '#/channels/game'
+    summary: Sent by server when a client message is invalid or cannot be processed.
+    messages:
+      - $ref: '#/channels/game/messages/server.error'
+
+components:
+  messages:
+    # ---------- CLIENT → SERVER ----------
+
+    ClientConnect:
+      name: ClientConnect
+      title: Client connects
+      summary: Initial handshake payload from client after WebSocket is open.
+      description: |
+        This message is optional but useful for correlating clients and
+        sessions, and for future authentication/authorization.
+      payload:
+        $ref: '#/components/schemas/ClientConnectPayload'
+
+    PlaceShips:
+      name: PlaceShips
+      title: Place ships
+      summary: Send full ship placement once the user finished placing ships.
+      payload:
+        $ref: '#/components/schemas/PlaceShipsPayload'
+
+    FireShot:
+      name: FireShot
+      title: Fire shot
+      summary: Fire a shot at a coordinate on the opponent's board.
+      payload:
+        $ref: '#/components/schemas/FireShotPayload'
+
+    # ---------- SERVER → CLIENT ----------
+
+    ServerConnected:
+      name: ServerConnected
+      title: Server connected
+      summary: Server confirms connection and provides initial game metadata.
+      payload:
+        $ref: '#/components/schemas/ServerConnectedPayload'
+
+    GameStateUpdate:
+      name: GameStateUpdate
+      title: Game state update
+      summary: Server sends full game state whenever something changes.
+      description: |
+        Contains both boards, a user-facing message and the current game state.
+        The boards are represented as 10x10 arrays of strings.
+      payload:
+        $ref: '#/components/schemas/GameStateUpdatePayload'
+
+    Error:
+      name: Error
+      title: Error
+      summary: Error message from server to client.
+      payload:
+        $ref: '#/components/schemas/ErrorPayload'
+
+  schemas:
+    # ---------- COMMON ----------
+
+    UUID:
+      type: string
+      format: uuid
+      description: UUID v4 identifier.
+
+    Coordinate:
+      type: string
+      description: Board coordinate using 'letter'-'number' format (e.g. A5).
+
+    CellState:
+      type: string
+      description: |
+        Cell state on a board. The exact codes are up to the server
+        implementation; these are suggested values to help mocking.
+
+    Board:
+      type: object
+      description: 10x10 board represented as a 2D array of strings.
+      properties:
+        cells:
+          type: array
+          minItems: 10
+          maxItems: 10
+          items:
+            type: array
+            minItems: 10
+            maxItems: 10
+            items:
+              $ref: '#/components/schemas/CellState'
+      required:
+        - cells
+
+    GameStateEnum:
+      type: string
+      description: |
+        High-level state of the game. Add more as needed (e.g. 'waiting-for-opponent').
+      enum:
+        - notStarted
+        - play
+        - finished
+
+    # ---------- CLIENT → SERVER PAYLOADS ----------
+
+    ClientConnectPayload:
+      type: object
+      properties:
+        type:
+          type: string
+          const: client.connect
+        clientId:
+          type: string
+      required:
+        - type
+        - clientId
+
+    ShipPlacement:
+      type: object
+      description: |
+        Ship definition. Coordinates are inclusive start and end cells.
+        For straight ships, either row or column must match.
+      properties:
+        name:
+          type: string
+          description: Ship type.
+          enum:
+            - carrier
+            - battleship
+            - cruiser
+            - submarine
+            - destroyer
+        coordinates:
+          type: array
+          description: All coordinates of the ship.
+          items:
+            $ref: '#/components/schemas/Coordinate'
+      required:
+        - type
+        - coordinates
+
+    PlaceShipsPayload:
+      type: object
+      description: |
+        Sent once the player finishes placing all ships on their board.
+      properties:
+        ships:
+          type: array
+          description: Full list of ships and their positions.
+          items:
+            $ref: '#/components/schemas/ShipPlacement'
+          minItems: 5
+          maxItems: 5
+      required:
+        - ships
+
+    FireShotPayload:
+      type: object
+      description: Fire a shot at the opponent’s board.
+      properties:
+        target:
+          $ref: '#/components/schemas/Coordinate'
+      required:
+        - target
+
+    # ---------- SERVER → CLIENT PAYLOADS ----------
+
+    ServerConnectedPayload:
+      type: object
+      properties:
+        type:
+          type: string
+          const: server.connected
+        message:
+          type: string
+          description: Human-readable message to show on initial connect.
+      required:
+        - type
+
+    GameStateUpdatePayload:
+      type: object
+      description: |
+        Full game state snapshot, sent whenever something changes
+        (ship placement accepted, a shot is fired, a ship is sunk, game ends, etc.).
+      properties:
+        type:
+          type: string
+          const: server.gameStateUpdate
+        playerBoard:
+          $ref: '#/components/schemas/Board'
+        opponentBoard:
+          $ref: '#/components/schemas/Board'
+        gameState:
+          $ref: '#/components/schemas/GameStateEnum'
+        message:
+          type: string
+          description: |
+            User-facing message, e.g. 'You sunk my battleship!', 'Your turn',
+            'Game over – you win', etc.
+        shipsToDestroy:
+          type: number
+          description: Number of ships that remain to destroy
+        currentTurn:
+          type: string
+          description: Whose turn it is.
+          enum:
+            - player
+            - opponent
+      required:
+        - type
+        - playerBoard
+        - opponentBoard
+        - gameState
+        - shipsToDestroy
+        - message
+
+    ErrorPayload:
+      type: object
+      properties:
+        type:
+          type: string
+          const: server.error
+        gameId:
+          $ref: '#/components/schemas/UUID'
+          nullable: true
+        code:
+          type: string
+          description: Machine-readable error code.
+          examples:
+            - INVALID_SHIP_PLACEMENT
+            - INVALID_COORDINATE
+            - NOT_YOUR_TURN
+        message:
+          type: string
+          description: Human-readable error message.
+        correlationId:
+          type: string
+          description: |
+            ID that allows client to correlate an error to the request it sent.
+      required:
+        - type
+        - code
+        - message
