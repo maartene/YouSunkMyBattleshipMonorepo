@@ -1,4 +1,8 @@
-asyncapi: '3.0.0'
+asyncapi: '2.0.0'
+id: 'urn:asyncapi:YouSunkMyBattleship:0.1.0'
+tags:
+  - name: game
+    description: WebSocket game channel
 info:
   title: Battleship WebSocket API
   version: '0.1.0'
@@ -10,93 +14,51 @@ info:
     This spec is geared towards using the AsyncAPI CLI + generators to mock
     the server while you build the iOS client.
 
+  contact:
+    name: YouSunkMyBattleship Maintainers
+    url: 'https://github.com/maartene/YouSunkMyBattleship'
+    email: devnull@example.com
+  license:
+    name: MIT
+    url: 'https://opensource.org/licenses/MIT'
+
 defaultContentType: application/json
 
 servers:
   production:
-    host: api.example.com/
+    url: wss://api.example.com
     protocol: wss
     description: Production Battleship WebSocket endpoint
   local:
-    host: localhost:8080/
+    url: ws://localhost:8080
     protocol: ws
     description: Local development WebSocket endpoint
 
 channels:
-  game:
-    address: /game
+  /game:
     description: |
       Single WebSocket channel. Once connected, the client and server
       exchange JSON messages defined by the messages below.
-    messages:
-      # Client → Server messages
-      client.connect:
-        $ref: '#/components/messages/ClientConnect'
-      client.placeShips:
-        $ref: '#/components/messages/PlaceShips'
-      client.fireShot:
-        $ref: '#/components/messages/FireShot'
+    publish:
+      operationId: clientSendGameMessage
+      summary: Client → Server messages
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ClientConnect'
+          - $ref: '#/components/messages/PlaceShips'
+          - $ref: '#/components/messages/FireShot'
+    subscribe:
+      operationId: serverSendGameMessage
+      summary: Server → Client messages
+      message:
+        oneOf:
+          - $ref: '#/components/messages/ServerConnected'
+          - $ref: '#/components/messages/GameStateUpdate'
+          - $ref: '#/components/messages/Error'
 
-      # Server → Client messages
-      server.connected:
-        $ref: '#/components/messages/ServerConnected'
-      server.gameStateUpdate:
-        $ref: '#/components/messages/GameStateUpdate'
-      server.error:
-        $ref: '#/components/messages/Error'
-
-operations:
-  # --- CLIENT → SERVER ---
-
-  sendClientConnect:
-    action: send
-    channel:
-      $ref: '#/channels/game'
-    summary: Client announces itself after WebSocket connection is established.
-    messages:
-      - $ref: '#/channels/game/messages/client.connect'
-
-  sendPlaceShips:
-    action: send
-    channel:
-      $ref: '#/channels/game'
-    summary: Send initial ship placement to the server.
-    messages:
-      - $ref: '#/channels/game/messages/client.placeShips'
-
-  sendFireShot:
-    action: send
-    channel:
-      $ref: '#/channels/game'
-    summary: Fire a shot at a coordinate (for completeness in gameplay loop).
-    messages:
-      - $ref: '#/channels/game/messages/client.fireShot'
-
-  # --- SERVER → CLIENT ---
-
-  receiveServerConnected:
-    action: receive
-    channel:
-      $ref: '#/channels/game'
-    summary: Sent by server once the connection is accepted and initialized.
-    messages:
-      - $ref: '#/channels/game/messages/server.connected'
-
-  receiveGameStateUpdate:
-    action: receive
-    channel:
-      $ref: '#/channels/game'
-    summary: Sent every time a board changes (player or bot action).
-    messages:
-      - $ref: '#/channels/game/messages/server.gameStateUpdate'
-
-  receiveError:
-    action: receive
-    channel:
-      $ref: '#/channels/game'
-    summary: Sent by server when a client message is invalid or cannot be processed.
-    messages:
-      - $ref: '#/channels/game/messages/server.error'
+# Note: Operation mappings have been moved into the channel as
+# `publish` (client → server) and `subscribe` (server → client) to
+# conform with AsyncAPI 2.0.0 structure.
 
 components:
   messages:
