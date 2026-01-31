@@ -7,7 +7,6 @@
 
 import Testing
 @testable import YouSunkMyBattleshipBE
-import VaporTesting
 import YouSunkMyBattleshipCommon
 
 /// As a player

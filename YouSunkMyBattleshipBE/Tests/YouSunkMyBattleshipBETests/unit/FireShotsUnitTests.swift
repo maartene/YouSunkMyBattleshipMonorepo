@@ -7,7 +7,6 @@
 
 import Testing
 @testable import YouSunkMyBattleshipBE
-import VaporTesting
 import YouSunkMyBattleshipCommon
 
 @Suite(.tags(.`Unit tests`)) struct FireShotsTests {

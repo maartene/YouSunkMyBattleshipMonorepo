@@ -6,8 +6,8 @@
 //
 
 import Testing
-import VaporTesting
 import YouSunkMyBattleshipCommon
+import Foundation
 
 @testable import YouSunkMyBattleshipBE
 
