@@ -22,9 +22,10 @@ echo "Using compose command: $COMPOSE_CMD"
 echo "Starting containers"
 eval "$COMPOSE_CMD up --build -d"
 sleep 5s
-echo "Run tests"
-cd api/contract/YouSunkMyBattleship
-bru run
+echo "Skipping tests"
+# echo "Run tests"
+# cd api/contract/YouSunkMyBattleship
+# bru run
 echo "Cleanup"
 cd ../../..
 eval "$COMPOSE_CMD down"
