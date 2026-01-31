@@ -14,10 +14,12 @@ final class GameService {
     private let decoder = JSONDecoder()
     private var lastMessage = "Play!"
     private let bot: Bot
+    private let ws: WebSocket?
 
-    init(repository: GameRepository, bot: Bot = ThinkingBot()) {
+    init(repository: GameRepository, bot: Bot = ThinkingBot(), ws: WebSocket? = nil) {
         self.repository = repository
         self.bot = bot
+        self.ws = ws
     }
 
     func receive(_ data: Data) async throws {
@@ -83,6 +85,10 @@ final class GameService {
                 lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
             } else {
                 if game.currentPlayer == .player2 {
+                    await self.repository.setGame(game)
+                    let data = try await getGameState()
+                    try ws?.send(encoder.encode(data))
+                    
                     let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
                     for botCoordinate in botCoordinates {
                         game.fireAt(botCoordinate, target: .player1)

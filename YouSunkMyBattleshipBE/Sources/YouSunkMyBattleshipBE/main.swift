@@ -12,7 +12,7 @@ func configure(_ app: Application) throws {
     }
 
     app.webSocket("game") { req, ws in
-        let gameService = GameService(repository: app.gameRepository!, bot: ThinkingBot())
+        let gameService = GameService(repository: app.gameRepository!, bot: ThinkingBot(), ws: ws)
         ws.send("Welcome!".data(using: .utf8)!)
         
         ws.onBinary { ws, data in
