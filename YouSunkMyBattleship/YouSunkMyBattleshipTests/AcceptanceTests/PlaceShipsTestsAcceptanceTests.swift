@@ -16,11 +16,11 @@ import Combine
 /// So that I can prepare for battle
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Ship Placement` {
-    let viewModel: ClientViewModel
+    let viewModel: NewClientViewModel
     let view: GameView
         
     init() {
-        self.viewModel = ClientViewModel(gameService: DummyGameService())
+        self.viewModel = NewClientViewModel(dataProvider: DummyDataProvider())
         self.view = GameView(viewModel: viewModel)
     }
 
