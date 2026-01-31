@@ -13,30 +13,32 @@ final class GameService {
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
     private var lastMessage = "Play!"
-    
+
     init(repository: GameRepository) {
         self.repository = repository
     }
-    
+
     func receive(_ data: Data) async throws {
         let command = try decoder.decode(GameCommand.self, from: data)
         try await processCommand(command)
     }
-    
+
     func getGameState() async throws -> GameState {
-        guard let board1 = await repository.getBoard(for: .player1) else {
-            throw GameServiceError.boardNotFound
+        guard let game = await repository.getGame() else {
+            throw GameServiceError.gameNotFound
         }
         
-        guard let board2 = await repository.getBoard(for: .player2) else {
-            throw GameServiceError.boardNotFound
-        }
-        
+        let board1 = game.player1Board
+        let board2 = game.player2Board
+
         let shipsToDestroy = board2.aliveShips.count
         let state = shipsToDestroy == 0 ? GameState.State.finished : .play
-        
+
         return GameState(
-            cells: [.player1: board1.toStringsAsPlayerBoard(), .player2: board2.toStringsAsTargetBoard()],
+            cells: [
+                .player1: board1.toStringsAsPlayerBoard(),
+                .player2: board2.toStringsAsTargetBoard(),
+            ],
             shipsToDestroy: shipsToDestroy,
             state: state,
             lastMessage: lastMessage
@@ -50,53 +52,57 @@ final class GameService {
             for ship in placedShips {
                 board.placeShip(at: ship.coordinates)
             }
-            
+
             guard board.placedShips.count == 5 else {
                 throw GameServiceError.invalidBoard
             }
 
-            await repository.setBoard(board, for: .player1)
-            await repository.setBoard(.makeAnotherFilledBoard(), for: .player2)
+            await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard()))
         case .fireAt(let coordinate):
-            guard var board = await repository.getBoard(for: .player2) else {
-                throw GameServiceError.boardNotFound
+            guard var game = await repository.getGame() else {
+                throw GameServiceError.gameNotFound
             }
+
+            game.fireAt(coordinate, target: .player2)
             
-            board.fire(at: coordinate)
+            let player2Board = game.player2Board
             
-            switch board.cells[coordinate.y][coordinate.x] {
+            switch player2Board.cells[coordinate.y][coordinate.x] {
             case .hitShip: lastMessage = "Hit!"
             case .destroyedShip:
-                let destroyedShip = board.destroyedShips.first(where: {$0.coordinates.contains(coordinate) })!
+                let destroyedShip = player2Board.destroyedShips.first(where: {
+                    $0.coordinates.contains(coordinate)
+                })!
                 lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
             default: lastMessage = "Miss!"
             }
-            
-            if board.aliveShips.isEmpty {
+
+            if player2Board.aliveShips.isEmpty {
                 lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
             }
 
-            await repository.setBoard(board, for: .player2)
+            await repository.setGame(game)
         }
     }
-    
+
     func cpuFires() async throws {
-        guard var board = await repository.getBoard(for: .player1) else {
-            throw GameServiceError.boardNotFound
+        guard var game = await repository.getGame() else {
+            throw GameServiceError.gameNotFound
         }
-        
+
         let hitCoordinates = [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]
         for hitCoordinate in hitCoordinates {
-            board.fire(at: hitCoordinate)
+            game.fireAt(hitCoordinate, target: .player1)
         }
-        
+
         lastMessage = "CPU fires at B2, C2 and A1"
-        
-        await repository.setBoard(board, for: .player1)
+
+        await repository.setGame(game)
     }
 }
 
 enum GameServiceError: Error {
     case invalidBoard
     case boardNotFound
+    case gameNotFound
 }

@@ -35,8 +35,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Firing Shots` {
     private func `Given the game has started with all ships placed`() async {
-        await repository.setBoard(.makeFilledBoard(), for: .player1)
-        await repository.setBoard(.makeAnotherFilledBoard(), for: .player2)
+        await repository.setGame(Game(player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard()))
     }
     
     private func `When I fire at coordinate B5`() async throws {
@@ -55,7 +54,8 @@ extension `Feature: Firing Shots` {
     }
     
     private func `And one of the ship has a piece place on H3`() async {
-        let board = await repository.getBoard(for: .player2)!
+        let game = await repository.getGame()!
+        let board = game.player2Board
         #expect(board.placedShips.contains(where: { ship in
             ship.coordinates.contains(Coordinate("H3"))
         }))

@@ -17,8 +17,8 @@ import YouSunkMyBattleshipCommon
     
     init() async {
         self.gameService = GameService(repository: repository)
-        await repository.setBoard(.makeFilledBoard(), for: .player1)
-        await repository.setBoard(.makeAnotherFilledBoard(), for: .player2)
+        let game = Game(player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard())
+        await repository.setGame(game)
     }
     
     @Test func `Scenario: CPU takes its turn`() async throws {
@@ -31,7 +31,17 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: CPU Opponent` {
     private func `Given it's the CPU's turn`() async throws {
-        notImplemented()
+        let commands = [
+            "A1", "A2", "A3"
+        ]
+            .map { Coordinate($0) }
+            .map { GameCommand.fireAt(coordinate: $0) }
+        
+        for command in commands {
+            try await gameService.receive(command.toData())
+        }
+        
+        #expect(await repository.getGame()?.currentPlayer == .player2)
     }
     
     private func `When the CPU fires`() async throws {

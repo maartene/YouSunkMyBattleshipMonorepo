@@ -15,8 +15,7 @@ import YouSunkMyBattleshipCommon
     
     init() async {
         gameService = GameService(repository: repository)
-        await repository.setBoard(.makeFilledBoard(), for: .player1)
-        await repository.setBoard(.makeAnotherFilledBoard(), for: .player2)
+        await repository.setGame(Game(player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard()))
     }
     
     @Test func `the boards for both player are independent of eachother`() async throws {

@@ -44,7 +44,6 @@ extension Board {
                 case .destroyedShip: "🔥"
                 case .hitShip: "💥"
                 case .miss: "❌"
-                default: " "
                 }
             }
         }

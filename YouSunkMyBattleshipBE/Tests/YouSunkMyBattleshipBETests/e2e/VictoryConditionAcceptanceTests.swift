@@ -36,8 +36,7 @@ extension `Feature: Victory Condition` {
         let (player2Board, lastCellToHit) = createNearlyCompletedBoard()
         self.lastCellToHit = lastCellToHit
         
-        await repository.setBoard(.makeAnotherFilledBoard(), for: .player1)
-        await repository.setBoard(player2Board, for: .player2)
+        await repository.setGame(Game(player1Board: .makeAnotherFilledBoard(), player2Board: player2Board))
     }
     
     func `When I fire at the last ship's remaining cell`() async throws {

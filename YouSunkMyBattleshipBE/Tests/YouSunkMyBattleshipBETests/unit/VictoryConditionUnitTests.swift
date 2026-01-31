@@ -14,9 +14,9 @@ import YouSunkMyBattleshipCommon
         let repository = InmemoryGameRepository()
         let gameService = GameService(repository: repository)
         
-        await repository.setBoard(.makeAnotherFilledBoard(), for: .player1)
         let (player2Board, _) = createNearlyCompletedBoard()
-        await repository.setBoard(player2Board, for: .player2)
+        await repository.setGame(Game(player1Board: .makeFilledBoard(), player2Board: player2Board))
+        
         let gameStateBeforeNewGame = try await gameService.getGameState()
         
         let placedShips = Board.makeFilledBoard().placedShips.map { $0.toDTO() }

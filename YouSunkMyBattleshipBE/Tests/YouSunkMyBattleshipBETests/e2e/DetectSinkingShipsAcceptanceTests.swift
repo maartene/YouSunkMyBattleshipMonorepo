@@ -33,8 +33,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Sinking Detection` {
     func `Given the enemy has a Destroyer at I9-J9`() async throws {
-        await repository.setBoard(.makeAnotherFilledBoard(), for: .player1)
-        await repository.setBoard(.makeFilledBoard(), for: .player2)
+        await repository.setGame(Game(player1Board: .makeAnotherFilledBoard(), player2Board: .makeFilledBoard()))
     }
 
     func `And I have hit I9`() async throws {
