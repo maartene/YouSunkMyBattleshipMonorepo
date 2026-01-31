@@ -16,7 +16,7 @@ import YouSunkMyBattleshipCommon
     let gameService: GameService
     
     init() async {
-        self.gameService = GameService(repository: repository)
+        self.gameService = GameService(repository: repository, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
         let game = Game(player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard())
         await repository.setGame(game)
     }
@@ -40,12 +40,10 @@ extension `Feature: CPU Opponent` {
         for command in commands {
             try await gameService.receive(command.toData())
         }
-        
-        #expect(await repository.getGame()?.currentPlayer == .player2)
     }
     
     private func `When the CPU fires`() async throws {
-        try await gameService.cpuFires()
+        
     }
     
     private func `Then I see "CPU fires at [coordinate]"`() async throws {

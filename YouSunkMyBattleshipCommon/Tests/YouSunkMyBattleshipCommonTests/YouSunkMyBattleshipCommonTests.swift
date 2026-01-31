@@ -75,3 +75,25 @@ import YouSunkMyBattleshipCommon
         }
     }
 }
+
+@Suite struct BotTests {
+    @Test func `a bot never returns the same coordinate twice`() async {
+        let bot = ThinkingBot(smarts: 0.00001)
+        var chosenCoordinates: Set<Coordinate> = []
+        
+        var board = Board()
+        
+        for _ in 0 ..< 100 {
+            let coordinates = await bot.getNextMoves(board: board)
+            for coordinate in coordinates {
+                if chosenCoordinates.contains(coordinate) {
+                    Issue.record("Should not send he same coordinate twice")
+                }
+                
+                board.fire(at: coordinate)
+                chosenCoordinates.insert(coordinate)
+            }
+            
+        }
+    }
+}

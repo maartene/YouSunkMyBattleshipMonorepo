@@ -30,3 +30,11 @@ func createNearlyCompletedBoard() -> (board: Board, lastCellToHit: Coordinate) {
     
     return (board, lastCellToHit)
 }
+
+struct FixedBot: Bot {
+    func getNextMoves(board: Board) async -> [Coordinate] {
+        fixedMoves
+    }
+    
+    let fixedMoves: [Coordinate]
+}

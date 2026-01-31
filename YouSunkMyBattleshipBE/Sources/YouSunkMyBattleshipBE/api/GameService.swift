@@ -9,13 +9,15 @@ import Vapor
 import YouSunkMyBattleshipCommon
 
 final class GameService {
-    let repository: GameRepository
-    let encoder = JSONEncoder()
-    let decoder = JSONDecoder()
+    private let repository: GameRepository
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
     private var lastMessage = "Play!"
+    private let bot: Bot
 
-    init(repository: GameRepository) {
+    init(repository: GameRepository, bot: Bot = ThinkingBot()) {
         self.repository = repository
+        self.bot = bot
     }
 
     func receive(_ data: Data) async throws {
@@ -79,12 +81,36 @@ final class GameService {
 
             if player2Board.aliveShips.isEmpty {
                 lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
+            } else {
+                if game.currentPlayer == .player2 {
+                    let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
+                    for botCoordinate in botCoordinates {
+                        game.fireAt(botCoordinate, target: .player1)
+                    }
+                
+                    switch botCoordinates.count {
+                    case 1: lastMessage = "CPU fires at \(botCoordinates[0])"
+                    case 2: lastMessage = "CPU fires at \(botCoordinates[0]) and \(botCoordinates[1])"
+                    case 3: lastMessage = "CPU fires at \(botCoordinates[0]), \(botCoordinates[1]) and \(botCoordinates[2])"
+                    default: break
+                    }
+                    
+                if game.player1Board.aliveShips.isEmpty {
+                    lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
+                }
+
+                    await self.repository.setGame(game)
+                }
             }
 
             await repository.setGame(game)
         }
     }
 
+    private func setLastMessage(_ message: String) {
+        lastMessage = message
+    }
+    
     func cpuFires() async throws {
         guard var game = await repository.getGame() else {
             throw GameServiceError.gameNotFound
