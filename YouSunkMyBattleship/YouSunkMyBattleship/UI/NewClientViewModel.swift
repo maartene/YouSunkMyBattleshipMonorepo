@@ -92,9 +92,8 @@ final class NewClientViewModel: ViewModel {
     
     func confirmPlacement() async {
         do {
-            let gamestate = try encoder.encode(GameState(cells: cells
-            , shipsToDestroy: 5, state: .play))
-            let data = try encoder.encode(boardInProgress.toDTO())
+            let command = GameCommand.createBoard(placedShips: boardInProgress.placedShips.map { PlacedShipDTO(name: $0.ship.name, coordinates: $0.coordinates)})
+            let data = try encoder.encode(command)
             try await dataProvider.send(data: data)
         } catch {
             print("Error submitting board: \(error)")

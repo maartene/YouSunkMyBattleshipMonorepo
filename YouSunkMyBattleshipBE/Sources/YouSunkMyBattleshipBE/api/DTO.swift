@@ -10,4 +10,3 @@ import Vapor
 
 extension Coordinate: @retroactive Content { }
 extension PlacedShipDTO: Content { }
-extension BoardDTO: Content { }

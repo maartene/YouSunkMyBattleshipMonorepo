@@ -13,6 +13,8 @@ public struct GameState: Codable, Sendable {
         self.shipsToDestroy = shipsToDestroy
         self.state = state
     }
+    
+    public let lastMessage = "Play!"
 }
 
 public struct PlacedShipDTO: Codable, Sendable {
@@ -25,25 +27,9 @@ public struct PlacedShipDTO: Codable, Sendable {
     }
 }
 
-public struct BoardDTO: Codable, Sendable {
-    public let placedShips: [PlacedShipDTO]
-
-    public init(placedShips: [PlacedShipDTO]) {
-        self.placedShips = placedShips
-    }
-}
-
 extension Board.PlacedShip {
-    func toDTO() -> PlacedShipDTO {
+    public func toDTO() -> PlacedShipDTO {
         PlacedShipDTO(name: ship.name, coordinates: coordinates)
-    }
-}
-
-extension Board {
-    public func toDTO() -> BoardDTO {
-        BoardDTO(placedShips:
-            self.placedShips.map { $0.toDTO() }
-        )
     }
 }
 

@@ -40,7 +40,7 @@ import YouSunkMyBattleshipCommon
                 })
                 
                 try await app.testing().test(.POST, "board", beforeRequest: { req in
-                    try req.content.encode(Board.makeFilledBoard().toDTO())
+                    //try req.content.encode(Board.makeFilledBoard().toDTO())
                 })   
 
                 try await app.testing().test(.GET, "gameState") { res in

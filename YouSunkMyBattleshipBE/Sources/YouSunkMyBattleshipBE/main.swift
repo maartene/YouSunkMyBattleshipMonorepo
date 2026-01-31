@@ -6,26 +6,36 @@ let app = try await Application.make(.detect())
 func configure(_ app: Application) throws {
     app.gameRepository = InmemoryGameRepository()
     app.http.server.configuration.hostname = "0.0.0.0"
-
+    
     app.get { req in
         return "Health check OK"
     }
 
-    app.post("board") { req in
-        let boardDTO = try req.content.decode(BoardDTO.self)
-
-        var board = Board()
-        for ship in boardDTO.placedShips {
-            board.placeShip(at: ship.coordinates)
+    app.webSocket("game") { req, ws in
+        let gameService = GameService(repository: app.gameRepository!)
+        ws.send("Welcome!".data(using: .utf8)!)
+        
+        ws.onBinary { ws, data in
+            do {
+                try await gameService.receive(Data(buffer: data))
+                let gameState = await gameService.getGameState()
+                try ws.send(JSONEncoder().encode(gameState))
+            } catch {
+                print("Error while receiving data: \(error)")
+            }
         }
-
-        guard board.placedShips.count == 5 else {
-            throw Abort(.badRequest)
+        
+        ws.onText { ws, text in
+            do {
+                guard let data = text.data(using: .utf8) else { return }
+                try await gameService.receive(data)
+                let gameState = await gameService.getGameState()
+                try ws.send(JSONEncoder().encode(gameState))
+            } catch {
+                print("Error while receiving data: \(error)")
+            }
         }
-
-        await app.gameRepository?.setBoard(board, for: .player1)
-        await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player2)
-        return Response(status: .created)
+        
     }
 
     app.get("gameState") { req in
