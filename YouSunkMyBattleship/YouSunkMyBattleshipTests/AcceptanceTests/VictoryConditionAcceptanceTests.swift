@@ -17,11 +17,11 @@ import YouSunkMyBattleshipCommon
 /// So that a winner is declared
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Victory Condition` {
-    let viewModel: NewClientViewModel
+    let viewModel: ClientViewModel
     let view: GameView
     
     init() async {
-        viewModel = NewClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: victoryState))
+        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: victoryState))
         addViewsToViewModel(viewModel)
         completePlacement(on: viewModel)
         await viewModel.confirmPlacement()

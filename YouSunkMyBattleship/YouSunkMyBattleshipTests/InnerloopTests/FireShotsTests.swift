@@ -52,7 +52,7 @@ import YouSunkMyBattleshipCommon
     @Suite struct ViewModelTests {
         @Test func `the boards for both player are independent of eachother`() {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
-            let viewModel = NewClientViewModel(dataProvider: dataProvider)
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
 
             completePlacement(on: viewModel)
             
@@ -61,7 +61,7 @@ import YouSunkMyBattleshipCommon
         
         @Test func `when the player taps the opponents board at B5, the game service should receive a message to fire at that coordinate`() async throws {
             let spy = DataProviderSpy()
-            let viewModel = NewClientViewModel(dataProvider: spy)
+            let viewModel = ClientViewModel(dataProvider: spy)
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             
@@ -72,7 +72,7 @@ import YouSunkMyBattleshipCommon
         
         @Test func `when the player taps their own board at B5, then that should not register as an attempt`() async throws {
             let spy = DataProviderSpy()
-            let viewModel = NewClientViewModel(dataProvider: spy)
+            let viewModel = ClientViewModel(dataProvider: spy)
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player1)
             

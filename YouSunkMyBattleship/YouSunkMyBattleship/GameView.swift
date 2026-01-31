@@ -28,7 +28,7 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView(viewModel: NewClientViewModel(dataProvider: DummyDataProvider()))
+    GameView(viewModel: ClientViewModel(dataProvider: DummyDataProvider()))
 }
 
 struct DummyDataProvider: DataProvider {

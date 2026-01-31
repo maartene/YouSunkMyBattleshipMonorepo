@@ -17,11 +17,11 @@ import YouSunkMyBattleshipCommon
 /// So that I can track my progress
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Ship Sinking Detection` {
-    let viewModel: NewClientViewModel
+    let viewModel: ClientViewModel
     let view: GameView
     
     init() {
-        viewModel = NewClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroying))
+        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroying))
         view = GameView(viewModel: viewModel)
     }
     

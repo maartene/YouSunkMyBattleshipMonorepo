@@ -18,7 +18,7 @@ import WSDataProvider
 /// So that I can try to sink their ships
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Firing Shots` {
-    var viewModel: NewClientViewModel!
+    var viewModel: ClientViewModel!
     var view: GameView!
     
     let dataProvider1 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringMiss)
@@ -43,7 +43,7 @@ import WSDataProvider
 // MARK: Steps
 extension `Feature: Firing Shots` {
     mutating func `Given a game has started with all ships placed`(_ dataProvider: DataProvider) async throws {
-        viewModel = NewClientViewModel(dataProvider: dataProvider)
+        viewModel = ClientViewModel(dataProvider: dataProvider)
         view = GameView(viewModel: viewModel)
         
         addViewsToViewModel(viewModel)

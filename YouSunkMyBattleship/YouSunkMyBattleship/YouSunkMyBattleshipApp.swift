@@ -11,7 +11,7 @@ import Foundation
 
 @main
 struct YouSunkMyBattleshipApp: App {
-    let viewModel = NewClientViewModel(
+    let viewModel = ClientViewModel(
         dataProvider: WSDataProvider(
                 url: URL(string: "ws://localhost:8080/game")!
         )

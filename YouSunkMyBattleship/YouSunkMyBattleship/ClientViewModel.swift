@@ -11,7 +11,7 @@ import YouSunkMyBattleshipCommon
 import WSDataProvider
 
 @Observable
-final class NewClientViewModel: ViewModel {
+final class ClientViewModel: ViewModel {
     private let dataProvider: DataProvider
     private let owner = Player.player1
     private(set) var shipsToPlace: [String] = []

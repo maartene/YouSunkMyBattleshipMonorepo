@@ -90,10 +90,10 @@ import YouSunkMyBattleshipCommon
 
     @MainActor
     @Suite struct ViewModelTests {
-        let viewModel: NewClientViewModel
+        let viewModel: ClientViewModel
 
         init() {
-            viewModel = NewClientViewModel(dataProvider: DummyDataProvider())
+            viewModel = ClientViewModel(dataProvider: DummyDataProvider())
             addViewsToViewModel(viewModel)
         }
 
@@ -190,7 +190,7 @@ import YouSunkMyBattleshipCommon
             async throws
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
-            let viewModel = NewClientViewModel(dataProvider: dataProvider)
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
             addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
@@ -205,7 +205,7 @@ import YouSunkMyBattleshipCommon
             async
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
-            let viewModel = NewClientViewModel(dataProvider: dataProvider)
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
             addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
@@ -244,7 +244,7 @@ import YouSunkMyBattleshipCommon
             `given all ships have been placed, when the player confirms placement and an error is occurred, the state does not change`()
             async throws
         {
-            let viewModel = NewClientViewModel(dataProvider: DummyDataProvider())
+            let viewModel = ClientViewModel(dataProvider: DummyDataProvider())
             addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
