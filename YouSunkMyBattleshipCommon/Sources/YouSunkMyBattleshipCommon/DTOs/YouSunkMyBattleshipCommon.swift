@@ -41,6 +41,9 @@ extension Board {
                 switch cell {
                 case .empty: "🌊"
                 case .ship: "🚢"
+                case .destroyedShip: "🔥"
+                case .hitShip: "💥"
+                case .miss: "❌"
                 default: " "
                 }
             }

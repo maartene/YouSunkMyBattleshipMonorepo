@@ -99,3 +99,4 @@ Feature: Victory Condition
         When I fire at the last ship's remaining cell    
         Then I see "🎉 VICTORY! You sank the enemy fleet! 🎉"    
         And the game ends
+

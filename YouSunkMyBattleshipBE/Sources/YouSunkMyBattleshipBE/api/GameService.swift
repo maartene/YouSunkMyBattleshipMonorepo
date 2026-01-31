@@ -79,6 +79,21 @@ final class GameService {
             await repository.setBoard(board, for: .player2)
         }
     }
+    
+    func cpuFires() async throws {
+        guard var board = await repository.getBoard(for: .player1) else {
+            throw GameServiceError.boardNotFound
+        }
+        
+        let hitCoordinates = [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]
+        for hitCoordinate in hitCoordinates {
+            board.fire(at: hitCoordinate)
+        }
+        
+        lastMessage = "CPU fires at B2, C2 and A1"
+        
+        await repository.setBoard(board, for: .player1)
+    }
 }
 
 enum GameServiceError: Error {
