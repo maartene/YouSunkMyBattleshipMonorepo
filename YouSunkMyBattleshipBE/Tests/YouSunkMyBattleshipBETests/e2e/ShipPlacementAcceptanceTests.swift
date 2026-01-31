@@ -23,7 +23,7 @@ import YouSunkMyBattleshipCommon
         `Given I placed all my ships`()
         try await `When I confirm placement`()
         try await `Then it shows the game board for player 1`()
-        await `And it shows the game is in play`()
+        try await `And it shows the game is in play`()
         try await `And it shows that there are 5 ships remaining to be destroyed`()
     }
 }
@@ -54,19 +54,19 @@ extension `Feature: Ship Placement` {
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊"]
         ]
         
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         
         #expect(gameState.cells[.player1] == expectedCells)
     }
         
-    private func `And it shows the game is in play`() async {
-        let gameState = await gameService.getGameState()
+    private func `And it shows the game is in play`() async throws {
+        let gameState = try await gameService.getGameState()
         #expect(gameState.state == .play)
         #expect(gameState.lastMessage == "Play!")
     }
     
     private func `And it shows that there are 5 ships remaining to be destroyed`() async throws {
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         #expect(gameState.shipsToDestroy == 5)
     }
 }

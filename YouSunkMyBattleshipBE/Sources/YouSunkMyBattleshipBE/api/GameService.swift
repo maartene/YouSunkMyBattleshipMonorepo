@@ -23,11 +23,21 @@ final class GameService {
         try await processCommand(command)
     }
 
-    func getGameState() async -> GameState {
-        let board1 = await repository.getBoard(for: .player1)?.toStringsAsPlayerBoard()
-        let board2 = await repository.getBoard(for: .player2)?.toStringsAsTargetBoard()
+    func getGameState() async throws -> GameState {
+        guard let board1 = await repository.getBoard(for: .player1) else {
+            throw GameServiceError.boardNotFound
+        }
         
-        return GameState(cells: [.player1: board1 ?? [], .player2: board2 ?? []], state: .play, lastMessage: lastMessage)
+        guard let board2 = await repository.getBoard(for: .player2) else {
+            throw GameServiceError.boardNotFound
+        }
+        
+        return GameState(
+            cells: [.player1: board1.toStringsAsPlayerBoard(), .player2: board2.toStringsAsTargetBoard()],
+            shipsToDestroy: board2.aliveShips.count,
+            state: .play,
+            lastMessage: lastMessage
+        )
     }
 
     private func processCommand(_ command: GameCommand) async throws {
@@ -51,11 +61,14 @@ final class GameService {
             
             board.fire(at: coordinate)
             
-            if board.cells[coordinate.y][coordinate.x] == .hitShip {
-                lastMessage = "Hit!"
-            } else {
-                lastMessage = "Miss!"
+            switch board.cells[coordinate.y][coordinate.x] {
+            case .hitShip: lastMessage = "Hit!"
+            case .destroyedShip:
+                let destroyedShip = board.destroyedShips.first(where: {$0.coordinates.contains(coordinate) })!
+                lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
+            default: lastMessage = "Miss!"
             }
+
             await repository.setBoard(board, for: .player2)
         }
     }

@@ -20,8 +20,8 @@ import YouSunkMyBattleshipCommon
         await repository.setBoard(.makeAnotherFilledBoard(), for: .player2)
     }
     
-    @Test func `the boards for both player are independent of eachother`() async {
-        let gameState = await gameService.getGameState()
+    @Test func `the boards for both player are independent of eachother`() async throws {
+        let gameState = try await gameService.getGameState()
         
         #expect(gameState.cells[.player1] != gameState.cells[.player2])
     }
@@ -31,7 +31,7 @@ import YouSunkMyBattleshipCommon
         
         try await gameService.receive(command.toData())
             
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         let cells = try #require(gameState.cells[.player2])
         #expect(cells[1][4] == "❌")
     }
@@ -41,7 +41,7 @@ import YouSunkMyBattleshipCommon
         
         try await gameService.receive(command.toData())
             
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         let cells = try #require(gameState.cells[.player2])
         #expect(cells[1][1] == "🌊")
     }

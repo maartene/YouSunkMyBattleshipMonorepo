@@ -18,7 +18,7 @@ func configure(_ app: Application) throws {
         ws.onBinary { ws, data in
             do {
                 try await gameService.receive(Data(buffer: data))
-                let gameState = await gameService.getGameState()
+                let gameState = try await gameService.getGameState()
                 try ws.send(JSONEncoder().encode(gameState))
             } catch {
                 print("Error while receiving data: \(error)")
@@ -29,7 +29,7 @@ func configure(_ app: Application) throws {
             do {
                 guard let data = text.data(using: .utf8) else { return }
                 try await gameService.receive(data)
-                let gameState = await gameService.getGameState()
+                let gameState = try await gameService.getGameState()
                 try ws.send(JSONEncoder().encode(gameState))
             } catch {
                 print("Error while receiving data: \(error)")

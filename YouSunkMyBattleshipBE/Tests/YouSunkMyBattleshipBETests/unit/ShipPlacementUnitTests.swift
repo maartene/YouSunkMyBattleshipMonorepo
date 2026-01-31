@@ -22,7 +22,7 @@ import YouSunkMyBattleshipCommon
             GameCommand.createBoard(placedShips: placedShips).toData()
         )
 
-        #expect(await gameService.getGameState().state == .play)
+        #expect(try await gameService.getGameState().state == .play)
     }
 
     @Test
@@ -48,7 +48,7 @@ import YouSunkMyBattleshipCommon
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊"],
         ]
 
-        let player2Cells = await gameService.getGameState().cells[.player2]
+        let player2Cells = try await gameService.getGameState().cells[.player2]
         #expect(player2Cells == expectedCells)
     }
 

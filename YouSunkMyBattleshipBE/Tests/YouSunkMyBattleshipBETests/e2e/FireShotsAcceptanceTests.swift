@@ -46,12 +46,12 @@ extension `Feature: Firing Shots` {
     }
     
     private func `Then the tracking board shows ❌ at B5`() async throws {
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         #expect(gameState.cells[.player2]![1][4] == "❌")
     }
     
     private func `And I receive feedback "Miss!"`() async throws {
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         #expect(gameState.lastMessage == "Miss!")
     }
     
@@ -68,12 +68,12 @@ extension `Feature: Firing Shots` {
     }
     
     private func `Then the tracking board shows 💥 at H3`() async throws {
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         #expect(gameState.cells[.player2]![7][2] == "💥")
     }
     
     private func `And I receive feedback "Hit!"`() async throws {
-        let gameState = await gameService.getGameState()
+        let gameState = try await gameService.getGameState()
         #expect(gameState.lastMessage == "Hit!")
     }
 }
