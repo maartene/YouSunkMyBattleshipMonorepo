@@ -17,12 +17,12 @@ final class GameService {
     init(repository: GameRepository) {
         self.repository = repository
     }
-
+    
     func receive(_ data: Data) async throws {
         let command = try decoder.decode(GameCommand.self, from: data)
         try await processCommand(command)
     }
-
+    
     func getGameState() async throws -> GameState {
         guard let board1 = await repository.getBoard(for: .player1) else {
             throw GameServiceError.boardNotFound
@@ -32,10 +32,13 @@ final class GameService {
             throw GameServiceError.boardNotFound
         }
         
+        let shipsToDestroy = board2.aliveShips.count
+        let state = shipsToDestroy == 0 ? GameState.State.finished : .play
+        
         return GameState(
             cells: [.player1: board1.toStringsAsPlayerBoard(), .player2: board2.toStringsAsTargetBoard()],
-            shipsToDestroy: board2.aliveShips.count,
-            state: .play,
+            shipsToDestroy: shipsToDestroy,
+            state: state,
             lastMessage: lastMessage
         )
     }
@@ -67,6 +70,10 @@ final class GameService {
                 let destroyedShip = board.destroyedShips.first(where: {$0.coordinates.contains(coordinate) })!
                 lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
             default: lastMessage = "Miss!"
+            }
+            
+            if board.aliveShips.isEmpty {
+                lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
             }
 
             await repository.setBoard(board, for: .player2)
