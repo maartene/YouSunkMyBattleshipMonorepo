@@ -6,10 +6,18 @@
 //
 
 import SwiftUI
+import WSDataProvider
+import Foundation
 
 @main
 struct YouSunkMyBattleshipApp: App {
-    let viewModel = ClientViewModel(gameService: RemoteGameService(dataProvider: RemoteDataProvider(baseURL: "http://localhost:8080")))
+    let viewModel = ClientViewModel(
+        gameService: RemoteGameService(
+            dataProvider: WSDataProvider(
+                url: URL(string: "ws://localhost:8080")!
+            )
+        )
+    )
     
     var body: some Scene {
         WindowGroup {

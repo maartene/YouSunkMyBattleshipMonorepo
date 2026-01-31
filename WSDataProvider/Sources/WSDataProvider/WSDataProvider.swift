@@ -1,27 +1,27 @@
 import Foundation
 
 @MainActor
-protocol DataProvider {
+public protocol DataProvider {
     func send(data: Data) async throws
     func register(onReceive: @escaping (Data) -> Void)
 }
 
 @MainActor
-final class WSDataProvider: DataProvider {
+public final class WSDataProvider: DataProvider {
     private let task: URLSessionWebSocketTask
     private var receiveTask: Task<Void, Never>?
     private var onReceive: ((Data) -> Void)?
     
-    func send(data: Data) async throws {
+    public func send(data: Data) async throws {
         let message = URLSessionWebSocketTask.Message.data(data)
         try await task.send(message)
     }
     
-    func register(onReceive: @escaping (Data) -> Void) {
+    public func register(onReceive: @escaping (Data) -> Void) {
         self.onReceive = onReceive
     }
         
-    init(url: URL) {
+    public init(url: URL) {
         task = URLSession.shared.webSocketTask(with: url)
         task.resume()
         startReceiveLoop()

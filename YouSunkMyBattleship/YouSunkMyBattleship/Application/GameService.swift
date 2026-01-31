@@ -7,6 +7,7 @@
 
 import YouSunkMyBattleshipCommon
 import Foundation
+import WSDataProvider
 
 protocol GameService {
     func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int
@@ -54,37 +55,20 @@ final class RemoteGameService: GameService {
     }
     
     func cellsForPlayer(player: Player) -> [[String]] {
-        do {
-            let data = try dataProvider.fetch("gameState")
-            let state = try decoder.decode(GameState.self, from: data)
-            return state.cells[player] ?? []
-        } catch {
             return []
-        }
     }
     
     func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int {
-        do {
-            let data = try dataProvider.fetch("gameState")
-            let state = try decoder.decode(GameState.self, from: data)
-            return state.shipsToDestroy
-        } catch {
-            return 5
-        }
+        5
     }
     
     func setBoardForPlayer(_ player: Player, board: Board) async throws {
-        let data = try encoder.encode(board.toDTO())
-        try await dataProvider.post(data, to: "board")
     }
     
     func fireAt(coordinate: Coordinate, against player: Player) async throws {
-        let data = try encoder.encode(coordinate)
-        try await dataProvider.post(data, to: "fire")
     }
     
     func shipAt(coordinate: Coordinate) async throws -> String {
-        let data = try dataProvider.fetch("shipAt/\(coordinate)")
-        return String(data: data, encoding: .utf8) ?? ""
+        "Destroyer"
     }
 }
