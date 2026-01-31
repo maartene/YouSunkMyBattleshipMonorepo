@@ -12,7 +12,7 @@ import WSDataProvider
 
 @Observable
 final class NewClientViewModel: ViewModel {
-    private let dataProvider: WSDataProvider
+    private let dataProvider: DataProvider
     private let owner = Player.player1
     private(set) var shipsToPlace: [String] = []
     private(set) var state: ViewModelState = .placingShips
@@ -32,7 +32,7 @@ final class NewClientViewModel: ViewModel {
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     
-    init(dataProvider: WSDataProvider) {
+    init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
         cells[.player1] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()

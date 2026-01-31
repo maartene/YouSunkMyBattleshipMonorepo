@@ -12,6 +12,7 @@ import ViewInspector
 import Combine
 import Testing
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 func notImplemented() {
     Issue.record("Not implemented")
@@ -23,6 +24,7 @@ extension Tag {
     @Tag static var `Integration tests`: Self
 }
 
+// MARK: ViewModel fakes
 final class ViewModelSpy: ViewModel {
     let state: ViewModelState
     var startDragLocation: CGPoint?
@@ -98,6 +100,7 @@ final class ViewModelSpy: ViewModel {
     let numberOfShipsToBeDestroyed = 0
 }
 
+// MARK: Helper functions
 func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGesture>> {
     let inspectedView = try view.inspect().find(GameBoardView.self)
     return try inspectedView.grid(0).gesture(DragGesture.self)
@@ -164,6 +167,7 @@ func almostSinkAllShips(on viewModel: ViewModel) async {
     }
 }
 
+// MARK: GameService fakes
 final class MockGameService: GameService {
     func cellsForPlayer(player: Player) -> [[String]] {
         var result = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)
@@ -251,4 +255,11 @@ final class ThrowingGameService: GameService {
     func fireAt(coordinate: Coordinate, against player: Player) throws {
         throw ThrowingGameServiceError.aGenericError
     }
+}
+
+// MARK: DataProvider fakes
+final class DummyDataProvider: DataProvider {
+    func send(data: Data) async throws { }
+    
+    func register(onReceive: @escaping (Data) -> Void) { }
 }
