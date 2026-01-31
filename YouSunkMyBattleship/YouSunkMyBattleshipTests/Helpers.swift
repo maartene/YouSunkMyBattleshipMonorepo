@@ -32,6 +32,7 @@ final class ViewModelSpy: ViewModel {
     var tapCoordinate: Coordinate?
     var tapPlayer: Player?
     private(set) var addCellWasCalled = false
+    private(set) var resetWasCalled = false
     
     init(state: ViewModelState = .placingShips) {
         self.state = state
@@ -67,7 +68,9 @@ final class ViewModelSpy: ViewModel {
     }
     
     func confirmPlacement() { }
-    func reset() { }
+    func reset() {
+        resetWasCalled = true
+    }
     
     let cells = [
         Player.player1: [
