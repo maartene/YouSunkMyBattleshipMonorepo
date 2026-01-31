@@ -36,7 +36,7 @@ final class GameService {
         let board2 = game.player2Board
 
         let shipsToDestroy = board2.aliveShips.count
-        let state = shipsToDestroy == 0 ? GameState.State.finished : .play
+        let state = (shipsToDestroy == 0 || board1.aliveShips.isEmpty) ? GameState.State.finished : .play
 
         return GameState(
             cells: [
@@ -115,21 +115,6 @@ final class GameService {
 
     private func setLastMessage(_ message: String) {
         lastMessage = message
-    }
-    
-    func cpuFires() async throws {
-        guard var game = await repository.getGame() else {
-            throw GameServiceError.gameNotFound
-        }
-
-        let hitCoordinates = [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]
-        for hitCoordinate in hitCoordinates {
-            game.fireAt(hitCoordinate, target: .player1)
-        }
-
-        lastMessage = "CPU fires at B2, C2 and A1"
-
-        await repository.setGame(game)
     }
 }
 

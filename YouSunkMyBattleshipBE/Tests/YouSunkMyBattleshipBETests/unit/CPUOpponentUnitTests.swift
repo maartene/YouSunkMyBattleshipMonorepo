@@ -17,9 +17,26 @@ import YouSunkMyBattleshipCommon
         gameService = GameService(repository: repository)
     }
     
+    @Test func `when the CPU wins the game, the game goes in finished state`() async throws {
+        let board = createCompletedBoard()
+        await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard()))
+        
+        let gameState = try await gameService.getGameState()
+        
+        #expect(gameState.state == .finished)
+    }
+    
+    @Test func `when the CPU wins the game, it notifies the player`() async throws {
+        let board = createCompletedBoard()
+        await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard()))
+        
+        try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A1")).toData())
+        try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A2")).toData())
+        try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A3")).toData())
+        
+        let gameState = try await gameService.getGameState()
+        
+        #expect(gameState.lastMessage == "💥 DEFEAT! The CPU sank your fleet! 💥")
+    }
     
 }
-
-// Only accept shots when its player turn
-// when its CPU turn, it immediately performs actions
-// CPU does not always shoot in the same place

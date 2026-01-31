@@ -19,6 +19,17 @@ extension Tag {
     @Tag static var `Integration tests`: Self
 }
 
+
+func createCompletedBoard() -> Board {
+    var board = Board.makeFilledBoard()
+    var cellsToHit = board.placedShips.flatMap { $0.coordinates }
+    
+    for cell in cellsToHit {
+        board.fire(at: cell)
+    }
+    
+    return board
+}
 func createNearlyCompletedBoard() -> (board: Board, lastCellToHit: Coordinate) {
     var board = Board.makeFilledBoard()
     var cellsToHit = board.placedShips.flatMap { $0.coordinates }
