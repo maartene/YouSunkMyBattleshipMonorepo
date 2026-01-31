@@ -11,29 +11,28 @@ import ViewInspector
 import SwiftUI
 import Combine
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 /// As a player
 /// I want to fire at coordinates on the enemy board 
 /// So that I can try to sink their ships
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Firing Shots` {
-    let viewModel: ClientViewModel
-    let view: GameView
+    var viewModel: NewClientViewModel!
+    var view: GameView!
     
-    init() {
-        viewModel = ClientViewModel(gameService: MockGameService())
-        view = GameView(viewModel: viewModel)
-    }
+    let dataProvider1 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringMiss)
+    let dataProvider2 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHit)
     
-    @Test func `Scenario: Player fires and misses`() async throws {
-        try await `Given a game has started with all ships placed`()
+    @Test mutating func `Scenario: Player fires and misses`() async throws {
+        try await `Given a game has started with all ships placed`(dataProvider1)
         try await `When I fire at coordinate B5`()
         try `Then the tracking board shows ❌ at B5`()
         try `And I receive feedback "Miss!"`()
     }
     
-    @Test func `Scenario: Player fires and hits`() async throws {
-        try await `Given a game has started with all ships placed`()
+    @Test mutating func `Scenario: Player fires and hits`() async throws {
+        try await `Given a game has started with all ships placed`(dataProvider2)
         try `And one of the ship has a piece place on C5`()
         try await `When I fire at coordinate C5`()
         try `Then the tracking board shows 💥 at C5`()
@@ -43,10 +42,17 @@ import YouSunkMyBattleshipCommon
 
 // MARK: Steps
 extension `Feature: Firing Shots` {
-    func `Given a game has started with all ships placed`() async throws {
+    mutating func `Given a game has started with all ships placed`(_ dataProvider: DataProvider) async throws {
+        viewModel = NewClientViewModel(dataProvider: dataProvider)
+        view = GameView(viewModel: viewModel)
+        
         addViewsToViewModel(viewModel)
         completePlacement(on: viewModel)
         await viewModel.confirmPlacement()
+        
+        while (viewModel.state != .play) {
+            try await Task.sleep(nanoseconds: 1000)
+        }
     }
     
     func `When I fire at coordinate B5`() async throws {

@@ -92,7 +92,7 @@ final class NewClientViewModel: ViewModel {
     
     func confirmPlacement() async {
         do {
-            let command = GameCommand.createBoard(placedShips: boardInProgress.placedShips.map { PlacedShipDTO(name: $0.ship.name, coordinates: $0.coordinates)})
+            let command = GameCommand.createBoard(placedShips: boardInProgress.placedShips.map { $0.toDTO() } )
             let data = try encoder.encode(command)
             try await dataProvider.send(data: data)
         } catch {
@@ -111,12 +111,13 @@ final class NewClientViewModel: ViewModel {
         guard boardForPlayer != owner else {
             return
         }
-        
-        guard let data = try? encoder.encode(coordinate) else {
-            fatalError("Failed to encode a coordinate")
+        do {
+            let command = GameCommand.fireAt(coordinate: coordinate)
+            let data = try encoder.encode(command)
+            try await dataProvider.send(data: data)
+        } catch {
+            print("Error when firing at \(coordinate): \(error)")
         }
-        
-        try? await dataProvider.send(data: data)
     }
     
     private func receiveData(_ data: Data) {
@@ -125,7 +126,7 @@ final class NewClientViewModel: ViewModel {
             self.cells = gameState.cells
             self.numberOfShipsToBeDestroyed = gameState.shipsToDestroy
             self.state = ViewModelState.fromGameState(gameState.state)
-            self.lastMessage = "Play!"
+            self.lastMessage = gameState.lastMessage
         } catch {
             print("Error receiving data: \(error)")
         }

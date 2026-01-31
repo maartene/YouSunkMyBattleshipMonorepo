@@ -265,10 +265,16 @@ final class DummyDataProvider: DataProvider {
 }
 
 final class DataProviderSpy: DataProvider {
-    private(set) var sendWasCalled = false
+    private var receivedData: [Data] = []
     
     func send(data: Data) async throws {
-        sendWasCalled = true
+        receivedData.append(data)
+    }
+    
+    func sendWasCalledWith(_ data: Data) -> Bool {
+        receivedData.contains { receivedData in
+            data == receivedData
+        }
     }
     
     func register(onReceive: @escaping (Data) -> Void) { }
