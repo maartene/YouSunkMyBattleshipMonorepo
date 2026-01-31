@@ -112,10 +112,6 @@ final class GameService {
             await repository.setGame(game)
         }
     }
-
-    private func setLastMessage(_ message: String) {
-        lastMessage = message
-    }
 }
 
 enum GameServiceError: Error {

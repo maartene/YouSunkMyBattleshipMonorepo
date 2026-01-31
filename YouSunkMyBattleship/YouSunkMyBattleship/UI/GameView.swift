@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 struct GameView: View {
     let viewModel: any ViewModel
@@ -27,5 +28,11 @@ struct GameView: View {
 }
 
 #Preview {
-    GameView(viewModel: ClientViewModel(gameService: DummyGameService()))
+    GameView(viewModel: NewClientViewModel(dataProvider: DummyDataProvider()))
+}
+
+struct DummyDataProvider: DataProvider {
+    func send(data: Data) async throws { }
+    
+    func register(onReceive: @escaping (Data) -> Void) { }
 }
