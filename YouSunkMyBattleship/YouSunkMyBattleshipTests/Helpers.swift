@@ -263,3 +263,32 @@ final class DummyDataProvider: DataProvider {
     
     func register(onReceive: @escaping (Data) -> Void) { }
 }
+
+final class DataProviderSpy: DataProvider {
+    private(set) var sendWasCalled = false
+    
+    func send(data: Data) async throws {
+        sendWasCalled = true
+    }
+    
+    func register(onReceive: @escaping (Data) -> Void) { }
+}
+
+final class MockDataProvider: DataProvider {
+    let dataToReceiveOnSend: Data
+    private var onReceive: ((Data) -> Void)?
+    
+    init(dataToReceiveOnSend: Data) {
+        self.dataToReceiveOnSend = dataToReceiveOnSend
+    }
+    
+    func send(data: Data) async throws {
+        onReceive?(dataToReceiveOnSend)
+    }
+    
+    func register(onReceive: @escaping (Data) -> Void) {
+        self.onReceive = onReceive
+    }
+    
+    
+}
