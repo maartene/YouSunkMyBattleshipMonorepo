@@ -46,3 +46,17 @@ extension Board {
         )
     }
 }
+
+extension Board {
+    public func toStringsAsPlayerBoard() -> [[String]] {
+        return cells.map { row in
+            row.map { cell in
+                switch cell {
+                case .empty: "🌊"
+                case .ship: "🚢"
+                default: " "
+                }
+            }
+        }
+    }
+}
