@@ -20,7 +20,7 @@ import Combine
     let view: GameView
         
     init() {
-        self.viewModel = NewClientViewModel(dataProvider: DummyDataProvider())
+        self.viewModel = NewClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement, ))
         self.view = GameView(viewModel: viewModel)
     }
 
@@ -111,7 +111,9 @@ extension `Feature: Ship Placement` {
     }
     
     private func `Then the game shows my board is done`() throws {
-        let inspectedView = try view.inspect().find(GameStateView.self)
+        
+        let inspectedView = try view.inspect()
+        let gameStateView = try inspectedView.find(GameStateView.self)
         _ = try inspectedView.find(text: "Play!")
     }
     

@@ -94,8 +94,6 @@ final class NewClientViewModel: ViewModel {
         do {
             let gamestate = try encoder.encode(GameState(cells: cells
             , shipsToDestroy: 5, state: .play))
-            print(String(data: gamestate, encoding: .utf8)!)
-            
             let data = try encoder.encode(boardInProgress.toDTO())
             try await dataProvider.send(data: data)
         } catch {
@@ -128,6 +126,7 @@ final class NewClientViewModel: ViewModel {
             self.cells = gameState.cells
             self.numberOfShipsToBeDestroyed = gameState.shipsToDestroy
             self.state = ViewModelState.fromGameState(gameState.state)
+            self.lastMessage = "Play!"
         } catch {
             print("Error receiving data: \(error)")
         }
