@@ -8,13 +8,14 @@ public struct GameState: Codable, Sendable {
     public let shipsToDestroy: Int
     public let state: State
     
-    public init(cells: [Player: [[String]]] = [:], shipsToDestroy: Int = 5, state: State = .play) {
+    public init(cells: [Player: [[String]]] = [:], shipsToDestroy: Int = 5, state: State = .play, lastMessage: String = "Play!") {
         self.cells = cells
         self.shipsToDestroy = shipsToDestroy
         self.state = state
+        self.lastMessage = lastMessage
     }
     
-    public let lastMessage = "Play!"
+    public let lastMessage: String
 }
 
 public struct PlacedShipDTO: Codable, Sendable {
@@ -41,6 +42,19 @@ extension Board {
                 case .empty: "🌊"
                 case .ship: "🚢"
                 default: " "
+                }
+            }
+        }
+    }
+    
+    public func toStringsAsTargetBoard() -> [[String]] {
+        cells.map { row in
+            row.map { cell in
+                switch cell {
+                case .miss: "❌"
+                case .hitShip: "💥"
+                case .destroyedShip: "🔥"
+                default: "🌊"
                 }
             }
         }

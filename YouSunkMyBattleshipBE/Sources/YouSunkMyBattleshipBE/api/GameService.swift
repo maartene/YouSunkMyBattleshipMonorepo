@@ -8,11 +8,12 @@
 import Vapor
 import YouSunkMyBattleshipCommon
 
-final class GameService: Sendable {
+final class GameService {
     let repository: GameRepository
     let encoder = JSONEncoder()
     let decoder = JSONDecoder()
-
+    private var lastMessage = "Play!"
+    
     init(repository: GameRepository) {
         self.repository = repository
     }
@@ -24,8 +25,9 @@ final class GameService: Sendable {
 
     func getGameState() async -> GameState {
         let board1 = await repository.getBoard(for: .player1)?.toStringsAsPlayerBoard()
-        let board2 = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)  // Placeholder for player 2 board
-        return GameState(cells: [.player1: board1 ?? [], .player2: board2], state: .play)
+        let board2 = await repository.getBoard(for: .player2)?.toStringsAsTargetBoard()
+        
+        return GameState(cells: [.player1: board1 ?? [], .player2: board2 ?? []], state: .play, lastMessage: lastMessage)
     }
 
     private func processCommand(_ command: GameCommand) async throws {
@@ -42,10 +44,24 @@ final class GameService: Sendable {
 
             await repository.setBoard(board, for: .player1)
             await repository.setBoard(.makeAnotherFilledBoard(), for: .player2)
+        case .fireAt(let coordinate):
+            guard var board = await repository.getBoard(for: .player2) else {
+                throw GameServiceError.boardNotFound
+            }
+            
+            board.fire(at: coordinate)
+            
+            if board.cells[coordinate.y][coordinate.x] == .hitShip {
+                lastMessage = "Hit!"
+            } else {
+                lastMessage = "Miss!"
+            }
+            await repository.setBoard(board, for: .player2)
         }
     }
 }
 
 enum GameServiceError: Error {
     case invalidBoard
+    case boardNotFound
 }
