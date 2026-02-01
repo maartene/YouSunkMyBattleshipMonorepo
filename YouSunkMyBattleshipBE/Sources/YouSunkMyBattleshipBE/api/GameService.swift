@@ -32,19 +32,13 @@ final class GameService {
             throw GameServiceError.gameNotFound
         }
         
-        let board1 = game.player1Board
-        let board2 = game.player2Board
-
-        let shipsToDestroy = board2.aliveShips.count
-        let state = (shipsToDestroy == 0 || board1.aliveShips.isEmpty) ? GameState.State.finished : .play
-
         return GameState(
             cells: [
-                .player1: board1.toStringsAsPlayerBoard(),
-                .player2: board2.toStringsAsTargetBoard(),
+                .player1: game.player1Board.toStringsAsPlayerBoard(),
+                .player2: game.player2Board.toStringsAsTargetBoard(),
             ],
-            shipsToDestroy: shipsToDestroy,
-            state: state,
+            shipsToDestroy: game.shipsToDestroy,
+            state: game.state,
             lastMessage: lastMessage
         )
     }
@@ -52,16 +46,7 @@ final class GameService {
     private func processCommand(_ command: GameCommand) async throws {
         switch command {
         case .createBoard(let placedShips):
-            var board = Board()
-            for ship in placedShips {
-                board.placeShip(at: ship.coordinates)
-            }
-
-            guard board.placedShips.count == 5 else {
-                throw GameServiceError.invalidBoard
-            }
-
-            await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard()))
+            try await createBoard(with: placedShips)
         case .fireAt(let coordinate):
             guard var game = await repository.getGame() else {
                 throw GameServiceError.gameNotFound
@@ -112,10 +97,34 @@ final class GameService {
             await repository.setGame(game)
         }
     }
+
+    private func createBoard(with placedShips: [PlacedShipDTO]) async throws {
+        var board = Board()
+        for ship in placedShips {
+            board.placeShip(at: ship.coordinates)
+        }
+
+        guard board.placedShips.count == 5 else {
+            throw GameServiceError.invalidBoard
+        }
+
+        await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard())
+        )
+    }
 }
 
 enum GameServiceError: Error {
     case invalidBoard
     case boardNotFound
     case gameNotFound
+}
+
+extension Game {
+    var shipsToDestroy: Int {
+        player2Board.aliveShips.count
+    }
+
+    var state: GameState.State {
+        (shipsToDestroy == 0 || player1Board.aliveShips.isEmpty) ? .finished : .play
+    }
 }
