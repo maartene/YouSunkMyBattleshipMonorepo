@@ -48,53 +48,7 @@ final class GameService {
         case .createBoard(let placedShips):
             try await createBoard(with: placedShips)
         case .fireAt(let coordinate):
-            guard var game = await repository.getGame() else {
-                throw GameServiceError.gameNotFound
-            }
-
-            game.fireAt(coordinate, target: .player2)
-            
-            let player2Board = game.player2Board
-            
-            switch player2Board.cells[coordinate.y][coordinate.x] {
-            case .hitShip: lastMessage = "Hit!"
-            case .destroyedShip:
-                let destroyedShip = player2Board.destroyedShips.first(where: {
-                    $0.coordinates.contains(coordinate)
-                })!
-                lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
-            default: lastMessage = "Miss!"
-            }
-
-            if player2Board.aliveShips.isEmpty {
-                lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
-            } else {
-                if game.currentPlayer == .player2 {
-                    await self.repository.setGame(game)
-                    let data = try await getGameState()
-                    try ws?.send(encoder.encode(data))
-                    
-                    let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
-                    for botCoordinate in botCoordinates {
-                        game.fireAt(botCoordinate, target: .player1)
-                    }
-                
-                    switch botCoordinates.count {
-                    case 1: lastMessage = "CPU fires at \(botCoordinates[0])"
-                    case 2: lastMessage = "CPU fires at \(botCoordinates[0]) and \(botCoordinates[1])"
-                    case 3: lastMessage = "CPU fires at \(botCoordinates[0]), \(botCoordinates[1]) and \(botCoordinates[2])"
-                    default: break
-                    }
-                    
-                if game.player1Board.aliveShips.isEmpty {
-                    lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
-                }
-
-                    await self.repository.setGame(game)
-                }
-            }
-
-            await repository.setGame(game)
+            try await fireAt(coordinate)
         }
     }
 
@@ -110,6 +64,56 @@ final class GameService {
 
         await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard())
         )
+    }
+
+    private func fireAt(_ coordinate: Coordinate) async throws {
+        guard var game = await repository.getGame() else {
+            throw GameServiceError.gameNotFound
+        }
+
+        game.fireAt(coordinate, target: .player2)
+        
+        let player2Board = game.player2Board
+        
+        switch player2Board.cells[coordinate.y][coordinate.x] {
+        case .hitShip: lastMessage = "Hit!"
+        case .destroyedShip:
+            let destroyedShip = player2Board.destroyedShips.first(where: {
+                $0.coordinates.contains(coordinate)
+            })!
+            lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
+        default: lastMessage = "Miss!"
+        }
+
+        if player2Board.aliveShips.isEmpty {
+            lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
+        } else {
+            if game.currentPlayer == .player2 {
+                await self.repository.setGame(game)
+                let data = try await getGameState()
+                try ws?.send(encoder.encode(data))
+                
+                let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
+                for botCoordinate in botCoordinates {
+                    game.fireAt(botCoordinate, target: .player1)
+                }
+            
+                switch botCoordinates.count {
+                case 1: lastMessage = "CPU fires at \(botCoordinates[0])"
+                case 2: lastMessage = "CPU fires at \(botCoordinates[0]) and \(botCoordinates[1])"
+                case 3: lastMessage = "CPU fires at \(botCoordinates[0]), \(botCoordinates[1]) and \(botCoordinates[2])"
+                default: break
+                }
+                
+            if game.player1Board.aliveShips.isEmpty {
+                lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
+            }
+
+                await self.repository.setGame(game)
+            }
+        }
+
+        await repository.setGame(game)
     }
 }
 
