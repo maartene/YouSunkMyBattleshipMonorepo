@@ -181,10 +181,13 @@ final class DataProviderSpy: DataProvider {
     private var receivedData: [String] = []
     private var onReceive: ((Data) -> Void)?
     
+    func triggerOnReceiveWith(_ data: Data) {
+        onReceive?(data)
+    }
+    
     func send(data: Data) async throws {
         let string = String(data: data, encoding: .utf8) ?? "unknown"
         receivedData.append(string)
-        onReceive?(data)
     }
     
     func sendWasCalledWith(_ string: String) -> Bool {

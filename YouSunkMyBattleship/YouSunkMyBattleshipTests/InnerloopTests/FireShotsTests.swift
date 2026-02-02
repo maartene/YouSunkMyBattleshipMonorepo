@@ -84,7 +84,7 @@ import YouSunkMyBattleshipCommon
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
             let gameState = GameState(currentPlayer: .player2)
-            try await spy.send(data: JSONEncoder().encode(gameState))
+            try spy.triggerOnReceiveWith(JSONEncoder().encode(gameState))
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             
