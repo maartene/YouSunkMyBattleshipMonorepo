@@ -65,8 +65,8 @@ import YouSunkMyBattleshipCommon
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             
-            let command = GameCommand.fireAt(coordinate: Coordinate(x: 4, y: 1))
-            let expectedData = try JSONEncoder().encode(command)
+            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            
             #expect(spy.sendWasCalledWith(expectedData))
         }
         
@@ -76,8 +76,19 @@ import YouSunkMyBattleshipCommon
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player1)
             
-            let command = GameCommand.fireAt(coordinate: Coordinate(x: 4, y: 1))
-            let expectedData = try JSONEncoder().encode(command)
+            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            #expect(spy.sendWasCalledWith(expectedData) == false)
+        }
+        
+        @Test func `cannot fire shots when its not your turn`() async throws {
+            let spy = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: spy)
+            let gameState = GameState(currentPlayer: .player2)
+            try await spy.send(data: JSONEncoder().encode(gameState))
+            
+            await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
+            
+            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
             #expect(spy.sendWasCalledWith(expectedData) == false)
         }
     }

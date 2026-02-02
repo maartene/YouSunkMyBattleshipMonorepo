@@ -178,19 +178,24 @@ final class DummyDataProvider: DataProvider {
 }
 
 final class DataProviderSpy: DataProvider {
-    private var receivedData: [Data] = []
+    private var receivedData: [String] = []
+    private var onReceive: ((Data) -> Void)?
     
     func send(data: Data) async throws {
-        receivedData.append(data)
+        let string = String(data: data, encoding: .utf8) ?? "unknown"
+        receivedData.append(string)
+        onReceive?(data)
     }
     
-    func sendWasCalledWith(_ data: Data) -> Bool {
+    func sendWasCalledWith(_ string: String) -> Bool {
         receivedData.contains { receivedData in
-            data == receivedData
+            string == receivedData
         }
     }
     
-    func register(onReceive: @escaping (Data) -> Void) { }
+    func register(onReceive: @escaping (Data) -> Void) {
+        self.onReceive = onReceive
+    }
 }
 
 final class MockDataProvider: DataProvider {

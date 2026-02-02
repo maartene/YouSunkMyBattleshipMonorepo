@@ -31,6 +31,7 @@ final class ClientViewModel: ViewModel {
     private var boardInProgress = Board()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
+    private(set) var currentPlayer = Player.player1
     
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
@@ -111,6 +112,11 @@ final class ClientViewModel: ViewModel {
         guard boardForPlayer != owner else {
             return
         }
+        
+        guard currentPlayer == .player1 else {
+            return
+        }
+        
         do {
             let command = GameCommand.fireAt(coordinate: coordinate)
             let data = try encoder.encode(command)
@@ -127,6 +133,7 @@ final class ClientViewModel: ViewModel {
             self.numberOfShipsToBeDestroyed = gameState.shipsToDestroy
             self.state = ViewModelState.fromGameState(gameState.state)
             self.lastMessage = gameState.lastMessage
+            self.currentPlayer = gameState.currentPlayer
         } catch {
             print("Error receiving data: \(error)")
         }
