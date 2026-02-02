@@ -1,6 +1,6 @@
 # WSDataProvider
 
-A small WebSocket-backed implementation of the `DataProvider` protocol used in this workspace.
+A small WebSocket-backed implementation of the `DataProvider` protocol used in this workspace for use on Apple platforms (it requires `URLSession`).
 
 ## DataProvider protocol
 
@@ -9,7 +9,7 @@ A small WebSocket-backed implementation of the `DataProvider` protocol used in t
 	- `func register(onReceive: @escaping (Data) -> Void)` — register a callback to receive incoming data.
 
 The provided `WSDataProvider` implements this protocol and:
-- Open a WebSocket connection on `init(url:)`.
+- Opens a WebSocket connection on `init(url:)`.
 - Calls the registered `onReceive` callback for incoming messages.
 - Cancels the receive task and closes the socket on `deinit`.
 
