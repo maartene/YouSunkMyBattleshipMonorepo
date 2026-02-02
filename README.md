@@ -6,8 +6,7 @@ This repository contains a small Battleship game split into three parts:
 
 - `YouSunkMyBattleship` — the iOS client application (UI, UI flow tests)
 - `YouSunkMyBattleshipBE` — the backend service (Swift server, game logic and integration tests)
-- `YouSunkMyBattleshipCommon` — shared/common library used by both
-The repo also includes API contract files in `api/contract/YouSunkMyBattleship` and a Docker Compose setup to run the backend locally.
+- `YouSunkMyBattleshipCommon` — shared/common library used by both. This can be considered the `API contract` and `domain model` layers.
 
 **Project Goals**
 - Provide a minimal, test-driven Battleship implementation demonstrating clean architecture and good tooling.
@@ -19,7 +18,7 @@ The repo also includes API contract files in `api/contract/YouSunkMyBattleship` 
 - `YouSunkMyBattleship/` — iOS app (Xcode workspace, app sources, tests, UI)
 - `YouSunkMyBattleshipBE/` — backend Swift package and Dockerfiles (service & infra)
 - `YouSunkMyBattleshipCommon/` — shared Swift package (DTOs, model)
-- `api/contract/YouSunkMyBattleship/` — contract files (bruno, schemas, examples)
+- `api/contract/ContractTest/` — small CLI program that drives the websocket api endpoint and validates that it conforms to the contract
 - `docker-compose.yml` — Compose file to run the backend and supporting services
 - `smoketest.sh` — simple script that runs quick integration checks against the running stack
 
@@ -60,6 +59,8 @@ open YouSunkMyBattleship/YouSunkMyBattleship.xcworkspace
 ```
 
 - Choose the `YouSunkMyBattleship` scheme and a simulator or device, then Run (Cmd+R).
+    - if you install and run on a physical device, it will try and contact a live backend service
+    - if you install and run on a simulator, it will connect to the locally running backend (assumed to listen to port 8080)
 
 4) Run backend locally (without Docker)
 
@@ -88,7 +89,7 @@ swift test
 
 API contract
 
-The API contract definitions live under `api/contract/YouSunkMyBattleship/` (bruno files and examples). Use these files as the source of truth for message formats and examples.
+The API contract definitions live under `YouSunkMyBattleshipCommon/Sources/YouSunkMyBattleshipCommon/DTOs` by providing Swift types for the messages exchanged between client and backend.
 
 Troubleshooting & Tips
 
