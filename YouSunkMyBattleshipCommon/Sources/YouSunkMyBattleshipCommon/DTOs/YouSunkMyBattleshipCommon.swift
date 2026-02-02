@@ -20,7 +20,7 @@ public struct GameState: Codable, Sendable {
     public let lastMessage: String
 }
 
-public struct PlacedShipDTO: Codable, Sendable {
+public struct PlacedShipDTO: Codable, Sendable, Equatable {
     public let name: String
     public let coordinates: [Coordinate]
 

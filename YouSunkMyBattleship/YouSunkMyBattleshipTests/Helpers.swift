@@ -178,7 +178,7 @@ final class DummyDataProvider: DataProvider {
 }
 
 final class DataProviderSpy: DataProvider {
-    private var receivedData: [String] = []
+    private var receivedData: [Data] = []
     private var onReceive: ((Data) -> Void)?
     
     func triggerOnReceiveWith(_ data: Data) {
@@ -187,13 +187,17 @@ final class DataProviderSpy: DataProvider {
     
     func send(data: Data) async throws {
         let string = String(data: data, encoding: .utf8) ?? "unknown"
-        receivedData.append(string)
+        print("Received string: \(string)")
+        receivedData.append(data)
     }
     
-    func sendWasCalledWith(_ string: String) -> Bool {
-        receivedData.contains { receivedData in
-            string == receivedData
+    func sendWasCalledWith<T: Codable & Equatable>(_ thing: T) -> Bool {
+        let decoder = JSONDecoder()
+        let things = receivedData.compactMap { data -> T? in
+            try? decoder.decode(type(of: thing).self, from: data)
         }
+        
+        return things.contains { $0 == thing }
     }
     
     func register(onReceive: @escaping (Data) -> Void) {

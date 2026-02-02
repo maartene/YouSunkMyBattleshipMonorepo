@@ -65,7 +65,7 @@ import YouSunkMyBattleshipCommon
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             
-            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            let expectedData = GameCommand.fireAt(coordinate: Coordinate(x: 4, y: 1))
             
             #expect(spy.sendWasCalledWith(expectedData))
         }
@@ -76,7 +76,7 @@ import YouSunkMyBattleshipCommon
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player1)
             
-            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            let expectedData = GameCommand.fireAt(coordinate: Coordinate(x: 4, y: 1))
             #expect(spy.sendWasCalledWith(expectedData) == false)
         }
         
@@ -88,7 +88,7 @@ import YouSunkMyBattleshipCommon
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             
-            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            let expectedData = GameCommand.fireAt(coordinate: Coordinate(x: 4, y: 1))
             #expect(spy.sendWasCalledWith(expectedData) == false)
         }
     }
