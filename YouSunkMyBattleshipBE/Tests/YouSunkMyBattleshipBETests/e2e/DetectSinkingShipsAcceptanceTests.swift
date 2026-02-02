@@ -6,7 +6,6 @@
 //
 
 import Testing
-import VaporTesting
 import YouSunkMyBattleshipCommon
 
 @testable import YouSunkMyBattleshipBE
@@ -15,60 +14,52 @@ import YouSunkMyBattleshipCommon
 /// I want to know when I've sunk an enemy ship
 /// So that I can track my progress
 @Suite(.tags(.`E2E tests`)) struct `Feature: Ship Sinking Detection` {
+    let repository = InmemoryGameRepository()
+    let gameService: GameService
+    
+    init() {
+        self.gameService = GameService(repository: repository)
+    }
+    
     @Test func `Scenario: Player sinks enemy destroyer`() async throws {
-        try await withApp(configure: configure) { app in
-            try await `Given the enemy has a Destroyer at I9-J9`(app)
-            try await `And I have hit I9`(app)
-            try await `When I fire at J9`(app)
-            try await `Then both I9 and J9 show 🔥`(app)
-            try await `And I see "You sank the enemy Destroyer!"`(app)
-            try await `And I see one less remaining ship to destroy`(app)
-        }
+        try await `Given the enemy has a Destroyer at I9-J9`()
+        try await `And I have hit I9`()
+        try await `When I fire at J9`()
+        try await `Then both I9 and J9 show 🔥`()
+        try await `And I see "You sank the enemy Destroyer!"`()
+        try await `And I see one less remaining ship to destroy`()
     }
 }
 
 extension `Feature: Ship Sinking Detection` {
-    func `Given the enemy has a Destroyer at I9-J9`(_ app: Application) async throws {
-        await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player1)
-        await app.gameRepository?.setBoard(.makeFilledBoard(), for: .player2)
+    func `Given the enemy has a Destroyer at I9-J9`() async throws {
+        await repository.setGame(Game(player1Board: .makeAnotherFilledBoard(), player2Board: .makeFilledBoard()))
     }
 
-    func `And I have hit I9`(_ app: Application) async throws {
-        try await app.testing().test(
-            .POST, "fire",
-            beforeRequest: { req in
-                try req.content.encode(Coordinate("I9"))
-            })
+    func `And I have hit I9`() async throws {
+        let command = GameCommand.fireAt(coordinate: Coordinate("I9"))
+        try await gameService.receive(command.toData())
     }
 
-    func `When I fire at J9`(_ app: Application) async throws {
-        try await app.testing().test(
-            .POST, "fire",
-            beforeRequest: { req in
-                try req.content.encode(Coordinate("J9"))
-            })
+    func `When I fire at J9`() async throws {
+        let command = GameCommand.fireAt(coordinate: Coordinate("J9"))
+        try await gameService.receive(command.toData())
     }
 
-    func `Then both I9 and J9 show 🔥`(_ app: Application) async throws {
-        try await app.testing().test(.GET, "gameState") { res in
-            let state = try res.content.decode(GameState.self)
-            let cells = try #require(state.cells[.player2])
-            #expect(cells[8][8] == "🔥")
-            #expect(cells[9][8] == "🔥")
-        }
+    func `Then both I9 and J9 show 🔥`() async throws {
+        let gameState = try await gameService.getGameState()
+        let cells = try #require(gameState.cells[.player2])
+        #expect(cells[8][8] == "🔥")
+        #expect(cells[9][8] == "🔥")
     }
 
-    func `And I see "You sank the enemy Destroyer!"`(_ app: Application) async throws {
-        try await app.testing().test(.GET, "shipAt/J9") { res in
-            let shipName = try res.content.decode(String.self)
-            #expect(shipName == "Destroyer")
-        }
+    func `And I see "You sank the enemy Destroyer!"`() async throws {
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.lastMessage == "You sank the enemy Destroyer!")
     }
 
-    func `And I see one less remaining ship to destroy`(_ app: Application) async throws {
-        try await app.testing().test(.GET, "gameState") { res in
-            let state = try res.content.decode(GameState.self)
-            #expect(state.shipsToDestroy == 4)
-        }
+    func `And I see one less remaining ship to destroy`() async throws {
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.shipsToDestroy == 4)
     }
 }

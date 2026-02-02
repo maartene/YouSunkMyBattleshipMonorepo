@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D2A313B2F2DE1FD002D7D80 /* WSDataProvider in Frameworks */ = {isa = PBXBuildFile; productRef = 2D2A313A2F2DE1FD002D7D80 /* WSDataProvider */; };
 		2D8C5A1E2ED8D147008BC07C /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 2D8C5A1D2ED8D147008BC07C /* ViewInspector */; };
 		DEEB3C842F289CEC00E029F9 /* YouSunkMyBattleshipCommon in Frameworks */ = {isa = PBXBuildFile; productRef = DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */; };
 /* End PBXBuildFile section */
@@ -87,6 +88,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DEEB3C842F289CEC00E029F9 /* YouSunkMyBattleshipCommon in Frameworks */,
+				2D2A313B2F2DE1FD002D7D80 /* WSDataProvider in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +162,7 @@
 			name = YouSunkMyBattleship;
 			packageProductDependencies = (
 				DEEB3C832F289CEC00E029F9 /* YouSunkMyBattleshipCommon */,
+				2D2A313A2F2DE1FD002D7D80 /* WSDataProvider */,
 			);
 			productName = YouSunkMyBattleship;
 			productReference = DEFB27C82ED8B17700F9C3D8 /* YouSunkMyBattleship.app */;
@@ -247,6 +250,7 @@
 			packageReferences = (
 				2D8C5A1C2ED8D147008BC07C /* XCRemoteSwiftPackageReference "ViewInspector" */,
 				DEEB3C812F289CE100E029F9 /* XCLocalSwiftPackageReference "../YouSunkMyBattleshipCommon" */,
+				2D2A31392F2DE1DD002D7D80 /* XCLocalSwiftPackageReference "../WSDataProvider" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DEFB27C92ED8B17700F9C3D8 /* Products */;
@@ -643,6 +647,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		2D2A31392F2DE1DD002D7D80 /* XCLocalSwiftPackageReference "../WSDataProvider" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../WSDataProvider;
+		};
 		DEEB3C812F289CE100E029F9 /* XCLocalSwiftPackageReference "../YouSunkMyBattleshipCommon" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../YouSunkMyBattleshipCommon;
@@ -661,6 +669,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2D2A313A2F2DE1FD002D7D80 /* WSDataProvider */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2D2A31392F2DE1DD002D7D80 /* XCLocalSwiftPackageReference "../WSDataProvider" */;
+			productName = WSDataProvider;
+		};
 		2D8C5A1D2ED8D147008BC07C /* ViewInspector */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2D8C5A1C2ED8D147008BC07C /* XCRemoteSwiftPackageReference "ViewInspector" */;

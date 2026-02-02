@@ -2,6 +2,8 @@ import Vapor
 import YouSunkMyBattleshipCommon
 
 let app = try await Application.make(.detect())
+try configure(app)
+try await app.execute()
 
 func configure(_ app: Application) throws {
     app.gameRepository = InmemoryGameRepository()
@@ -11,96 +13,31 @@ func configure(_ app: Application) throws {
         return "Health check OK"
     }
 
-    app.post("board") { req in
-        let boardDTO = try req.content.decode(BoardDTO.self)
+    app.webSocket("game") { req, ws in
+        print("Connection established")
+        let gameService = GameService(repository: app.gameRepository!, bot: ThinkingBot(), ws: ws)
+        ws.send("Welcome!".data(using: .utf8)!)
 
-        var board = Board()
-        for ship in boardDTO.placedShips {
-            board.placeShip(at: ship.coordinates)
+        ws.onBinary { ws, data in
+            await receiveData(Data(buffer: data), on: ws, gameService: gameService)
         }
 
-        guard board.placedShips.count == 5 else {
-            throw Abort(.badRequest)
+        ws.onText { ws, text in
+            guard let data = text.data(using: .utf8) else { return }
+            await receiveData(data, on: ws, gameService: gameService)
         }
 
-        await app.gameRepository?.setBoard(board, for: .player1)
-        await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player2)
-        return Response(status: .created)
-    }
-
-    app.get("gameState") { req in
-        guard let board1 = await app.gameRepository?.getBoard(for: .player1) else {
-            throw Abort(.notFound)
-        }
-
-        let board1Cells = board1.cells.map { row in
-            row.map { cell in
-                switch cell {
-                case .ship: "🚢"
-                default: "🌊"
-                }
+        func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService) async {
+            do {
+                try await gameService.receive(data)
+                let gameState = try await gameService.getGameState()
+                try webSocket.send(JSONEncoder().encode(gameState))
+            } catch {
+                print("Error while receiving data: \(error)")
             }
         }
-
-        guard let board2 = await app.gameRepository?.getBoard(for: .player2) else {
-            throw Abort(.notFound)
-        }
-
-        let board2Cells = board2.cells.map { row in
-            row.map { cell in
-                switch cell {
-                case .miss: "❌"
-                case .hitShip: "💥"
-                case .destroyedShip: "🔥"
-                default: "🌊"
-                }
-            }
-        }
-
-        let shipsToDestroy = board2.aliveShips.count
-        let state = shipsToDestroy == 0 ? GameState.State.finished : .play
-
-        let gameState = GameState(
-            cells: [
-                .player1: board1Cells,
-                .player2: board2Cells,
-            ],
-            shipsToDestroy: shipsToDestroy,
-            state: state
-        )
-
-        return gameState
-    }
-
-    app.post("fire") { req in
-        let coordinate = try req.content.decode(Coordinate.self)
-
-        guard var board = await app.gameRepository?.getBoard(for: .player2) else {
-            throw Abort(.notFound)
-        }
-
-        board.fire(at: coordinate)
-        await app.gameRepository?.setBoard(board, for: .player2)
-
-        return Response(status: .created)
-    }
-
-    app.get("shipAt", ":coordinate") { req in
-        let coordinateString = try req.parameters.require("coordinate")
-        let coordinate = Coordinate(coordinateString)
-
-        guard let board = await app.gameRepository?.getBoard(for: .player2) else {
-            throw Abort(.notFound)
-        }
-
-        let shipName =
-            board.destroyedShips.first { $0.coordinates.contains(coordinate) }?.ship.name ?? ""
-        return shipName
     }
 }
-
-try configure(app)
-try await app.execute()
 
 extension GameState: @retroactive Content {}
 

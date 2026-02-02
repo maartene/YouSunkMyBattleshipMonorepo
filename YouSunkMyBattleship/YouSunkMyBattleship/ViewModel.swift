@@ -31,4 +31,13 @@ enum ViewModelState {
     case awaitingConfirmation
     case play
     case finished
+    
+    static func fromGameState(_ gameState: GameState.State) -> ViewModelState {
+        return switch gameState {
+        case .play:
+            .play
+        case .finished:
+            .finished
+        }
+    }
 }

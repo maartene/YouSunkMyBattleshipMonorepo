@@ -51,52 +51,45 @@ import YouSunkMyBattleshipCommon
     @MainActor
     @Suite struct ViewModelTests {
         @Test func `the boards for both player are independent of eachother`() {
-            let viewModel = ClientViewModel(gameService: MockGameService())
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
+
             completePlacement(on: viewModel)
             
             #expect(viewModel.cells[.player1] != viewModel.cells[.player2])
         }
         
-        @Test func `when the player taps the opponents board at B5, the game service should receive a message to fire at that coordinate`() async {
-            let spy = GameServiceSpy()
-            let viewModel = ClientViewModel(gameService: spy)
+        @Test func `when the player taps the opponents board at B5, the game service should receive a message to fire at that coordinate`() async throws {
+            let spy = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: spy)
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             
-            #expect(spy.fireAtWasCalledWith(Coordinate(x: 4, y: 1), player: .player2))
+            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            
+            #expect(spy.sendWasCalledWith(expectedData))
         }
         
-        @Test func `when the player taps their own board at B5, then that should not register as an attempt`() async {
-            let spy = GameServiceSpy()
-            let viewModel = ClientViewModel(gameService: spy)
+        @Test func `when the player taps their own board at B5, then that should not register as an attempt`() async throws {
+            let spy = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: spy)
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player1)
             
-            #expect(spy.fireAtWasNotCalled())
+            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            #expect(spy.sendWasCalledWith(expectedData) == false)
         }
         
-        @Test func `a cell that has not been tapped, should show as 🌊`() async {
-            let viewModel = ClientViewModel(gameService: MockGameService())
+        @Test func `cannot fire shots when its not your turn`() async throws {
+            let spy = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: spy)
+            let gameState = GameState(currentPlayer: .player2)
+            try await spy.send(data: JSONEncoder().encode(gameState))
             
-            await viewModel.tap(Coordinate("A1"), boardForPlayer: .player2)
+            await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             
-            #expect(viewModel.cells[.player2]![1][1] == "🌊")
-        }
-        
-        @Test func `a cell that was tapped where no ship is, should show as ❌`() async {
-            let viewModel = ClientViewModel(gameService: MockGameService())
-            
-            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player2)
-            
-            #expect(viewModel.cells[.player2]![1][4] == "❌")
-        }
-        
-        @Test func `when the player taps the tracking board at a location where a ship is, the cell shows 💥`() async {
-            let viewModel = ClientViewModel(gameService: MockGameService())
-            
-            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player2)
-            
-            #expect(viewModel.cells[.player2]![2][4] == "💥")
+            let expectedData = #"{"fireAt":{"coordinate":{"x":4,"y":1}}}"#
+            #expect(spy.sendWasCalledWith(expectedData) == false)
         }
     }
 }

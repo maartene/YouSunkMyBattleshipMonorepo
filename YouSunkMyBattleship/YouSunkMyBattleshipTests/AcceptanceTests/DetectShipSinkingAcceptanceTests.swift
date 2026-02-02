@@ -21,7 +21,7 @@ import YouSunkMyBattleshipCommon
     let view: GameView
     
     init() {
-        viewModel = ClientViewModel(gameService: MockGameService())
+        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroying))
         view = GameView(viewModel: viewModel)
     }
     
@@ -40,6 +40,10 @@ extension `Feature: Ship Sinking Detection` {
         addViewsToViewModel(viewModel)
         completePlacement(on: viewModel)
         await viewModel.confirmPlacement()
+        
+        while viewModel.state != .play {
+            try await Task.sleep(nanoseconds: 1000)
+        }
     }
     
     func `And I have hit I9`() async throws {

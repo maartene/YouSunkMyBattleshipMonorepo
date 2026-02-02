@@ -7,48 +7,24 @@
 
 import Testing
 @testable import YouSunkMyBattleshipBE
-import VaporTesting
 import YouSunkMyBattleshipCommon
 
 @Suite(.tags(.`Unit tests`)) struct VictoryConditionTests {
-    @Suite struct ViewModelTests {
-        @Test func `when all ships have been hit, the game is in finished state`() async throws {
-            try await withApp(configure: configure) { app in
-                await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player1)
-                let (player2Board, lastCellToHit) = createNearlyCompletedBoard()
-                await app.gameRepository?.setBoard(player2Board, for: .player2)
-                
-                try await app.testing().test(.POST, "fire", beforeRequest: { req in
-                    try req.content.encode(lastCellToHit)
-                })
-                
-                try await app.testing().test(.GET, "gameState") { res in
-                    let state = try res.content.decode(GameState.self)
-                    #expect(state.state == .finished)
-                }
-            }
-        }
-
-        @Test func `when a new game is started, the player2 board is reset`() async throws {
-            try await withApp(configure: configure) { app in
-                await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player1)
-                let (player2Board, lastCellToHit) = createNearlyCompletedBoard()
-                await app.gameRepository?.setBoard(player2Board, for: .player2)
-                
-                try await app.testing().test(.POST, "fire", beforeRequest: { req in
-                    try req.content.encode(lastCellToHit)
-                })
-                
-                try await app.testing().test(.POST, "board", beforeRequest: { req in
-                    try req.content.encode(Board.makeFilledBoard().toDTO())
-                })   
-
-                try await app.testing().test(.GET, "gameState") { res in
-                    let state = try res.content.decode(GameState.self)
-                    let player2Cells = try #require(state.cells[.player2])
-                    #expect(player2Cells == Array(repeating: Array(repeating: "🌊", count: 10), count: 10))
-                }
-            }
-        }
+    @Test func `when a new game is started, the player2 board is reset`() async throws {
+        let repository = InmemoryGameRepository()
+        let gameService = GameService(repository: repository)
+        
+        let (player2Board, _) = createNearlyCompletedBoard()
+        await repository.setGame(Game(player1Board: .makeFilledBoard(), player2Board: player2Board))
+        
+        let gameStateBeforeNewGame = try await gameService.getGameState()
+        
+        let placedShips = Board.makeFilledBoard().placedShips.map { $0.toDTO() }
+        let command = GameCommand.createBoard(placedShips: placedShips)
+        try await gameService.receive(command.toData())
+        
+        let gameStateAfterNewGame = try await gameService.getGameState()
+        
+        #expect(gameStateBeforeNewGame.cells[.player2] != gameStateAfterNewGame.cells[.player2])
     }
 }

@@ -4,7 +4,7 @@
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:YouSunkMyBattleship}/YouSunkMyBattleshipBE",
+            "cwd": "${workspaceFolder:YouSunkMyBattleshipMonorepo}/YouSunkMyBattleshipBE",
             "name": "Debug YouSunkMyBattleshipBE (YouSunkMyBattleshipBE)",
             "target": "YouSunkMyBattleshipBE",
             "configuration": "debug",
@@ -14,11 +14,31 @@
             "type": "swift",
             "request": "launch",
             "args": [],
-            "cwd": "${workspaceFolder:YouSunkMyBattleship}/YouSunkMyBattleshipBE",
+            "cwd": "${workspaceFolder:YouSunkMyBattleshipMonorepo}/YouSunkMyBattleshipBE",
             "name": "Release YouSunkMyBattleshipBE (YouSunkMyBattleshipBE)",
             "target": "YouSunkMyBattleshipBE",
             "configuration": "release",
             "preLaunchTask": "swift: Build Release YouSunkMyBattleshipBE (YouSunkMyBattleshipBE)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:YouSunkMyBattleship}/api/contract/ContractTest",
+            "name": "Debug ContractTest (api/contract/ContractTest)",
+            "target": "ContractTest",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug ContractTest (api/contract/ContractTest)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:YouSunkMyBattleship}/api/contract/ContractTest",
+            "name": "Release ContractTest (api/contract/ContractTest)",
+            "target": "ContractTest",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release ContractTest (api/contract/ContractTest)"
         }
     ]
 }

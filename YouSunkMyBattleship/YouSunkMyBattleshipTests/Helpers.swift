@@ -12,6 +12,7 @@ import ViewInspector
 import Combine
 import Testing
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 func notImplemented() {
     Issue.record("Not implemented")
@@ -23,6 +24,7 @@ extension Tag {
     @Tag static var `Integration tests`: Self
 }
 
+// MARK: ViewModel fakes
 final class ViewModelSpy: ViewModel {
     let state: ViewModelState
     var startDragLocation: CGPoint?
@@ -30,6 +32,7 @@ final class ViewModelSpy: ViewModel {
     var tapCoordinate: Coordinate?
     var tapPlayer: Player?
     private(set) var addCellWasCalled = false
+    private(set) var resetWasCalled = false
     
     init(state: ViewModelState = .placingShips) {
         self.state = state
@@ -65,7 +68,9 @@ final class ViewModelSpy: ViewModel {
     }
     
     func confirmPlacement() { }
-    func reset() { }
+    func reset() {
+        resetWasCalled = true
+    }
     
     let cells = [
         Player.player1: [
@@ -98,6 +103,7 @@ final class ViewModelSpy: ViewModel {
     let numberOfShipsToBeDestroyed = 0
 }
 
+// MARK: Helper functions
 func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGesture>> {
     let inspectedView = try view.inspect().find(GameBoardView.self)
     return try inspectedView.grid(0).gesture(DragGesture.self)
@@ -164,91 +170,49 @@ func almostSinkAllShips(on viewModel: ViewModel) async {
     }
 }
 
-final class MockGameService: GameService {
-    func cellsForPlayer(player: Player) -> [[String]] {
-        var result = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)
-        result[1][4] = "❌"
-        result[2][4] = "💥"
-        result[8][8] = "🔥"
-        result[9][8] = "🔥"
-        return result
+// MARK: DataProvider fakes
+final class DummyDataProvider: DataProvider {
+    func send(data: Data) async throws { }
+    
+    func register(onReceive: @escaping (Data) -> Void) { }
+}
+
+final class DataProviderSpy: DataProvider {
+    private var receivedData: [String] = []
+    private var onReceive: ((Data) -> Void)?
+    
+    func send(data: Data) async throws {
+        let string = String(data: data, encoding: .utf8) ?? "unknown"
+        receivedData.append(string)
+        onReceive?(data)
     }
     
-    func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int {
-        switch player {
-        case .player1:
-            5
-        case .player2:
-            4
+    func sendWasCalledWith(_ string: String) -> Bool {
+        receivedData.contains { receivedData in
+            string == receivedData
         }
     }
     
-    func shipAt(coordinate: Coordinate) async throws -> String {
-        "Destroyer"
+    func register(onReceive: @escaping (Data) -> Void) {
+        self.onReceive = onReceive
     }
 }
 
-final class FinishedGameService: GameService {
-    func cellsForPlayer(player: Player) -> [[String]] {
-        var result = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)
-        result[1][4] = "❌"
-        result[2][4] = "💥"
-        result[8][8] = "🔥"
-        result[9][8] = "🔥"
-        return result
+final class MockDataProvider: DataProvider {
+    let dataToReceiveOnSend: Data
+    private var onReceive: ((Data) -> Void)?
+    
+    init(dataToReceiveOnSend: Data) {
+        self.dataToReceiveOnSend = dataToReceiveOnSend
     }
     
-    func numberOfShipsToBeDestroyedForPlayer(_ player: Player) -> Int {
-        switch player {
-        case .player1:
-            5
-        case .player2:
-            0
-        }
-    }
-}
-
-final class GameServiceSpy: GameService {
-    private var firedAtCoordinate: Coordinate?
-    private var firedAtPlayer: Player?
-    private var setBoardCaller: Player?
-    
-    func cellsForPlayer(player: Player) -> [[String]] {
-        Array(repeating: Array(repeating: "", count: 10), count: 10)
+    func send(data: Data) async throws {
+        onReceive?(dataToReceiveOnSend)
     }
     
-    func fireAtWasCalledWith(_ coordinate: Coordinate, player: Player) -> Bool {
-        firedAtCoordinate == coordinate && firedAtPlayer == player
+    func register(onReceive: @escaping (Data) -> Void) {
+        self.onReceive = onReceive
     }
     
-    func fireAt(coordinate: Coordinate, against player: Player) {
-        firedAtCoordinate = coordinate
-        firedAtPlayer = player
-    }
     
-    func fireAtWasNotCalled() -> Bool {
-        firedAtPlayer == nil && firedAtCoordinate == nil
-    }
-    
-    func setBoardWasCalledForPlayer(_ player: Player) -> Bool {
-        setBoardCaller == player
-    }
-    
-    func setBoardForPlayer(_ player: Player, board: Board) {
-        setBoardCaller = player
-    }
-}
-
-final class ThrowingGameService: GameService {
-    enum ThrowingGameServiceError: Error {
-        case aGenericError
-    }
-    
-    func setBoardForPlayer(_ player: Player, board: Board) throws {
-        throw ThrowingGameServiceError.aGenericError
-    }
-    
-    func fireAt(coordinate: Coordinate, against player: Player) throws {
-        throw ThrowingGameServiceError.aGenericError
-    }
 }

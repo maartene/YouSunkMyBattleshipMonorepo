@@ -1,7 +1,18 @@
-.build
-.git
-.gitignore
-*.xcuserdatads
+# exclude any node_modules anywhere
+**/node_modules/**
+
+# exclude any Swiftt build dirs anywhere
+**/.build/**
+
+# exclude git metadata
+**/.git/**
+
+# exclude any node_modules anywhere
+**/node_modules/**
+
+# exclude any build dirs anywhere
+**/*.xcuserdatads/**
+
 YouSunkMyBattleship/
-docker-compose.yml
-Dockerfile
+
+**/.swiftpm/**

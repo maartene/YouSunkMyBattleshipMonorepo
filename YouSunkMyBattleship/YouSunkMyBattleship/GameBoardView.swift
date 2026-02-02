@@ -25,7 +25,7 @@ struct GameBoardView: View {
                         .font(.headline)
                 }
             }
-            ForEach(viewModel.cells[owner]!.enumerated(), id: \.offset) { row in
+            ForEach(viewModel.cells[owner, default: []].enumerated(), id: \.offset) { row in
                 GridRow(alignment: .bottom) {
                     BoardRowView(viewModel: viewModel, columns: row.element, rowIndex: row.offset, owner: owner, isDraggable: isDraggable)
                 }

@@ -93,7 +93,7 @@ import YouSunkMyBattleshipCommon
         let viewModel: ClientViewModel
 
         init() {
-            viewModel = ClientViewModel(gameService: DummyGameService())
+            viewModel = ClientViewModel(dataProvider: DummyDataProvider())
             addViewsToViewModel(viewModel)
         }
 
@@ -187,8 +187,11 @@ import YouSunkMyBattleshipCommon
         @Test
         func
             `given all ships have been placed, when the player confirms placement, the viewmodels state should move to play`()
-            async
+            async throws
         {
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
+            addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
@@ -198,16 +201,30 @@ import YouSunkMyBattleshipCommon
 
         @Test
         func
-            `given all ships have been placed, when the player confirms placement, the game services setBoard should be called`()
+            `given all ships have been placed, when the player confirms placement, the game should receive a board with the placed ships`()
             async
         {
-            let spy = GameServiceSpy()
-            let viewModel = ClientViewModel(gameService: spy)
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
+            addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 
-            #expect(spy.setBoardWasCalledForPlayer(.player1))
+            #expect(viewModel.cells[.player1] ==
+                [
+                    ["🚢","🚢","🚢","🚢","🚢","🌊","🚢","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🚢","🌊"],
+                    ["🚢","🚢","🚢","🌊","🌊","🌊","🚢","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"]
+                ]
+            )
         }
 
         @Test
@@ -227,7 +244,7 @@ import YouSunkMyBattleshipCommon
             `given all ships have been placed, when the player confirms placement and an error is occurred, the state does not change`()
             async throws
         {
-            let viewModel = ClientViewModel(gameService: ThrowingGameService())
+            let viewModel = ClientViewModel(dataProvider: DummyDataProvider())
             addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 

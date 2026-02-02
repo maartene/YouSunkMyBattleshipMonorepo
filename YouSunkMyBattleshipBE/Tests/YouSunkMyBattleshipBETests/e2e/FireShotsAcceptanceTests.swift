@@ -6,62 +6,73 @@
 //
 
 import Testing
-import VaporTesting
 import YouSunkMyBattleshipCommon
 @testable import YouSunkMyBattleshipBE
 
 @Suite struct `Feature: Firing Shots` {
+    let repository = InmemoryGameRepository()
+    let gameService: GameService
+    
+    init() async {
+        gameService = GameService(repository: repository)
+    }
+    
     @Test func `Scenario: Player fires and misses`() async throws {
-        try await withApp(configure: configure) { app in
-            await `Given the game has started with all ships placed`(app)
-            try await `When I fire at coordinate B5`(app)
-            try await `Then the tracking board shows ❌ at B5`(app)
-        }
+        await `Given the game has started with all ships placed`()
+        try await `When I fire at coordinate B5`()
+        try await `Then the tracking board shows ❌ at B5`()
+        try await `And I receive feedback "Miss!"`()
     }
         
     @Test func `Scenario: Player fires and hits`() async throws {
-        try await withApp(configure: configure) { app in
-            await `Given the game has started with all ships placed`(app)
-            `And one of the ship has a piece place on B2`()
-            try await `When I fire at coordinate B2`(app)
-            try await `Then the tracking board shows 💥 at B2`(app)
-        }
+        await `Given the game has started with all ships placed`()
+        await `And one of the ship has a piece place on H3`()
+        try await `When I fire at coordinate H3`()
+        try await `Then the tracking board shows 💥 at H3`()
+        try await `And I receive feedback "Hit!"`()
     }
 }
 
 extension `Feature: Firing Shots` {
-    private func `Given the game has started with all ships placed`(_ app: Application) async {
-        await app.gameRepository?.setBoard(.makeAnotherFilledBoard(), for: .player1)
-        await app.gameRepository?.setBoard(.makeFilledBoard(), for: .player2)
+    private func `Given the game has started with all ships placed`() async {
+        await repository.setGame(Game(player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard()))
     }
     
-    private func `When I fire at coordinate B5`(_ app: Application) async throws {
-        try await app.testing().test(.POST, "fire", beforeRequest: { req in
-            try req.content.encode(Coordinate("B5"))
-        })
+    private func `When I fire at coordinate B5`() async throws {
+        let command = GameCommand.fireAt(coordinate: Coordinate("B5"))
+        try await gameService.receive(command.toData())
     }
     
-    private func `Then the tracking board shows ❌ at B5`(_ app: Application) async throws {
-        try await app.testing().test(.GET, "gameState") { res in
-            let gameState = try res.content.decode(GameState.self)
-            #expect(gameState.cells[.player2]![1][4] == "❌")
-        }
+    private func `Then the tracking board shows ❌ at B5`() async throws {
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.cells[.player2]![1][4] == "❌")
     }
     
-    private func `And one of the ship has a piece place on B2`() {
-        
+    private func `And I receive feedback "Miss!"`() async throws {
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.lastMessage == "Miss!")
     }
     
-    private func `When I fire at coordinate B2`(_ app: Application) async throws {
-        try await app.testing().test(.POST, "fire", beforeRequest: { req in
-            try req.content.encode(Coordinate("B2"))
-        })
+    private func `And one of the ship has a piece place on H3`() async {
+        let game = await repository.getGame()!
+        let board = game.player2Board
+        #expect(board.placedShips.contains(where: { ship in
+            ship.coordinates.contains(Coordinate("H3"))
+        }))
     }
     
-    private func `Then the tracking board shows 💥 at B2`(_ app: Application) async throws {
-        try await app.testing().test(.GET, "gameState") { res in
-            let gameState = try res.content.decode(GameState.self)
-            #expect(gameState.cells[.player2]![1][1] == "💥")
-        }
+    private func `When I fire at coordinate H3`() async throws {
+        let command = GameCommand.fireAt(coordinate: Coordinate("H3"))
+        try await gameService.receive(command.toData())
+    }
+    
+    private func `Then the tracking board shows 💥 at H3`() async throws {
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.cells[.player2]![7][2] == "💥")
+    }
+    
+    private func `And I receive feedback "Hit!"`() async throws {
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.lastMessage == "Hit!")
     }
 }

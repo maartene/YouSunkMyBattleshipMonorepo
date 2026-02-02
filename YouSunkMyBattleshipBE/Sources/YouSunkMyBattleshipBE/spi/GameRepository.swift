@@ -8,18 +8,17 @@
 import YouSunkMyBattleshipCommon
 
 protocol GameRepository: Sendable {
-    func setBoard(_ board: Board, for player: Player) async
-    func getBoard(for player: Player) async -> Board?
+    func setGame(_ game: Game) async
+    func getGame() async -> Game?
 }
 
 actor InmemoryGameRepository: GameRepository {
-    private var boards: [Player: Board] = [.player2: Board.makeAnotherFilledBoard()]
-    
-    func setBoard(_ board: Board, for player: Player) async {
-        boards[player] = board
+    private var game: Game?
+    func setGame(_ game: Game) async {
+        self.game = game
     }
     
-    func getBoard(for player: Player) async -> Board? {
-        boards[player]
+    func getGame() async -> Game? {
+        self.game
     }
 }

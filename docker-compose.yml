@@ -2,7 +2,7 @@ version: '3.8'
 services:
   database:
     build:
-      context: ./YouSunkMyBattleshipBE/infrastructure/database
+      context: ./infrastructure/database
       dockerfile: Dockerfile
     image: yousunkmybattleship_database:latest
     restart: unless-stopped
@@ -14,13 +14,22 @@ services:
   service:
     build:
       context: .
-      dockerfile: ./YouSunkMyBattleshipBE/infrastructure/service/Dockerfile
+      dockerfile: ./infrastructure/service/Dockerfile
     image: yousunkmybattleship_service:latest
     restart: "no"
     ports:
       - "8080:8080"
     depends_on:
       - database
+
+  smoketest:
+    build:
+      context: .
+      dockerfile: ./infrastructure/contract_test/Dockerfile
+    image: yousunkmybattleship_smoketest:latest
+    restart: "no"
+    depends_on:
+      - service
 
 volumes:
   db_data:

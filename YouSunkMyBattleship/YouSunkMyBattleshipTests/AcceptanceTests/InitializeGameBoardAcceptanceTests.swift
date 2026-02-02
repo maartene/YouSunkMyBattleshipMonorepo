@@ -16,7 +16,7 @@ import Combine
 /// So that I can visualize the battlefield
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Game Board Initialization` {
-    var view = GameView(viewModel: ClientViewModel(gameService: DummyGameService()))
+    var view = GameView(viewModel: ClientViewModel(dataProvider: DummyDataProvider()))
     
     @Test mutating func `Scenario: Player views empty board`() throws {
         `Given I start a new Battleship game`()

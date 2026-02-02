@@ -1,3 +1,4 @@
+
 //
 //  ClientViewModel.swift
 //  YouSunkMyBattleship
@@ -7,15 +8,17 @@
 
 import SwiftUI
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 @Observable
 final class ClientViewModel: ViewModel {
-    private let gameService: GameService
+    private let dataProvider: DataProvider
     private let owner = Player.player1
     private(set) var shipsToPlace: [String] = []
     private(set) var state: ViewModelState = .placingShips
     private(set) var lastMessage = ""
     private(set) var cells: [Player : [[String]]] = [:]
+    private(set) var numberOfShipsToBeDestroyed: Int = 5
     
     private struct PlayerCoordinate: Hashable {
         let player: Player
@@ -26,11 +29,15 @@ final class ClientViewModel: ViewModel {
     private var startDragPosition: Coordinate?
     private var endDragPosition: Coordinate?
     private var boardInProgress = Board()
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+    private(set) var currentPlayer = Player.player1
     
-    init(gameService: GameService) {
-        self.gameService = gameService
-        cells[.player1] = cellsForPlayer()
+    init(dataProvider: DataProvider) {
+        self.dataProvider = dataProvider
+        cells[.player1] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()
+        dataProvider.register(onReceive: receiveData)
     }
     
     // MARK: Commands
@@ -86,11 +93,9 @@ final class ClientViewModel: ViewModel {
     
     func confirmPlacement() async {
         do {
-            try await gameService.setBoardForPlayer(owner, board: boardInProgress)
-            cells[.player1] = gameService.cellsForPlayer(player: .player1)
-            cells[.player2] = gameService.cellsForPlayer(player: .player2)
-            state = .play
-            lastMessage = "Play!"
+            let command = GameCommand.createBoard(placedShips: boardInProgress.placedShips.map { $0.toDTO() } )
+            let data = try encoder.encode(command)
+            try await dataProvider.send(data: data)
         } catch {
             print("Error submitting board: \(error)")
         }
@@ -99,7 +104,7 @@ final class ClientViewModel: ViewModel {
     func reset() {
         boardInProgress = Board()        
         state = .placingShips
-        cells[.player1] = cellsForPlayer()
+        cells[.player1] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()
     }
     
@@ -108,24 +113,29 @@ final class ClientViewModel: ViewModel {
             return
         }
         
-        try? await gameService.fireAt(coordinate: coordinate, against: boardForPlayer)
-        
-        cells[.player2] = gameService.cellsForPlayer(player: boardForPlayer)
-        switch cells[.player2]![coordinate.y][coordinate.x] {
-        case "❌":
-            lastMessage = "Miss!"
-        case "💥":
-            lastMessage = "Hit!"
-        case "🔥":
-            let shipName = (try? await gameService.shipAt(coordinate: coordinate)) ?? ""
-            lastMessage = "You sank the enemy \(shipName)!"
-        default:
-            break
+        guard currentPlayer == .player1 else {
+            return
         }
         
-        if numberOfShipsToBeDestroyed == 0 {
-            state = .finished
-            lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
+        do {
+            let command = GameCommand.fireAt(coordinate: coordinate)
+            let data = try encoder.encode(command)
+            try await dataProvider.send(data: data)
+        } catch {
+            print("Error when firing at \(coordinate): \(error)")
+        }
+    }
+    
+    private func receiveData(_ data: Data) {
+        do {
+            let gameState = try decoder.decode(GameState.self, from: data)
+            self.cells = gameState.cells
+            self.numberOfShipsToBeDestroyed = gameState.shipsToDestroy
+            self.state = ViewModelState.fromGameState(gameState.state)
+            self.lastMessage = gameState.lastMessage
+            self.currentPlayer = gameState.currentPlayer
+        } catch {
+            print("Error receiving data: \(error)")
         }
     }
     
@@ -157,18 +167,10 @@ final class ClientViewModel: ViewModel {
     }
     
     // MARK: Queries
-//    func cellsFor(_ player: Player) -> [[String]] {
-//        switch player {
-//        case .player1:
-//            return cellsForPlayer()
-//        case .player2:
-//            return gameService.cellsForPlayer(player: player)
-//        }
-//    }
     
     private func cellsForPlayer() -> [[String]] {
-        if state == .play || state == .finished {
-            return gameService.cellsForPlayer(player: .player1)
+        guard state == .placingShips else {
+            return cells[.player1, default: []]
         }
         
         var result = boardInProgress.cells.map { row in
@@ -192,9 +194,5 @@ final class ClientViewModel: ViewModel {
                 cells[coordinate.y][coordinate.x] = "🚢"
             }
         }
-    }
-    
-    var numberOfShipsToBeDestroyed: Int {
-        gameService.numberOfShipsToBeDestroyedForPlayer(.player2)
     }
 }
