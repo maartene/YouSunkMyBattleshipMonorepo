@@ -6,3 +6,4 @@ YouSunkMyBattleship/
 docker-compose.yml
 Dockerfile
 node_modules
+.swiftpm

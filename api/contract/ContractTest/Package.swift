@@ -9,7 +9,7 @@ let package = Package(
         .macOS(.v15),
     ],
     dependencies: [
-        .package(path: "../../../WSDataProvider"),
+        .package(url: "https://github.com/Local-Connectivity-Lab/lcl-websocket.git", from: "1.0.0"),
         .package(path: "../../../YouSunkMyBattleshipCommon"),
         
     ],
@@ -19,7 +19,7 @@ let package = Package(
         .executableTarget(
             name: "ContractTest",
             dependencies: [
-                .product(name: "WSDataProvider", package: "WSDataProvider"),
+                .product(name: "LCLWebSocket", package: "lcl-websocket"),
                 .product(name: "YouSunkMyBattleshipCommon", package: "YouSunkMyBattleshipCommon"),
             ]
         ),
