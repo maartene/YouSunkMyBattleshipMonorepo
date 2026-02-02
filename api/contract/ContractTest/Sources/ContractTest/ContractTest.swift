@@ -65,23 +65,33 @@ final class ContractTest: Sendable {
         client.onText { websocket, text in
             print("received text: \(text)")
         }
+        
+        client.onError { error in
+            fatalError("Received error: \(error)")
+        }
 
         _ = client.connect(to: "ws://\(hostname):\(port)/game", configuration: config)
         
+        let deadline = Date().addingTimeInterval(120)
         while currentGameState.value.state != .finished {
+            guard Date() < deadline else {
+                fatalError("Out of time")
+            }
+            
+            
             try await Task.sleep(nanoseconds: 10_000_000)
             if locked.value == false, currentGameState.value.state == .play, currentGameState.value.currentPlayer == .player1 {
                 
                 locked.set(true)
                 
-                guard let move = availableMoves.randomElement() else {
+                if let move = availableMoves.randomElement() {
+                    availableMoves.remove(move)
+                    
+                    let fireCommand = GameCommand.fireAt(coordinate: move)
+                    try websocket.value?.send(fireCommand.toByteButffer(using: encoder), opcode: .binary, promise: nil)
+                } else {
                     fatalError("No more moves to make")
                 }
-                
-                availableMoves.remove(move)
-                
-                let fireCommand = GameCommand.fireAt(coordinate: move)
-                try websocket.value?.send(fireCommand.toByteButffer(using: encoder), opcode: .binary, promise: nil)
             }
         }
         
