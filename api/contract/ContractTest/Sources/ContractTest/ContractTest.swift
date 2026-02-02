@@ -15,38 +15,28 @@ final class Box<T: Sendable>: @unchecked Sendable {
     }
 }
 
-final class OptionalBox<T: Sendable>: @unchecked Sendable {
-    private(set) var value: T?
+final class ContractTest: Sendable {
+    let config: LCLWebSocket.Configuration
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+    let hostname: String
+    let port: String
     
-    init() {
-    }
-    
-    func set(_ newValue: T) {
-        self.value = newValue
-    }
-}
-
-final class ContractTest {
-    
-    
-    init() {
-        
-    }
-    
-    func run() async throws {
-        let config = LCLWebSocket.Configuration(
+    init(hostname: String = "127.0.0.1", port: String = "8080") {
+        self.hostname = hostname
+        self.port = port
+        config = LCLWebSocket.Configuration(
             maxFrameSize: 1 << 16,
             autoPingConfiguration: .enabled(pingInterval: .seconds(4), pingTimeout: .seconds(10)),
             leftoverBytesStrategy: .forwardBytes
         )
-        
-        let encoder = JSONEncoder()
-        let decoder = JSONDecoder()
-        
-        let currentGameState = Box(value: GameState())
-        
+    }
+    
+    func run() async throws {
         var availableMoves = Set<Coordinate>()
-        let websocket = OptionalBox<WebSocket>()
+
+        let currentGameState = Box(value: GameState())
+        let websocket = Box<WebSocket?>(value: nil)
         let locked = Box(value: false)
         
         for y in 0 ..< Board.rows.count {
@@ -60,12 +50,12 @@ final class ContractTest {
             let localBoard = Board.makeFilledBoard()
             let placedShips = localBoard.placedShips.map { $0.toDTO() }
             let createBoardCommand = GameCommand.createBoard(placedShips: placedShips)
-            try? ws.send(createBoardCommand.toByteButffer(using: encoder), opcode: .binary, promise: nil)
+            try? ws.send(createBoardCommand.toByteButffer(using: self.encoder), opcode: .binary, promise: nil)
             websocket.set(ws)
         }
 
         client.onBinary { websocket, binary in
-            if let state = try? decoder.decode(GameState.self, from: binary) {
+            if let state = try? self.decoder.decode(GameState.self, from: binary) {
                 currentGameState.set(state)
                 print(currentGameState.value)
                 locked.set(false)
@@ -76,7 +66,7 @@ final class ContractTest {
             print("received text: \(text)")
         }
 
-        client.connect(to: "ws://127.0.0.1:8080/game", configuration: config)
+        _ = client.connect(to: "ws://\(hostname):\(port)/game", configuration: config)
         
         while currentGameState.value.state != .finished {
             try await Task.sleep(nanoseconds: 10_000_000)
@@ -85,8 +75,7 @@ final class ContractTest {
                 locked.set(true)
                 
                 guard let move = availableMoves.randomElement() else {
-                    print("No more moves to make")
-                    return
+                    fatalError("No more moves to make")
                 }
                 
                 availableMoves.remove(move)
@@ -97,40 +86,10 @@ final class ContractTest {
         }
         
         print("Game finished")
-        
-        
-//            do {
-//                try ws.send(createBoardCommand.toData(using: self.encoder))
-//                while await self.currentGameState?.state != .finished {
-//                    try await Task.sleep(nanoseconds: 1_000_000)
-//                    
-//                    if let currentGameState = await self.currentGameState, currentGameState.state == .play, currentGameState.currentPlayer == .player1 {
-//                        
-//                        guard let move = await self.availableMoves.randomElement() else {
-//                            print("No more moves to make")
-//                            return
-//                        }
-//                        
-//                        self.availableMoves.remove(move)
-//                        
-//                        let fireCommand = GameCommand.fireAt(coordinate: move)
-//                        try ws.send(fireCommand.toData(using: self.encoder))
-//                    }
-//                }
-//                
-//                print("Game finished")
-//            } catch {
-//                print("Error in websocket communication: \(error)")
-//                exit(1)
-//            }
     }
 }
 
 extension Encodable {
-    func toData(using encoder: JSONEncoder) throws -> Data {
-        try encoder.encode(self)
-    }
-    
     func toByteButffer(using encoder: JSONEncoder) throws -> ByteBuffer {
         let data = try encoder.encode(self)
         return ByteBuffer(data: data)

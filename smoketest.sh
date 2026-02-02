@@ -18,14 +18,25 @@ if [ -z "$COMPOSE_CMD" ]; then
   exit 1
 fi
 
+# detect available compose command (podman/docker, with/without compose subcommand)
+DOCKER_CMD=""
+if command -v docker >/dev/null 2>&1 && docker version >/dev/null 2>&1; then
+  DOCKER_CMD="docker"
+elif command -v podman >/dev/null 2>&1 && podman version >/dev/null 2>&1; then
+  DOCKER_CMD="podman"
+fi
+
+if [ -z "$DOCKER_CMD" ]; then
+  echo "Error: neither podman nor docker found in PATH" >&2
+  exit 1
+fi
+
 echo "Using compose command: $COMPOSE_CMD"
 echo "Starting containers"
 eval "$COMPOSE_CMD up --build -d"
 sleep 1s
 echo "Run tests"
-cd api/contract/ContractTest
-swift build
-swift run
+eval "$DOCKER_CMD build -t smoketest -f api/contract/ContractTest/Dockerfile ."
+eval "$DOCKER_CMD run --rm --network yousunkmybattleship_default smoketest"
 echo "Cleanup"
-cd ../../..
 eval "$COMPOSE_CMD down"

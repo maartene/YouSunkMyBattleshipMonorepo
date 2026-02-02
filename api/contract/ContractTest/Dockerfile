@@ -9,5 +9,5 @@ COPY . .
 WORKDIR /app/api/contract/ContractTest
 RUN swift package resolve
 
-RUN swift build
-CMD ["swift", "test"]
+RUN swift build --configuration release
+CMD ["./.build/release/ContractTest", "service"]
