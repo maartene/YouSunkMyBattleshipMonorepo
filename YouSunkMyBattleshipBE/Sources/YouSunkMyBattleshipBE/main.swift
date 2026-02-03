@@ -14,7 +14,7 @@ func configure(_ app: Application) throws {
     }
 
     app.webSocket("game") { req, ws in
-        print("Connection established")
+        req.logger.info("Connection established.")
         let gameService = GameService(repository: app.gameRepository!, bot: ThinkingBot(), ws: ws)
         ws.send("Welcome!".data(using: .utf8)!)
 
@@ -27,13 +27,13 @@ func configure(_ app: Application) throws {
             await receiveData(data, on: ws, gameService: gameService)
         }
 
-        func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService) async {
+        @Sendable func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService) async {
             do {
                 try await gameService.receive(data)
                 let gameState = try await gameService.getGameState()
                 try webSocket.send(JSONEncoder().encode(gameState))
             } catch {
-                print("Error while receiving data: \(error)")
+                req.logger.warning("Error while receiving data: \(error)")
             }
         }
     }

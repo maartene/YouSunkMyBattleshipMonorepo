@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Bot {
+public protocol Bot: Sendable {
     func getNextMoves(board: Board) async -> [Coordinate]
 }
 

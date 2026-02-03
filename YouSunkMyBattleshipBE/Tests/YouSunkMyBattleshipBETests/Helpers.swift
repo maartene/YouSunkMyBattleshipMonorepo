@@ -22,7 +22,7 @@ extension Tag {
 
 func createCompletedBoard() -> Board {
     var board = Board.makeFilledBoard()
-    var cellsToHit = board.placedShips.flatMap { $0.coordinates }
+    let cellsToHit = board.placedShips.flatMap { $0.coordinates }
     
     for cell in cellsToHit {
         board.fire(at: cell)

@@ -8,7 +8,7 @@
 import Vapor
 import YouSunkMyBattleshipCommon
 
-final class GameService {
+actor GameService {
     private let repository: GameRepository
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -16,7 +16,7 @@ final class GameService {
     private let bot: Bot
     private let ws: WebSocket?
 
-    init(repository: GameRepository, bot: Bot = ThinkingBot(), ws: WebSocket? = nil) {
+    init(repository: GameRepository, bot: Bot = ThinkingBot(smarts: 0.75), ws: WebSocket? = nil) {
         self.repository = repository
         self.bot = bot
         self.ws = ws

@@ -23,6 +23,7 @@ protocol ViewModel {
     var lastMessage: String { get }
     var numberOfShipsToBeDestroyed: Int { get }
     var cells: [Player: [[String]]] { get }
+    var currentPlayer: Player { get }
     
 }
 

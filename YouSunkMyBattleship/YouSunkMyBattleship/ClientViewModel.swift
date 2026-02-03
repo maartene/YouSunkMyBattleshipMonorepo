@@ -97,7 +97,7 @@ final class ClientViewModel: ViewModel {
             let data = try encoder.encode(command)
             try await dataProvider.send(data: data)
         } catch {
-            print("Error submitting board: \(error)")
+            NSLog("Error submitting board: \(error)")
         }
     }
     
@@ -122,7 +122,7 @@ final class ClientViewModel: ViewModel {
             let data = try encoder.encode(command)
             try await dataProvider.send(data: data)
         } catch {
-            print("Error when firing at \(coordinate): \(error)")
+            NSLog("Error when firing at \(coordinate): \(error)")
         }
     }
     
@@ -135,7 +135,7 @@ final class ClientViewModel: ViewModel {
             self.lastMessage = gameState.lastMessage
             self.currentPlayer = gameState.currentPlayer
         } catch {
-            print("Error receiving data: \(error)")
+            NSLog("Error receiving data: \(error)")
         }
     }
     
