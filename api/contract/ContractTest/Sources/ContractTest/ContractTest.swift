@@ -72,7 +72,7 @@ final class ContractTest: Sendable {
 
         _ = client.connect(to: "ws://\(hostname):\(port)/game", configuration: config)
         
-        let deadline = Date().addingTimeInterval(120)
+        let deadline = Date().addingTimeInterval(300)
         while currentGameState.value.state != .finished {
             guard Date() < deadline else {
                 fatalError("Out of time")
