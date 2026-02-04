@@ -27,7 +27,9 @@ func configure(_ app: Application) throws {
             await receiveData(data, on: ws, gameService: gameService)
         }
 
-        @Sendable func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService) async {
+        @Sendable func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService)
+            async
+        {
             do {
                 try await gameService.receive(data)
                 let gameState = try await gameService.getGameState()
