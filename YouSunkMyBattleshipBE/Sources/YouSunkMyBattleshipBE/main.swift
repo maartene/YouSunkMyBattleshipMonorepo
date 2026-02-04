@@ -15,7 +15,7 @@ func configure(_ app: Application) throws {
 
     app.webSocket("game") { req, ws in
         req.logger.info("Connection established.")
-        let gameService = GameService(repository: app.gameRepository!, bot: ThinkingBot(), ws: ws)
+        let gameService = GameService(repository: app.gameRepository!, bot: RandomBot(), ws: ws)
         ws.send("Welcome!".data(using: .utf8)!)
 
         ws.onBinary { ws, data in

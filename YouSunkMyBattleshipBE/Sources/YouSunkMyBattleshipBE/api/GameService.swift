@@ -16,7 +16,7 @@ actor GameService {
     private let bot: Bot
     private let ws: WebSocket?
 
-    init(repository: GameRepository, bot: Bot = ThinkingBot(smarts: 0.75), ws: WebSocket? = nil) {
+    init(repository: GameRepository, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
         self.repository = repository
         self.bot = bot
         self.ws = ws
@@ -87,38 +87,58 @@ actor GameService {
         default: lastMessage = "Miss!"
         }
 
-        if player2Board.aliveShips.isEmpty {
-            lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
+        if player2Board.aliveShips.isEmpty == false {
+            try await processPlayer2Turn(&game)
         } else {
-            if game.currentPlayer == .player2 {
-                await self.repository.setGame(game)
-                let data = try await getGameState()
-                try ws?.send(encoder.encode(data))
-
-                let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
-                for botCoordinate in botCoordinates {
-                    game.fireAt(botCoordinate, target: .player1)
-                }
-
-                switch botCoordinates.count {
-                case 1: lastMessage = "CPU fires at \(botCoordinates[0])"
-                case 2: lastMessage = "CPU fires at \(botCoordinates[0]) and \(botCoordinates[1])"
-                case 3:
-                    lastMessage =
-                        "CPU fires at \(botCoordinates[0]), \(botCoordinates[1]) and \(botCoordinates[2])"
-                default: break
-                }
-
-                if game.player1Board.aliveShips.isEmpty {
-                    lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
-                }
-
-                await self.repository.setGame(game)
-            }
+            lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
         }
 
         await repository.setGame(game)
     }
+
+    private func processPlayer2Turn(_ game: inout Game) async throws {
+        guard game.currentPlayer == .player2 else {
+            return
+        }
+
+        try await saveAndSendGameState(game)
+
+        let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
+        lastMessage = getCPUFiresMessage(botCoordinates: botCoordinates)
+
+        for botCoordinate in botCoordinates {
+            try await cpuFire(at: botCoordinate, in: &game)
+        }
+
+        if game.player1Board.aliveShips.isEmpty {
+            lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
+        }
+
+        await self.repository.setGame(game)
+    }
+
+    private func saveAndSendGameState(_ game: Game) async throws {
+        await self.repository.setGame(game)
+        let data = try await getGameState()
+        try ws?.send(encoder.encode(data))
+    }
+
+    private func getCPUFiresMessage(botCoordinates: [Coordinate]) -> String {
+        return switch botCoordinates.count {
+        case 1: "CPU fires at \(botCoordinates[0])"
+        case 2: "CPU fires at \(botCoordinates[0]) and \(botCoordinates[1])"
+        case 3:
+            "CPU fires at \(botCoordinates[0]), \(botCoordinates[1]) and \(botCoordinates[2])"
+        default: ""
+        }
+    }
+
+    private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
+        try await Task.sleep(nanoseconds: UInt64(1_000_000_000.0 * 0.75))
+        game.fireAt(coordinate, target: .player1)
+        try await saveAndSendGameState(game)
+    }
+
 }
 
 enum GameServiceError: Error {

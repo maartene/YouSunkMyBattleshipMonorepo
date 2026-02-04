@@ -11,11 +11,9 @@ public protocol Bot: Sendable {
     func getNextMoves(board: Board) async -> [Coordinate]
 }
 
-public struct ThinkingBot: Bot {
-    private let smarts: TimeInterval
-    
-    public init(smarts: TimeInterval = 0.5) {
-        self.smarts = smarts
+public struct RandomBot: Bot {
+    public init() {
+        
     }
     
     public func getNextMoves(board: Board) async -> [Coordinate] {
@@ -36,8 +34,6 @@ public struct ThinkingBot: Bot {
             chosenCells.append(availableCells.removeLast())
             
         }
-        
-        try? await Task.sleep(nanoseconds:  UInt64(1_000_000_000 * smarts))
         
         return chosenCells
     }
