@@ -1,15 +1,15 @@
-import YouSunkMyBattleshipCommon
 import Foundation
 import LCLWebSocket
 import NIO
+import YouSunkMyBattleshipCommon
 
 final class Box<T: Sendable>: @unchecked Sendable {
     private(set) var value: T
-    
+
     init(value: T) {
         self.value = value
     }
-    
+
     func set(_ newValue: T) {
         self.value = newValue
     }
@@ -21,7 +21,7 @@ final class ContractTest: Sendable {
     let decoder = JSONDecoder()
     let hostname: String
     let port: String
-    
+
     init(hostname: String = "127.0.0.1", port: String = "8080") {
         self.hostname = hostname
         self.port = port
@@ -31,26 +31,29 @@ final class ContractTest: Sendable {
             leftoverBytesStrategy: .forwardBytes
         )
     }
-    
+
     func run() async throws {
         var availableMoves = Set<Coordinate>()
 
         let currentGameState = Box(value: GameState())
         let websocket = Box<WebSocket?>(value: nil)
         let locked = Box(value: false)
-        
-        for y in 0 ..< Board.rows.count {
-            for x in 0 ..< Board.columns.count {
+
+        for y in 0..<Board.rows.count {
+            for x in 0..<Board.columns.count {
                 availableMoves.insert(Coordinate(x: x, y: y))
             }
         }
-        
+
         var client = LCLWebSocket.client()
         client.onOpen { ws in
             let localBoard = Board.makeFilledBoard()
             let placedShips = localBoard.placedShips.map { $0.toDTO() }
-            let createBoardCommand = GameCommand.createBoard(placedShips: placedShips)
-            try? ws.send(createBoardCommand.toByteButffer(using: self.encoder), opcode: .binary, promise: nil)
+            let createBoardCommand = GameCommand.createBoard(
+                placedShips: placedShips, gameID: "contract_test")
+            try? ws.send(
+                createBoardCommand.toByteButffer(using: self.encoder), opcode: .binary, promise: nil
+            )
             websocket.set(ws)
         }
 
@@ -65,36 +68,38 @@ final class ContractTest: Sendable {
         client.onText { websocket, text in
             print("received text: \(text)")
         }
-        
+
         client.onError { error in
             fatalError("Received error: \(error)")
         }
 
         _ = client.connect(to: "ws://\(hostname):\(port)/game", configuration: config)
-        
+
         let deadline = Date().addingTimeInterval(300)
         while currentGameState.value.state != .finished {
             guard Date() < deadline else {
                 fatalError("Out of time")
             }
-            
-            
+
             try await Task.sleep(nanoseconds: 10_000_000)
-            if locked.value == false, currentGameState.value.state == .play, currentGameState.value.currentPlayer == .player1 {
-                
+            if locked.value == false, currentGameState.value.state == .play,
+                currentGameState.value.currentPlayer == .player1
+            {
+
                 locked.set(true)
-                
+
                 if let move = availableMoves.randomElement() {
                     availableMoves.remove(move)
-                    
+
                     let fireCommand = GameCommand.fireAt(coordinate: move)
-                    try websocket.value?.send(fireCommand.toByteButffer(using: encoder), opcode: .binary, promise: nil)
+                    try websocket.value?.send(
+                        fireCommand.toByteButffer(using: encoder), opcode: .binary, promise: nil)
                 } else {
                     fatalError("No more moves to make")
                 }
             }
         }
-        
+
         print("Game finished")
     }
 }
@@ -111,27 +116,26 @@ extension GameState: @retroactive CustomStringConvertible {
         var result = "State: \(state)\n"
         result += "Current player: \(currentPlayer)\n"
         result += "Ships to destroy: \(shipsToDestroy)\n"
-        
+
         result += "Player 1             Player 2\n"
-        for y in 0 ..< Board.rows.count {
+        for y in 0..<Board.rows.count {
             var line = ""
-            for x in 0 ..< Board.columns.count {
+            for x in 0..<Board.columns.count {
                 let coordinate = Coordinate(x: x, y: y)
                 line += cells[.player1, default: []][coordinate.y][coordinate.x]
             }
-            
+
             line += " "
-            
-            for x in 0 ..< Board.columns.count {
+
+            for x in 0..<Board.columns.count {
                 let coordinate = Coordinate(x: x, y: y)
                 line += cells[.player2, default: []][coordinate.y][coordinate.x]
             }
-            
+
             result += line + "\n"
         }
         result += "\(lastMessage)\n"
-        
-        
+
         return result
     }
 }

@@ -26,6 +26,8 @@ extension Tag {
 
 // MARK: ViewModel fakes
 final class ViewModelSpy: ViewModel {
+    let currentPlayer: Player = .player1
+    
     let state: ViewModelState
     var startDragLocation: CGPoint?
     var endDragLocation: CGPoint?

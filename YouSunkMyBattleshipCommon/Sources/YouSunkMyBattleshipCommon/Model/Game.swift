@@ -5,15 +5,19 @@
 //  Created by Maarten Engels on 31/01/2026.
 //
 
+import Foundation
+
 public struct Game {
     public private(set) var currentPlayer = Player.player1
     
     public private(set) var player1Board: Board
     public private(set) var player2Board: Board
+    public let gameID: String
     
-    public init(player1Board: Board, player2Board: Board) {
+    public init(gameID: String? = nil, player1Board: Board, player2Board: Board) {
         self.player1Board = player1Board
         self.player2Board = player2Board
+        self.gameID = gameID ?? UUID().uuidString
     }
     
     public mutating func fireAt(_ coordinate: Coordinate, target: Player) {

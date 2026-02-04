@@ -19,7 +19,7 @@ import Foundation
         let placedShips = board.placedShips.map { $0.toDTO() }
         
         try await gameService.receive(
-            GameCommand.createBoard(placedShips: placedShips).toData()
+            GameCommand.createBoard(placedShips: placedShips, gameID: "a game").toData()
         )
 
         #expect(try await gameService.getGameState().state == .play)
@@ -33,7 +33,7 @@ import Foundation
         let placedShips = board.placedShips.map { $0.toDTO() }
         
         try await gameService.receive(
-            GameCommand.createBoard(placedShips: placedShips).toData()
+            GameCommand.createBoard(placedShips: placedShips, gameID: "a game").toData()
         )
         let expectedCells = [
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊"],
@@ -61,7 +61,7 @@ import Foundation
 
         await #expect(throws: (any Error).self) {
             try await gameService.receive(
-                GameCommand.createBoard(placedShips: notEnoughPlacedShips).toData()
+                GameCommand.createBoard(placedShips: notEnoughPlacedShips, gameID: "a game").toData()
             )
         }
     }
@@ -82,7 +82,7 @@ import Foundation
         
         await #expect(throws: (any Error).self) {
             try await gameService.receive(
-                GameCommand.createBoard(placedShips: placedShips).toData()
+                GameCommand.createBoard(placedShips: placedShips, gameID: "a game").toData()
             )
         }
     }

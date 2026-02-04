@@ -46,14 +46,14 @@ actor GameService {
 
     private func processCommand(_ command: GameCommand) async throws {
         switch command {
-        case .createBoard(let placedShips):
-            try await createBoard(with: placedShips)
+        case .createBoard(let placedShips, let gameID):
+            try await createBoard(with: placedShips, gameID: gameID)
         case .fireAt(let coordinate):
             try await fireAt(coordinate)
         }
     }
 
-    private func createBoard(with placedShips: [PlacedShipDTO]) async throws {
+    private func createBoard(with placedShips: [PlacedShipDTO], gameID: String) async throws {
         var board = Board()
         for ship in placedShips {
             board.placeShip(at: ship.coordinates)
@@ -64,7 +64,7 @@ actor GameService {
         }
 
         await repository.setGame(
-            Game(player1Board: board, player2Board: .makeAnotherFilledBoard())
+            Game(gameID: gameID, player1Board: board, player2Board: .makeAnotherFilledBoard())
         )
     }
 
@@ -134,7 +134,7 @@ actor GameService {
     }
 
     private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
-        try await Task.sleep(nanoseconds: UInt64(1_000_000_000.0 * 0.75))
+        try await Task.sleep(nanoseconds: game.nanoSecondDelay)
         game.fireAt(coordinate, target: .player1)
         try await saveAndSendGameState(game)
     }
@@ -154,5 +154,12 @@ extension Game {
 
     var state: GameState.State {
         (shipsToDestroy == 0 || player1Board.aliveShips.isEmpty) ? .finished : .play
+    }
+}
+
+extension Game {
+    var nanoSecondDelay: UInt64 {
+        let delay = gameID == "contract_test" ? 0.1 : 0.75
+        return UInt64(1_000_000_000.0 * delay)
     }
 }
