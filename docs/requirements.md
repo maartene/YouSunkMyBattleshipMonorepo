@@ -155,3 +155,24 @@ Feature: Deliver as Docker Compose
         And the game runs in CPU VS CPU
         And it shutdown gracefully without core dumps
         And an exit 0 return to the user.
+
+
+## Story 7: Save and Resume Game
+As a player
+I want to save my game and resume later
+So that I don't lose progress
+
+### Acceptance Criteria:
+1. Save current game state into a persistence layer
+2. List available saved games
+3. Load and resume from saved state
+4. Preserve board state, ships, and turn order
+5. The persistence layer must be decoupled into a "sidecar" container
+
+### Scenario
+Feature: Game Persistence  
+    Scenario: Player saves and resumes game    
+        Given I'm in an active game against CPU    
+        When I save the game as "game1"    
+        And I restart and load "game1"    
+        Then the board state is exactly as I left it
