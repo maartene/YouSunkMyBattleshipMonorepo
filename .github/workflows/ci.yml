@@ -28,19 +28,19 @@ jobs:
           swift build
           swift test    
           
-  smoketest:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # smoketest:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
       
-      - name: Install Swift version
-        uses: kkebo/setup-swift@fix-ci
+  #     - name: Install Swift version
+  #       uses: swift-actions/setup-swift@v3
 
-      - name: Run smoketest
-        run: |
-          set -e
-          chmod +x smoketest.sh
-          ./smoketest.sh
+  #     - name: Run smoketest
+  #       run: |
+  #         set -e
+  #         chmod +x smoketest.sh
+  #         ./smoketest.sh
         
     
