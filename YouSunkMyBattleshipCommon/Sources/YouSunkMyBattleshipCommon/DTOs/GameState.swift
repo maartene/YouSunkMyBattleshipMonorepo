@@ -20,22 +20,6 @@ public struct GameState: Codable, Sendable {
     public let lastMessage: String
 }
 
-public struct PlacedShipDTO: Codable, Sendable, Equatable {
-    public let name: String
-    public let coordinates: [Coordinate]
-
-    public init(name: String, coordinates: [Coordinate]) {
-        self.name = name
-        self.coordinates = coordinates
-    }
-}
-
-extension Board.PlacedShip {
-    public func toDTO() -> PlacedShipDTO {
-        PlacedShipDTO(name: ship.name, coordinates: coordinates)
-    }
-}
-
 extension Board {
     public func toStringsAsPlayerBoard() -> [[String]] {
         return cells.map { row in
@@ -63,9 +47,4 @@ extension Board {
             }
         }
     }
-}
-
-public enum GameSpeed: Codable {
-    case fast
-    case slow
 }

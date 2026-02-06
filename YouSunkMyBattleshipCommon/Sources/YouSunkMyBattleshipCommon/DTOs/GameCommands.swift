@@ -14,3 +14,24 @@ extension GameCommand: Equatable {
         }
     }
 }
+
+public struct PlacedShipDTO: Codable, Sendable, Equatable {
+    public let name: String
+    public let coordinates: [Coordinate]
+
+    public init(name: String, coordinates: [Coordinate]) {
+        self.name = name
+        self.coordinates = coordinates
+    }
+}
+
+extension Board.PlacedShip {
+    public func toDTO() -> PlacedShipDTO {
+        PlacedShipDTO(name: ship.name, coordinates: coordinates)
+    }
+}
+
+public enum GameSpeed: Codable {
+    case fast
+    case slow
+}
