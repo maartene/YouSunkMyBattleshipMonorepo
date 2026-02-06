@@ -88,7 +88,7 @@ actor GameService {
         game.fireAt(coordinate, target: .player2)
 
         let player2Board = game.player2Board
-
+        
         switch player2Board.cells[coordinate.y][coordinate.x] {
         case .hitShip: lastMessage = "Hit!"
         case .destroyedShip:

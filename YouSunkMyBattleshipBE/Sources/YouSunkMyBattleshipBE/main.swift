@@ -3,7 +3,10 @@ import Vapor
 import YouSunkMyBattleshipCommon
 
 let app = try await Application.make(.detect())
-let repository = try await MongoGameRepository()
+
+let connectionString = ProcessInfo.processInfo.environment["CONNECTION_STRING"] ?? "mongodb://localhost:27017/game_database"
+
+let repository = try await MongoGameRepository(connectionString: connectionString)
 try configure(app, repository: repository)
 try await app.execute()
 

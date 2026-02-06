@@ -34,6 +34,7 @@ public actor MongoGameRepository: GameRepository {
     }
 
     public func setGame(_ game: Game) async {
+        try? await games.deleteAll(where: "gameID" == game.gameID)
         _ = try? await games.insert(encoder.encode(game))
     }
 

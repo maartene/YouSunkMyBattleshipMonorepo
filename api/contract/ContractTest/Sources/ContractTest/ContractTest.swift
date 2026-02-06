@@ -52,7 +52,7 @@ final class ContractTest: Sendable {
             let createBoardCommand = GameCommand.createGame(
                 placedShips: placedShips, speed: .fast)
             try? ws.send(
-                createBoardCommand.toByteButffer(using: self.encoder), opcode: .binary, promise: nil
+                createBoardCommand.toByteBuffer(using: self.encoder), opcode: .binary, promise: nil
             )
             websocket.set(ws)
         }
@@ -74,14 +74,14 @@ final class ContractTest: Sendable {
         }
 
         _ = client.connect(to: "ws://\(hostname):\(port)/game", configuration: config)
-
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         let deadline = Date().addingTimeInterval(300)
         while currentGameState.value.state != .finished {
             guard Date() < deadline else {
                 fatalError("Out of time")
             }
 
-            try await Task.sleep(nanoseconds: 10_000_000)
+            try await Task.sleep(nanoseconds: 100_000_000)
             if locked.value == false, currentGameState.value.state == .play,
                 currentGameState.value.currentPlayer == .player1
             {
@@ -93,9 +93,9 @@ final class ContractTest: Sendable {
 
                     let fireCommand = GameCommand.fireAt(coordinate: move)
                     try websocket.value?.send(
-                        fireCommand.toByteButffer(using: encoder), opcode: .binary, promise: nil)
+                        fireCommand.toByteBuffer(using: encoder), opcode: .binary, promise: nil)
                 } else {
-                    fatalError("No more moves to make")
+                    print("No more moves to make")
                 }
             }
         }
@@ -105,7 +105,7 @@ final class ContractTest: Sendable {
 }
 
 extension Encodable {
-    func toByteButffer(using encoder: JSONEncoder) throws -> ByteBuffer {
+    func toByteBuffer(using encoder: JSONEncoder) throws -> ByteBuffer {
         let data = try encoder.encode(self)
         return ByteBuffer(data: data)
     }

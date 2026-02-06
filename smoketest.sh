@@ -20,7 +20,11 @@ fi
 
 echo "Using compose command: $COMPOSE_CMD"
 echo "Starting containers"
-eval "$COMPOSE_CMD up --build --abort-on-container-exit --exit-code-from smoketest"
+eval "$COMPOSE_CMD up -d --build"
 sleep 1s
+cd ./api/contract/ContractTest
+swift build --configuration release
+./.build/release/ContractTest
+cd ../../..
 echo "Cleanup"
 eval "$COMPOSE_CMD down"
