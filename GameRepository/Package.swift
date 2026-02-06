@@ -4,39 +4,36 @@
 import PackageDescription
 
 let package = Package(
-    name: "YouSunkMyBattleshipBE",
+    name: "GameRepository",
     platforms: [
-        .macOS(.v15)
+        .macOS(.v15),
+        .iOS(.v18),
     ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
-        .executable(
-            name: "YouSunkMyBattleshipBE",
-            targets: ["YouSunkMyBattleshipBE"]
+        .library(
+            name: "GameRepository",
+            targets: ["GameRepository"]
         )
+
     ],
     dependencies: [
         .package(path: "../YouSunkMyBattleshipCommon"),
-        .package(path: "../GameRepository"),
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.110.1"),
+        .package(url: "https://github.com/orlandos-nl/MongoKitten.git", from: "7.9.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .executableTarget(
-            name: "YouSunkMyBattleshipBE",
+        .target(
+            name: "GameRepository",
             dependencies: [
                 "YouSunkMyBattleshipCommon",
-                "GameRepository",
-                .product(name: "Vapor", package: "vapor"),
+                .product(name: "MongoKitten", package: "MongoKitten"),
             ]
         ),
         .testTarget(
-            name: "YouSunkMyBattleshipBETests",
-            dependencies: [
-                "YouSunkMyBattleshipBE",
-                .product(name: "VaporTesting", package: "vapor"),
-            ]
+            name: "GameRepositoryTests",
+            dependencies: ["GameRepository"]
         ),
     ]
 )

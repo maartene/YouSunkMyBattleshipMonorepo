@@ -1,3 +1,4 @@
+import GameRepository
 import Vapor
 import YouSunkMyBattleshipCommon
 
@@ -42,7 +43,8 @@ func configure(_ app: Application, repository: GameRepository) throws {
     }
     app.get("games") { req in
         let games = await app.gameRepository?.all() ?? []
-        return games
+        return
+            games
             .map { $0.gameID }
             .sorted()
     }

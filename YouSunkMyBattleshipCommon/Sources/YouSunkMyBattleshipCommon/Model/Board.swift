@@ -123,7 +123,7 @@ public struct Board: Sendable {
     }
 }
 
-extension Board: Codable { }
+extension Board: Codable {}
 
 // MARK: Factory methods
 extension Board {
@@ -169,7 +169,7 @@ extension Board {
 
         return board
     }
-    
+
     public static func makeAnotherFilledBoard() -> Board {
         var board = Board()
 

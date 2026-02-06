@@ -5,6 +5,7 @@
 //  Created by Maarten Engels on 31/01/2026.
 //
 
+import GameRepository
 import Vapor
 import YouSunkMyBattleshipCommon
 
@@ -66,15 +67,15 @@ actor GameService {
         guard board.placedShips.count == 5 else {
             throw GameServiceError.invalidBoard
         }
-        
+
         let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard())
-        
+
         self.speed = speed
         self.gameID = game.gameID
 
         await repository.setGame(game)
     }
-    
+
     private func loadGame(gameID: String) async throws {
         self.gameID = gameID
     }

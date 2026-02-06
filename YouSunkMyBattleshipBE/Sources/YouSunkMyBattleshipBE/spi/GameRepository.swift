@@ -6,12 +6,7 @@
 //
 
 import YouSunkMyBattleshipCommon
-
-protocol GameRepository: Sendable {
-    func setGame(_ game: Game) async
-    func getGame(id: String) async -> Game?
-    func all() async -> [Game]
-}
+import GameRepository
 
 actor InmemoryGameRepository: GameRepository {
     private var storage = [String: Game]()
