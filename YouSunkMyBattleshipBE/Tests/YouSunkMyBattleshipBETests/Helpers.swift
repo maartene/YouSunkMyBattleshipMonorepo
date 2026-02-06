@@ -8,6 +8,7 @@
 import Testing
 import VaporTesting
 import YouSunkMyBattleshipCommon
+@testable import YouSunkMyBattleshipBE
 
 func notImplemented() {
     Issue.record("Not implemented")
@@ -48,4 +49,10 @@ struct FixedBot: Bot {
     }
     
     let fixedMoves: [Coordinate]
+}
+
+func createGame(player1Board: Board, in gameService: GameService) async throws {
+    let createGameCommand = GameCommand.createGame(placedShips: player1Board.placedShips.map { $0.toDTO() }, speed: .fast)
+    
+    try await gameService.receive(createGameCommand.toData())
 }

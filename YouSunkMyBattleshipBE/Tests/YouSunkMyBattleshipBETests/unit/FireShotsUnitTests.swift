@@ -12,10 +12,12 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`Unit tests`)) struct FireShotsTests {
     let repository = InmemoryGameRepository()
     let gameService: GameService
+    let gameID: String
     
-    init() async {
+    init() async throws {
         gameService = GameService(repository: repository)
-        await repository.setGame(Game(player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard()))
+        try await createGame(player1Board: .makeFilledBoard(), in: gameService)
+        gameID = await gameService.gameID
     }
     
     @Test func `the boards for both player are independent of eachother`() async throws {

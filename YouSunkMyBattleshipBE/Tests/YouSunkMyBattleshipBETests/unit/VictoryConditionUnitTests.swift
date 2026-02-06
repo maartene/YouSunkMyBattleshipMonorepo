@@ -13,9 +13,10 @@ import YouSunkMyBattleshipCommon
     @Test func `when a new game is started, the player2 board is reset`() async throws {
         let repository = InmemoryGameRepository()
         let gameService = GameService(repository: repository)
+        let gameID = await gameService.gameID
         
         let (player2Board, _) = createNearlyCompletedBoard()
-        await repository.setGame(Game(player1Board: .makeFilledBoard(), player2Board: player2Board))
+        await repository.setGame(Game(gameID: gameID, player1Board: .makeFilledBoard(), player2Board: player2Board))
         
         let gameStateBeforeNewGame = try await gameService.getGameState()
         

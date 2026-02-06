@@ -16,9 +16,11 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`E2E tests`)) class `Feature: Victory Condition` {
     let repository = InmemoryGameRepository()
     let gameService: GameService
+    let gameID: String
     
-    init() {
+    init() async {
         gameService = GameService(repository: repository)
+        gameID = await gameService.gameID
     }
     
     var lastCellToHit: Coordinate?
@@ -36,7 +38,7 @@ extension `Feature: Victory Condition` {
         let (player2Board, lastCellToHit) = createNearlyCompletedBoard()
         self.lastCellToHit = lastCellToHit
         
-        await repository.setGame(Game(player1Board: .makeAnotherFilledBoard(), player2Board: player2Board))
+        await repository.setGame(Game(gameID: gameID, player1Board: .makeAnotherFilledBoard(), player2Board: player2Board))
     }
     
     func `When I fire at the last ship's remaining cell`() async throws {

@@ -16,9 +16,11 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`E2E tests`)) struct `Feature: Ship Sinking Detection` {
     let repository = InmemoryGameRepository()
     let gameService: GameService
+    let gameID: String
     
-    init() {
+    init() async {
         self.gameService = GameService(repository: repository)
+        gameID = await gameService.gameID
     }
     
     @Test func `Scenario: Player sinks enemy destroyer`() async throws {
@@ -33,7 +35,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Sinking Detection` {
     func `Given the enemy has a Destroyer at I9-J9`() async throws {
-        await repository.setGame(Game(player1Board: .makeAnotherFilledBoard(), player2Board: .makeFilledBoard()))
+        await repository.setGame(Game(gameID: gameID, player1Board: .makeAnotherFilledBoard(), player2Board: .makeFilledBoard()))
     }
 
     func `And I have hit I9`() async throws {

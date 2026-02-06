@@ -16,7 +16,7 @@ actor GameService {
     private let bot: Bot
     private let ws: WebSocket?
     private var speed: GameSpeed = .slow
-    private let gameID: String = "A game"
+    let gameID: String = "A game"
 
     init(repository: GameRepository, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
         self.repository = repository
@@ -30,7 +30,7 @@ actor GameService {
     }
 
     func getGameState() async throws -> GameState {
-        guard let game = await repository.getGame() else {
+        guard let game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
 
@@ -73,7 +73,7 @@ actor GameService {
     }
 
     private func fireAt(_ coordinate: Coordinate) async throws {
-        guard var game = await repository.getGame() else {
+        guard var game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
 

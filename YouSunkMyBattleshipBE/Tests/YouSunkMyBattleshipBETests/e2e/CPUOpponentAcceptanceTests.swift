@@ -14,11 +14,13 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`E2E tests`)) struct `Feature: CPU Opponent` {
     let repository = InmemoryGameRepository()
     let gameService: GameService
+    let gameID: String
     
-    init() async {
+    
+    init() async throws {
         self.gameService = GameService(repository: repository, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
-        let game = Game(player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard())
-        await repository.setGame(game)
+        try await createGame(player1Board: .makeFilledBoard(), in: gameService)
+        gameID = await gameService.gameID
     }
     
     @Test func `Scenario: CPU takes its turn`() async throws {

@@ -12,14 +12,16 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`Unit tests`)) struct CPUOpponentUnitTests {
     let repository = InmemoryGameRepository()
     let gameService: GameService
+    let gameID: String
     
     init() async {
         gameService = GameService(repository: repository)
+        self.gameID = await gameService.gameID
     }
     
     @Test func `when the CPU wins the game, the game goes in finished state`() async throws {
         let board = createCompletedBoard()
-        await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard()))
+        await repository.setGame(Game(gameID: gameID, player1Board: board, player2Board: .makeAnotherFilledBoard()))
         
         let gameState = try await gameService.getGameState()
         
@@ -28,7 +30,7 @@ import YouSunkMyBattleshipCommon
     
     @Test func `when the CPU wins the game, it notifies the player`() async throws {
         let board = createCompletedBoard()
-        await repository.setGame(Game(player1Board: board, player2Board: .makeAnotherFilledBoard()))
+        await repository.setGame(Game(gameID: gameID,player1Board: board, player2Board: .makeAnotherFilledBoard()))
         
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A1")).toData())
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A2")).toData())
