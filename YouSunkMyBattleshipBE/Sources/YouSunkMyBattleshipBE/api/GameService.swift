@@ -50,6 +50,8 @@ actor GameService {
         switch command {
         case .createGame(let placedShips, let speed):
             try await createGame(with: placedShips, speed: speed)
+        case .load(let gameID):
+            try await loadGame(gameID: gameID)
         case .fireAt(let coordinate):
             try await fireAt(coordinate)
         }
@@ -70,6 +72,10 @@ actor GameService {
         await repository.setGame(
             Game(gameID: gameID, player1Board: board, player2Board: .makeAnotherFilledBoard())
         )
+    }
+    
+    private func loadGame(gameID: String) async throws {
+        
     }
 
     private func fireAt(_ coordinate: Coordinate) async throws {

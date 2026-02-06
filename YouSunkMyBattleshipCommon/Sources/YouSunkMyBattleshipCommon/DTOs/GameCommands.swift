@@ -1,6 +1,7 @@
 public enum GameCommand: Codable {
     case createGame(placedShips: [PlacedShipDTO], speed: GameSpeed)
     case fireAt(coordinate: Coordinate)
+    case load(gameID: String)
 }
 
 extension GameCommand: Equatable {
@@ -9,6 +10,8 @@ extension GameCommand: Equatable {
             return lhsPlacedShips == rhsPlacedShips && lhsSpeed == rhsSpeed
         } else if case .fireAt(let lhsCoordinate) = lhs, case .fireAt(let rhsCoordinate) = rhs {
             return lhsCoordinate == rhsCoordinate
+        } else if case .load(let lhsGameID) = lhs, case .load(let rhsGameID) = rhs {
+            return lhsGameID == rhsGameID
         } else {
             return false
         }
