@@ -1,5 +1,5 @@
 {
-  "originHash" : "90b837fc3c39f41a622e320789dd3b2749ea0931e6794efbc94da0dfe2d25762",
+  "originHash" : "9582c96ebc5a50a6c2e747e873b02a2389c2a40f68c3bc81b2f52506e9719e8e",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -20,12 +20,39 @@
       }
     },
     {
+      "identity" : "bson",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orlandos-nl/BSON.git",
+      "state" : {
+        "revision" : "4240cf68b5d161434034a493741f0ae08cbef017",
+        "version" : "8.2.0"
+      }
+    },
+    {
       "identity" : "console-kit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/console-kit.git",
       "state" : {
         "revision" : "742f624a998cba2a9e653d9b1e91ad3f3a5dff6b",
         "version" : "4.15.2"
+      }
+    },
+    {
+      "identity" : "dnsclient",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orlandos-nl/DNSClient.git",
+      "state" : {
+        "revision" : "ae146fd47b64df4222fdb455d520763be9b98b58",
+        "version" : "2.6.1"
+      }
+    },
+    {
+      "identity" : "mongokitten",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orlandos-nl/MongoKitten.git",
+      "state" : {
+        "revision" : "cab8d2a80cd64c3861f81306d098c29cb3c0d6d7",
+        "version" : "7.11.0"
       }
     },
     {

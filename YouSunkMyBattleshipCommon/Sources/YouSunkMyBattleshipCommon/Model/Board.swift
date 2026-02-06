@@ -14,7 +14,7 @@ public enum Cell {
 }
 
 public struct Board: Sendable {
-    public struct PlacedShip: Sendable {
+    public struct PlacedShip: Sendable, Codable {
         public let ship: Ship
         public let coordinates: [Coordinate]
     }
@@ -122,6 +122,8 @@ public struct Board: Sendable {
         hitCells.insert(coordinate)
     }
 }
+
+extension Board: Codable { }
 
 // MARK: Factory methods
 extension Board {

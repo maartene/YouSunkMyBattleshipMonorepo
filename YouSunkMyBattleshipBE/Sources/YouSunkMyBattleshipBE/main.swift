@@ -2,7 +2,8 @@ import Vapor
 import YouSunkMyBattleshipCommon
 
 let app = try await Application.make(.detect())
-try configure(app, repository: InmemoryGameRepository())
+let repository = try await MongoGameRepository()
+try configure(app, repository: repository)
 try await app.execute()
 
 func configure(_ app: Application, repository: GameRepository) throws {

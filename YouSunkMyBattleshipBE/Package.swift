@@ -17,7 +17,8 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../YouSunkMyBattleshipCommon"),
-        .package(url: "https://github.com/vapor/vapor.git", from: "4.110.1")
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.110.1"),
+        .package(url: "https://github.com/orlandos-nl/MongoKitten.git", from: "7.9.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -26,7 +27,8 @@ let package = Package(
             name: "YouSunkMyBattleshipBE",
             dependencies: [
                 "YouSunkMyBattleshipCommon",
-                .product(name: "Vapor", package: "vapor")
+                .product(name: "Vapor", package: "vapor"),
+                .product(name: "MongoKitten", package: "MongoKitten")
             ]
         ),
         .testTarget(

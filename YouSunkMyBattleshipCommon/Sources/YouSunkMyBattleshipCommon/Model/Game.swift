@@ -43,3 +43,4 @@ public struct Game {
 }
 
 extension Game: Sendable { }
+extension Game: Codable { }

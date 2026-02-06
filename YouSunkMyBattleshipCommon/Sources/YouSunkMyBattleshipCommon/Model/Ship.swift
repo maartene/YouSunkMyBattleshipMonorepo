@@ -17,6 +17,7 @@ extension Ship: CustomStringConvertible {
 }
 
 extension Ship: Equatable, Hashable { }
+extension Ship: Codable { }
 
 extension Ship {
     public static var carrier: Ship {
