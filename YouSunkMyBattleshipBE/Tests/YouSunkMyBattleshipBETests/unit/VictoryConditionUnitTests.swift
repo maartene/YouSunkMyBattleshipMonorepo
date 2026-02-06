@@ -20,7 +20,7 @@ import YouSunkMyBattleshipCommon
         let gameStateBeforeNewGame = try await gameService.getGameState()
         
         let placedShips = Board.makeFilledBoard().placedShips.map { $0.toDTO() }
-        let command = GameCommand.createBoard(placedShips: placedShips, gameID: "a game")
+        let command = GameCommand.createGame(placedShips: placedShips, speed: .fast)
         try await gameService.receive(command.toData())
         
         let gameStateAfterNewGame = try await gameService.getGameState()

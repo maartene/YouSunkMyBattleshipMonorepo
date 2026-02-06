@@ -35,7 +35,7 @@ extension `Feature: Ship Placement` {
     
     private mutating func `When I confirm placement`() async throws {
         let placedShipsDTO = placedShips.map { $0.toDTO() }
-        let command = GameCommand.createBoard(placedShips: placedShipsDTO, gameID: "a game")
+        let command = GameCommand.createGame(placedShips: placedShipsDTO, speed: .fast)
         try await gameService.receive(command.toData())
     }
     

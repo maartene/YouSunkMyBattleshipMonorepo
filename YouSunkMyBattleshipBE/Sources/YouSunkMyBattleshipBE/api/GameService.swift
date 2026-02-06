@@ -15,6 +15,8 @@ actor GameService {
     private var lastMessage = "Play!"
     private let bot: Bot
     private let ws: WebSocket?
+    private var speed: GameSpeed = .slow
+    private let gameID: String = "A game"
 
     init(repository: GameRepository, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
         self.repository = repository
@@ -46,14 +48,14 @@ actor GameService {
 
     private func processCommand(_ command: GameCommand) async throws {
         switch command {
-        case .createBoard(let placedShips, let gameID):
-            try await createBoard(with: placedShips, gameID: gameID)
+        case .createGame(let placedShips, let speed):
+            try await createGame(with: placedShips, speed: speed)
         case .fireAt(let coordinate):
             try await fireAt(coordinate)
         }
     }
 
-    private func createBoard(with placedShips: [PlacedShipDTO], gameID: String) async throws {
+    private func createGame(with placedShips: [PlacedShipDTO], speed: GameSpeed) async throws {
         var board = Board()
         for ship in placedShips {
             board.placeShip(at: ship.coordinates)
@@ -62,6 +64,8 @@ actor GameService {
         guard board.placedShips.count == 5 else {
             throw GameServiceError.invalidBoard
         }
+        
+        self.speed = speed
 
         await repository.setGame(
             Game(gameID: gameID, player1Board: board, player2Board: .makeAnotherFilledBoard())
@@ -134,7 +138,7 @@ actor GameService {
     }
 
     private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
-        try await Task.sleep(nanoseconds: game.nanoSecondDelay)
+        try await Task.sleep(nanoseconds: speed.nanoSecondDelay)
         game.fireAt(coordinate, target: .player1)
         try await saveAndSendGameState(game)
     }
@@ -157,9 +161,9 @@ extension Game {
     }
 }
 
-extension Game {
+extension GameSpeed {
     var nanoSecondDelay: UInt64 {
-        let delay = gameID == "contract_test" ? 0.1 : 0.75
+        let delay = self == .fast ? 0.1 : 0.75
         return UInt64(1_000_000_000.0 * delay)
     }
 }

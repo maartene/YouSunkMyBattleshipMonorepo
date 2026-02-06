@@ -64,3 +64,8 @@ extension Board {
         }
     }
 }
+
+public enum GameSpeed: Codable {
+    case fast
+    case slow
+}

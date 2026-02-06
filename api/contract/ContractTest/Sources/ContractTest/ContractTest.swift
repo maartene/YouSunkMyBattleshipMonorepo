@@ -49,8 +49,8 @@ final class ContractTest: Sendable {
         client.onOpen { ws in
             let localBoard = Board.makeFilledBoard()
             let placedShips = localBoard.placedShips.map { $0.toDTO() }
-            let createBoardCommand = GameCommand.createBoard(
-                placedShips: placedShips, gameID: "contract_test")
+            let createBoardCommand = GameCommand.createGame(
+                placedShips: placedShips, speed: .fast)
             try? ws.send(
                 createBoardCommand.toByteButffer(using: self.encoder), opcode: .binary, promise: nil
             )

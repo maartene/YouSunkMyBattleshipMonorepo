@@ -93,7 +93,7 @@ final class ClientViewModel: ViewModel {
     
     func confirmPlacement() async {
         do {
-            let command = GameCommand.createBoard(placedShips: boardInProgress.placedShips.map { $0.toDTO() }, gameID: UUID().uuidString )
+            let command = GameCommand.createGame(placedShips: boardInProgress.placedShips.map { $0.toDTO() }, speed: .slow )
             let data = try encoder.encode(command)
             try await dataProvider.send(data: data)
         } catch {

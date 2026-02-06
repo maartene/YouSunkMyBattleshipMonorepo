@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:ContractTest}",
+            "name": "Debug ContractTest",
+            "target": "ContractTest",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug ContractTest"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:ContractTest}",
+            "name": "Release ContractTest",
+            "target": "ContractTest",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release ContractTest"
+        }
+    ]
+}
