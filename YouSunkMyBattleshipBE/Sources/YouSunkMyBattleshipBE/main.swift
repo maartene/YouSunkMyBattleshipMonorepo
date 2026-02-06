@@ -2,11 +2,11 @@ import Vapor
 import YouSunkMyBattleshipCommon
 
 let app = try await Application.make(.detect())
-try configure(app)
+try configure(app, repository: InmemoryGameRepository())
 try await app.execute()
 
-func configure(_ app: Application) throws {
-    app.gameRepository = InmemoryGameRepository()
+func configure(_ app: Application, repository: GameRepository) throws {
+    app.gameRepository = repository
     app.http.server.configuration.hostname = "0.0.0.0"
 
     app.get { req in
@@ -38,6 +38,12 @@ func configure(_ app: Application) throws {
                 req.logger.warning("Error while receiving data: \(error)")
             }
         }
+    }
+    app.get("games") { req in
+        let games = await app.gameRepository?.all() ?? []
+        return games
+            .map { $0.gameID }
+            .sorted()
     }
 }
 

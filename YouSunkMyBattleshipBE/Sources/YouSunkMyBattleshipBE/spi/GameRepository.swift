@@ -10,6 +10,7 @@ import YouSunkMyBattleshipCommon
 protocol GameRepository: Sendable {
     func setGame(_ game: Game) async
     func getGame(id: String) async -> Game?
+    func all() async -> [Game]
 }
 
 actor InmemoryGameRepository: GameRepository {
@@ -21,5 +22,9 @@ actor InmemoryGameRepository: GameRepository {
     
     func getGame(id: String) async -> Game? {
         self.storage[id]
+    }
+    
+    func all() async -> [Game] {
+        Array(storage.values)
     }
 }

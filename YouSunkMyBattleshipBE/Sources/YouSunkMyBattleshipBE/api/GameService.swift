@@ -16,7 +16,7 @@ actor GameService {
     private let bot: Bot
     private let ws: WebSocket?
     private var speed: GameSpeed = .slow
-    let gameID: String = "A game"
+    var gameID: String = "A game"
 
     init(repository: GameRepository, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
         self.repository = repository
@@ -67,15 +67,16 @@ actor GameService {
             throw GameServiceError.invalidBoard
         }
         
+        let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard())
+        
         self.speed = speed
+        self.gameID = game.gameID
 
-        await repository.setGame(
-            Game(gameID: gameID, player1Board: board, player2Board: .makeAnotherFilledBoard())
-        )
+        await repository.setGame(game)
     }
     
     private func loadGame(gameID: String) async throws {
-        
+        self.gameID = gameID
     }
 
     private func fireAt(_ coordinate: Coordinate) async throws {
