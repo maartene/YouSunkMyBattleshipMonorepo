@@ -10,6 +10,7 @@ import Testing
 import ViewInspector
 import SwiftUI
 import Combine
+import WSDataProvider
 
 /// As a player
 /// I want to see an empty game board

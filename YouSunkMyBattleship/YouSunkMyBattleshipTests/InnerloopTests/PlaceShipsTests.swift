@@ -10,6 +10,7 @@ import SwiftUI
 import Testing
 import ViewInspector
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 @testable import YouSunkMyBattleship
 

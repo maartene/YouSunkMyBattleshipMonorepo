@@ -35,9 +35,10 @@ final class ClientViewModel: GameViewModel {
     
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
+        dataProvider.register(onReceive: receiveData)
+    
         cells[.player1] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()
-        dataProvider.register(onReceive: receiveData)
     }
     
     // MARK: Commands

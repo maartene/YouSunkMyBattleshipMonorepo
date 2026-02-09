@@ -9,11 +9,12 @@ import Testing
 @testable import YouSunkMyBattleship
 import SwiftUI
 import ViewInspector
+import YouSunkMyBattleshipCommon
 
 @Suite(.tags(.`Unit tests`)) struct GamePersistenceTests {
     @MainActor
     @Suite struct `Interaction between View and ViewModel` {
-        let dataProvider = DummyDataProvider()
+        let dataProvider = DataProviderSpy()
         let view: MainMenuView
         
         init() {
@@ -27,10 +28,13 @@ import ViewInspector
             _ = try inspectedView.find(text: "game3")
         }
         
-//        @Test func `when clicking on a game, the gameboard view tries to load the game with that name`() throws {
-//            let inspectedView = try view.inspect()
-//            let navigation = try inspectedView.find(navigationLink: "game2")
-//            
-//        }
+        @Test func `when clicking on a game, the game to load is passed in`() async throws {
+            let inspectedView = try view.inspect()
+            let link = try inspectedView.find(navigationLink: "game2")
+            
+            let nextView = try link.view(GameView.self).actualView()
+            
+            #expect(nextView.gameID == "game2")
+        }
     }
 }

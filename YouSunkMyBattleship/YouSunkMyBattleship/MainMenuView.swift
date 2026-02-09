@@ -23,7 +23,7 @@ struct MainMenuView: View {
                 VStack {
                     List(games, id: \.self) { game in
                         NavigationLink(game) {
-                            GameView(viewModel: ClientViewModel(dataProvider: dataProvider))
+                            GameView(viewModel: ClientViewModel(dataProvider: dataProvider), gameID: game)
                         }
                     }
                     NavigationLink("New game") {

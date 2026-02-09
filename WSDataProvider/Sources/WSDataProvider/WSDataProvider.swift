@@ -3,8 +3,17 @@ import Foundation
 @MainActor
 public protocol DataProvider {
     func send(data: Data) async throws
+    func syncSend(data: Data)
     func register(onReceive: @escaping (Data) -> Void)
 }
+
+public struct DummyDataProvider: DataProvider {
+    public init() { }
+    public func syncSend(data: Data) {}
+    public func send(data: Data) async throws {}
+    public func register(onReceive: @escaping (Data) -> Void) {}
+}
+
 
 @MainActor
 public final class WSDataProvider: DataProvider {
@@ -15,6 +24,12 @@ public final class WSDataProvider: DataProvider {
     public func send(data: Data) async throws {
         let message = URLSessionWebSocketTask.Message.data(data)
         try await task.send(message)
+    }
+    
+    public func syncSend(data: Data) {
+        let message = URLSessionWebSocketTask.Message.data(data)
+        task.send(message) { _ in
+        }
     }
     
     public func register(onReceive: @escaping (Data) -> Void) {

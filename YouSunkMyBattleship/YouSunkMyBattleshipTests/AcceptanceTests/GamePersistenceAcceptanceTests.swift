@@ -11,6 +11,7 @@ import ViewInspector
 import SwiftUI
 import Combine
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 //As a player
 //I want to save my game and resume later

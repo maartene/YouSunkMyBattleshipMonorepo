@@ -173,12 +173,6 @@ func almostSinkAllShips(on viewModel: GameViewModel) async {
 }
 
 // MARK: DataProvider fakes
-final class DummyDataProvider: DataProvider {
-    func send(data: Data) async throws { }
-    
-    func register(onReceive: @escaping (Data) -> Void) { }
-}
-
 final class DataProviderSpy: DataProvider {
     private var receivedData: [Data] = []
     private var onReceive: ((Data) -> Void)?
@@ -188,6 +182,10 @@ final class DataProviderSpy: DataProvider {
     }
     
     func send(data: Data) async throws {
+        syncSend(data: data)
+    }
+    
+    func syncSend(data: Data) {
         let string = String(data: data, encoding: .utf8) ?? "unknown"
         print("Received string: \(string)")
         receivedData.append(data)
@@ -216,6 +214,10 @@ final class MockDataProvider: DataProvider {
     }
     
     func send(data: Data) async throws {
+        onReceive?(dataToReceiveOnSend)
+    }
+    
+    func syncSend(data: Data) {
         onReceive?(dataToReceiveOnSend)
     }
     
