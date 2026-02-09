@@ -11,7 +11,7 @@ import YouSunkMyBattleshipCommon
 import Foundation
 
 @MainActor
-func addViewsToViewModel(_ viewModel: any ViewModel) {
+func addViewsToViewModel(_ viewModel: any GameViewModel) {
     let entries: [Coordinate: (Double, Double, Double, Double)] = [
         Coordinate(x: 5, y: 0): (215.16666666666666, 300.3212076822917, 24.0, 24.0),
         Coordinate(x: 2, y: 1): (119.16666666666667, 332.3212076822917, 24.000000000000014, 24.0),

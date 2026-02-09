@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct GameStateView: View {
-    private let viewModel: any ViewModel
+    private let viewModel: any GameViewModel
     
     private var shipsToPlace: String {
         viewModel.shipsToPlace.joined(separator: "\t")
     }
 
-    init(viewModel: any ViewModel) {
+    init(viewModel: any GameViewModel) {
         self.viewModel = viewModel
     }
     

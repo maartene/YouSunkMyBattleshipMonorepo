@@ -25,10 +25,10 @@ extension Tag {
 }
 
 // MARK: ViewModel fakes
-final class ViewModelSpy: ViewModel {
+final class ViewModelSpy: GameViewModel {
     let currentPlayer: Player = .player1
     
-    let state: ViewModelState
+    let state: GameViewModelState
     var startDragLocation: CGPoint?
     var endDragLocation: CGPoint?
     var tapCoordinate: Coordinate?
@@ -36,7 +36,7 @@ final class ViewModelSpy: ViewModel {
     private(set) var addCellWasCalled = false
     private(set) var resetWasCalled = false
     
-    init(state: ViewModelState = .placingShips) {
+    init(state: GameViewModelState = .placingShips) {
         self.state = state
     }
     
@@ -111,7 +111,7 @@ func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGes
     return try inspectedView.grid(0).gesture(DragGesture.self)
 }
 
-func completePlacement(on viewModel: any ViewModel) {
+func completePlacement(on viewModel: any GameViewModel) {
     viewModel.startDrag(at: CGPoint(x: 56, y: 301))
     viewModel.endDrag(at: CGPoint(x: 185, y: 301))
     viewModel.startDrag(at: CGPoint(x: 248, y: 301))
@@ -147,7 +147,7 @@ func gesture(from view: GameView) throws -> InspectableView<ViewType.Gesture<Dra
     return try inspectedView.grid(0).gesture(DragGesture.self)
 }
 
-func almostSinkAllShips(on viewModel: ViewModel) async {
+func almostSinkAllShips(on viewModel: GameViewModel) async {
     let coordinates = [
         Coordinate(x: 1, y: 2),
         Coordinate(x: 1, y: 3),

@@ -10,7 +10,7 @@ import CoreGraphics
 import YouSunkMyBattleshipCommon
 
 // MARK: ViewModel protocol (PORT)
-protocol ViewModel {
+protocol GameViewModel {
     func startDrag(at location: CGPoint)
     func endDrag(at location: CGPoint)
     func addCell(coordinate: Coordinate, rectangle: CGRect, player: Player)
@@ -19,7 +19,7 @@ protocol ViewModel {
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async
     
     var shipsToPlace: [String] { get }
-    var state: ViewModelState { get }
+    var state: GameViewModelState { get }
     var lastMessage: String { get }
     var numberOfShipsToBeDestroyed: Int { get }
     var cells: [Player: [[String]]] { get }
@@ -27,13 +27,13 @@ protocol ViewModel {
     
 }
 
-enum ViewModelState {
+enum GameViewModelState {
     case placingShips
     case awaitingConfirmation
     case play
     case finished
     
-    static func fromGameState(_ gameState: GameState.State) -> ViewModelState {
+    static func fromGameState(_ gameState: GameState.State) -> GameViewModelState {
         return switch gameState {
         case .play:
             .play

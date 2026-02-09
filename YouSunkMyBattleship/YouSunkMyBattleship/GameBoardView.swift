@@ -9,7 +9,7 @@ import SwiftUI
 import YouSunkMyBattleshipCommon
 
 struct GameBoardView: View {
-    let viewModel: any ViewModel
+    let viewModel: any GameViewModel
     let owner: Player
     let isDraggable: Bool
     let columnLabels = {
@@ -45,7 +45,7 @@ struct GameBoardView: View {
 }
 
 struct BoardRowView: View {
-    let viewModel: ViewModel
+    let viewModel: GameViewModel
     let columns: [String]
     let rowIndex: Int
     let owner: Player
@@ -64,14 +64,14 @@ struct BoardRowView: View {
 
 struct CellView: View {
     let content: String
-    let viewModel: ViewModel?
+    let viewModel: GameViewModel?
     let coordinate: Coordinate
     let owner: Player
     let isDraggable: Bool
 
     init(
         content: String, coordinate: Coordinate, owner: Player, isDraggable: Bool,
-        viewModel: ViewModel? = nil
+        viewModel: GameViewModel? = nil
     ) {
         self.content = content
         self.coordinate = coordinate

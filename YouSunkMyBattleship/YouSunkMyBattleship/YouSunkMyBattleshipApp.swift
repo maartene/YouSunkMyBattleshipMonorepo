@@ -11,7 +11,7 @@ import Foundation
 
 @main
 struct YouSunkMyBattleshipApp: App {
-    let viewModel: ViewModel
+    let viewModel: GameViewModel
     
     init() {
         #if targetEnvironment(simulator)

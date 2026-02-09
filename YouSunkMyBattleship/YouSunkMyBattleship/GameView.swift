@@ -11,7 +11,7 @@ import WSDataProvider
 import YouSunkMyBattleshipCommon
 
 struct GameView: View {
-    let viewModel: any ViewModel
+    let viewModel: any GameViewModel
     internal let publisher = PassthroughSubject<Void, Never>()
 
     var body: some View {

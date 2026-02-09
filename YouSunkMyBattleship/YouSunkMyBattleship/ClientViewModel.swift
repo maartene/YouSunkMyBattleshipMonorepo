@@ -11,11 +11,11 @@ import YouSunkMyBattleshipCommon
 import WSDataProvider
 
 @Observable
-final class ClientViewModel: ViewModel {
+final class ClientViewModel: GameViewModel {
     private let dataProvider: DataProvider
     private let owner = Player.player1
     private(set) var shipsToPlace: [String] = []
-    private(set) var state: ViewModelState = .placingShips
+    private(set) var state: GameViewModelState = .placingShips
     private(set) var lastMessage = ""
     private(set) var cells: [Player : [[String]]] = [:]
     private(set) var numberOfShipsToBeDestroyed: Int = 5
@@ -131,7 +131,7 @@ final class ClientViewModel: ViewModel {
             let gameState = try decoder.decode(GameState.self, from: data)
             self.cells = gameState.cells
             self.numberOfShipsToBeDestroyed = gameState.shipsToDestroy
-            self.state = ViewModelState.fromGameState(gameState.state)
+            self.state = GameViewModelState.fromGameState(gameState.state)
             self.lastMessage = gameState.lastMessage
             self.currentPlayer = gameState.currentPlayer
         } catch {
