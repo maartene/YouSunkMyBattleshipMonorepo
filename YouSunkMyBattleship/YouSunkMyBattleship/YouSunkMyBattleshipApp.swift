@@ -11,7 +11,7 @@ import Foundation
 
 @main
 struct YouSunkMyBattleshipApp: App {
-    let viewModel: GameViewModel
+    let dataProvider: DataProvider
     
     init() {
         #if targetEnvironment(simulator)
@@ -20,12 +20,12 @@ struct YouSunkMyBattleshipApp: App {
         let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game")!
         #endif
 
-        viewModel = ClientViewModel(dataProvider: WSDataProvider(url: wsURL))
+        dataProvider = WSDataProvider(url: wsURL)
     }
 
     var body: some Scene {
         WindowGroup {
-            GameView(viewModel: viewModel)
+            MainMenuView(dataProvider: dataProvider)
         }
     }
 }
