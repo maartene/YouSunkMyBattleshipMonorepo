@@ -9,18 +9,18 @@ import SwiftUI
 import WSDataProvider
 import Foundation
 
+#if targetEnvironment(simulator)
+let wsURL = URL(string: "ws://localhost:8080/game")!
+#else
+let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game")!
+#endif
+
 @main
 struct YouSunkMyBattleshipApp: App {
     let dataProvider: DataProvider
     
     init() {
-        #if targetEnvironment(simulator)
-        let wsURL = URL(string: "ws://localhost:8080/game")!
-        #else
-        let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game")!
-        #endif
-
-        dataProvider = WSDataProvider(url: wsURL)
+        dataProvider = URLSessionDataProvider()
     }
 
     var body: some Scene {

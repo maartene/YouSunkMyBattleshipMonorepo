@@ -83,6 +83,8 @@ import YouSunkMyBattleshipCommon
         @Test func `cannot fire shots when its not your turn`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
+            await viewModel.confirmPlacement()
+            
             let gameState = GameState(currentPlayer: .player2)
             try spy.triggerOnReceiveWith(JSONEncoder().encode(gameState))
             

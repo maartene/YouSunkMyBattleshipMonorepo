@@ -35,8 +35,6 @@ final class ClientViewModel: GameViewModel {
     
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
-        dataProvider.register(onReceive: receiveData)
-    
         cells[.player1] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()
     }
@@ -94,9 +92,10 @@ final class ClientViewModel: GameViewModel {
     
     func confirmPlacement() async {
         do {
+            dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
             let command = GameCommand.createGame(placedShips: boardInProgress.placedShips.map { $0.toDTO() }, speed: .slow )
             let data = try encoder.encode(command)
-            try await dataProvider.send(data: data)
+            try await dataProvider.wsSend(data: data)
         } catch {
             NSLog("Error submitting board: \(error)")
         }
@@ -121,7 +120,7 @@ final class ClientViewModel: GameViewModel {
         do {
             let command = GameCommand.fireAt(coordinate: coordinate)
             let data = try encoder.encode(command)
-            try await dataProvider.send(data: data)
+            try await dataProvider.wsSend(data: data)
         } catch {
             NSLog("Error when firing at \(coordinate): \(error)")
         }

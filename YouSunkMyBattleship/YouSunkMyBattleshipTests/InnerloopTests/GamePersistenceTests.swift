@@ -36,5 +36,14 @@ import YouSunkMyBattleshipCommon
             
             #expect(nextView.gameID == "game2")
         }
+        
+        @Test func `when clicking on a new game, no game to load is passed in`() async throws {
+            let inspectedView = try view.inspect()
+            let link = try inspectedView.find(navigationLink: "New game")
+            
+            let nextView = try link.view(GameView.self).actualView()
+            
+            #expect(nextView.gameID == nil)
+        }
     }
 }

@@ -181,11 +181,11 @@ final class DataProviderSpy: DataProvider {
         onReceive?(data)
     }
     
-    func send(data: Data) async throws {
-        syncSend(data: data)
+    func wsSend(data: Data) async throws {
+        wsSyncSend(data: data)
     }
     
-    func syncSend(data: Data) {
+    func wsSyncSend(data: Data) {
         let string = String(data: data, encoding: .utf8) ?? "unknown"
         print("Received string: \(string)")
         receivedData.append(data)
@@ -200,7 +200,7 @@ final class DataProviderSpy: DataProvider {
         return things.contains { $0 == thing }
     }
     
-    func register(onReceive: @escaping (Data) -> Void) {
+    func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
         self.onReceive = onReceive
     }
 }
@@ -213,17 +213,15 @@ final class MockDataProvider: DataProvider {
         self.dataToReceiveOnSend = dataToReceiveOnSend
     }
     
-    func send(data: Data) async throws {
+    func wsSend(data: Data) async throws {
         onReceive?(dataToReceiveOnSend)
     }
     
-    func syncSend(data: Data) {
+    func wsSyncSend(data: Data) {
         onReceive?(dataToReceiveOnSend)
     }
     
-    func register(onReceive: @escaping (Data) -> Void) {
+    func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
         self.onReceive = onReceive
     }
-    
-    
 }
