@@ -17,20 +17,14 @@ struct MainMenuView: View {
     
     let dataProvider: DataProvider
     
+    @State var shouldShowBoard = false
+    
     var body: some View {
-        VStack {
-            NavigationView {
-                VStack {
-                    List(games, id: \.self) { game in
-                        NavigationLink(game) {
-                            GameView(viewModel: ClientViewModel(dataProvider: dataProvider), gameID: game)
-                        }
-                    }
-                    NavigationLink("New game") {
-                        GameView(viewModel: ClientViewModel(dataProvider: dataProvider))
-                    }
-                }
-                .navigationTitle("Main Menu")
+        if shouldShowBoard {
+            GameView(viewModel: ClientViewModel(dataProvider: dataProvider), gameID: nil)
+        } else {
+            Button("New game") {
+                shouldShowBoard = true
             }
         }
     }

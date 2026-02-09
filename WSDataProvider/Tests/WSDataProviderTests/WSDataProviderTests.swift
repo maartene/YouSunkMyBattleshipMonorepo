@@ -5,10 +5,10 @@ import Foundation
 @MainActor
 @Suite final class WSDataProviderTests {
     var receivedStrings: [String] = []
-    let dataProvider = WSDataProvider(url: URL(string: "ws://localhost:8080")!)
+    let dataProvider = URLSessionDataProvider()
 
     init() {
-        dataProvider.register { data in
+        dataProvider.connectToWebsocket(to: URL(string: "ws://localhost:8080")!) { data in
             self.receivedStrings.append(String(data: data, encoding: .utf8) ?? "Not able to convert to string")
         }
     }
@@ -23,7 +23,18 @@ import Foundation
 
     @Test func `can send and receive data`() async throws {
         let data = "Hello, World!".data(using: .utf8)!
-        try await dataProvider.send(data: data)
+        try await dataProvider.wsSend(data: data)
+
+        while receivedStrings.count < 2 {
+            try await Task.sleep(nanoseconds: 1000)
+        }
+
+        #expect(receivedStrings.contains("Mirroring: Hello, World!"))
+    }
+    
+    @Test func `can send and receive data synchronously`() async throws {
+        let data = "Hello, World!".data(using: .utf8)!
+        dataProvider.wsSyncSend(data: data)
 
         while receivedStrings.count < 2 {
             try await Task.sleep(nanoseconds: 1000)

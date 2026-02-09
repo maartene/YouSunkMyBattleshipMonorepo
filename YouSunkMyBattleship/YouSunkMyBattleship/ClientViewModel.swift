@@ -87,6 +87,7 @@ final class ClientViewModel: GameViewModel {
     }
     
     func addCell(coordinate: Coordinate, rectangle: CGRect, player: Player) {
+        print("Adding cell: \(coordinate), to \(ObjectIdentifier(self))")
         cellsLocationMap[PlayerCoordinate(player: player, coordinate: coordinate)] = rectangle
     }
     
