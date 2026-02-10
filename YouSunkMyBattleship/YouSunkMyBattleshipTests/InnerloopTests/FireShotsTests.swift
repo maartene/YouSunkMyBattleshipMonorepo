@@ -27,7 +27,7 @@ import YouSunkMyBattleshipCommon
             let randomRow = rows.randomElement()!
             let randomCell = randomRow.findAll(CellView.self).randomElement()!
             
-            try randomCell.geometryReader().text().callOnTapGesture()
+            try randomCell.text().callOnTapGesture()
             
             while viewModelSpy.tapWasCalledWithCoordinate(try randomCell.actualView().coordinate, for: .player2) == false {
                 try await Task.sleep(nanoseconds: 1000)
@@ -40,7 +40,7 @@ import YouSunkMyBattleshipCommon
             let randomRow = rows.randomElement()!
             let randomCell = randomRow.findAll(CellView.self).randomElement()!
             
-            try randomCell.geometryReader().text().callOnTapGesture()
+            try randomCell.text().callOnTapGesture()
             
             while viewModelSpy.tapWasCalledWithCoordinate(try randomCell.actualView().coordinate, for: .player1) == false {
                 try await Task.sleep(nanoseconds: 1000)
@@ -62,6 +62,14 @@ import YouSunkMyBattleshipCommon
         @Test func `when the player taps the opponents board at B5, the game service should receive a message to fire at that coordinate`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
+            await completePlacement(on: viewModel)
+            await viewModel.confirmPlacement()
+            
+            spy.triggerOnReceiveWith(gameStateDataAfterCompletingPlacement)
+            
+            while viewModel.state != .play {
+                try await Task.sleep(nanoseconds: 1_000_000)
+            }
             
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
             

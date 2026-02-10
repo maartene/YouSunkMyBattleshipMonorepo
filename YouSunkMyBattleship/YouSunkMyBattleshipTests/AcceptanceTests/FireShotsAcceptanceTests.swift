@@ -64,7 +64,7 @@ extension `Feature: Firing Shots` {
         let row = rows[1]
         let columns = row.findAll(CellView.self)
         
-        #expect(try columns[4].geometryReader().text().string() == "❌")
+        #expect(try columns[4].text().string() == "❌")
     }
     
     func `And I receive feedback "Miss!"`() throws {
@@ -87,7 +87,7 @@ extension `Feature: Firing Shots` {
         let row = rows[2]
         let columns = row.findAll(CellView.self)
         
-        #expect(try columns[4].geometryReader().text().string() == "💥")
+        #expect(try columns[4].text().string() == "💥")
     }
     
     private func `And I receive feedback "Hit!"`() throws {

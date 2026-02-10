@@ -78,6 +78,20 @@ extension `Feature: Ship Placement` {
     }
     
     private func `Given I placed all my ships`() async throws {
+        await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+        
+        await viewModel.tap(Coordinate("B2"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("E2"), boardForPlayer: .player1)
+        
+        await viewModel.tap(Coordinate("C3"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+        
+        await viewModel.tap(Coordinate("G8"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("I8"), boardForPlayer: .player1)
+        
+        await viewModel.tap(Coordinate("F6"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("F7"), boardForPlayer: .player1)
         
         #expect(viewModel.state == .awaitingConfirmation)
     }
@@ -126,7 +140,7 @@ extension `Feature: Ship Placement` {
             #expect(columns.count == 10)
             
             for cell in columns {
-                #expect(try cell.geometryReader().text().string() == "🌊")
+                #expect(try cell.text().string() == "🌊")
             }
         }
     }

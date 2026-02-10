@@ -56,7 +56,7 @@ extension `Feature: Victory Condition` {
             #expect(columns.count == 10)
             
             for cell in columns {
-                #expect(try cell.geometryReader().text().string() == "🌊")
+                #expect(try cell.text().string() == "🌊")
             }
         }
     }

@@ -47,7 +47,7 @@ extension `Feature: Game Board Initialization` {
             #expect(columns.count == 10)
             
             for cell in columns {
-                #expect(try cell.geometryReader().text().string() == "🌊")
+                #expect(try cell.text().string() == "🌊")
             }
         }
     }

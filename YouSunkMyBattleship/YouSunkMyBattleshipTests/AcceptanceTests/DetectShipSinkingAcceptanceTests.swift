@@ -60,7 +60,7 @@ extension `Feature: Ship Sinking Detection` {
             let row = rows[rowIndex]
             let columns = row.findAll(CellView.self)
             
-            #expect(try columns[8].geometryReader().text().string() == "🔥")
+            #expect(try columns[8].text().string() == "🔥")
         }
     }
     
