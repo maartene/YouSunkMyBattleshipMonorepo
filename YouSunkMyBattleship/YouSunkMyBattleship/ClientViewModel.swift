@@ -57,6 +57,12 @@ final class ClientViewModel: GameViewModel {
         updateShipsToPlace()
     }
     
+    func load(_ gameID: String) {
+        let command = GameCommand.load(gameID: gameID)
+        let data = try! encoder.encode(command)
+        dataProvider.wsSyncSend(data: data)
+    }
+    
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
         switch state {
         case .placingShips:

@@ -14,6 +14,7 @@ protocol GameViewModel {
     func confirmPlacement() async
     func reset()
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async
+    func load(_ gameID: String)
     
     var shipsToPlace: [String] { get }
     var state: GameViewModelState { get }

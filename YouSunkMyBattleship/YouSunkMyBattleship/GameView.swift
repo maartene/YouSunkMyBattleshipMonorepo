@@ -38,6 +38,11 @@ struct GameView: View {
             }
         }
         .animation(.easeInOut(duration: 0.35), value: viewModel.state)
+        .onAppear() {
+            if let gameID {
+                viewModel.load(gameID)
+            }
+        }
     }
 }
 

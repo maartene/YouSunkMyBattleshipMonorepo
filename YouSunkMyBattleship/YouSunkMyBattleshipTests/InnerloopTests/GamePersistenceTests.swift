@@ -46,4 +46,32 @@ import YouSunkMyBattleshipCommon
             #expect(nextView.gameID == nil)
         }
     }
+    
+    @MainActor
+    @Suite struct `Interaction between GameView and ViewModel` {
+        @Test func `when a gameview has a gameID set, then the viewmodel tries to load that game`() async throws {
+            let viewModel = ViewModelSpy()
+            let view = GameView(viewModel: viewModel, gameID: "game1")
+            
+            let inspectedView = try view.inspect()
+            
+            try inspectedView.vStack().callOnAppear()
+            
+            #expect(viewModel.loadWasCalledWithGameID("game1"))
+        }
+    }
+    
+    @MainActor
+    @Suite struct ViewModelTests {
+        @Test func `when viewModel tries to load a game, the load command is send to the dataprovider`() throws {
+            let dataProvider = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
+            
+            viewModel.load("game3")
+            
+            let expectedCommand = GameCommand.load(gameID: "game3")
+            
+            #expect(dataProvider.sendWasCalledWith(expectedCommand))
+        }
+    }
 }
