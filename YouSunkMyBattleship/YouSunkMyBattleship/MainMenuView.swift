@@ -17,7 +17,6 @@ struct MainMenuView: View {
     
     let dataProvider: DataProvider
     let gameViewModel: GameViewModel
-    @State var shouldShowBoard = false
     
     init(dataProvider: DataProvider, gameViewModel: GameViewModel) {
         self.dataProvider = dataProvider
@@ -25,11 +24,17 @@ struct MainMenuView: View {
     }
     
     var body: some View {
-        if shouldShowBoard {
-            GameView(viewModel: gameViewModel, gameID: nil)
-        } else {
-            Button("New game") {
-                shouldShowBoard = true
+        VStack {
+            NavigationStack {
+                List(games, id: \.self) { game in
+                    NavigationLink(game) {
+                        GameView(viewModel: gameViewModel, gameID: game)
+                    }
+                }
+                NavigationLink("New game") {
+                    GameView(viewModel: gameViewModel, gameID: nil)
+                }
+                .navigationTitle("Main Menu")
             }
         }
     }
