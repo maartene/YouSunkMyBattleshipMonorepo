@@ -10,6 +10,7 @@ import Testing
 import ViewInspector
 import SwiftUI
 import Combine
+import YouSunkMyBattleshipCommon
 
 /// As a player 
 /// I want to place my fleet on the board
@@ -20,20 +21,20 @@ import Combine
     let view: GameView
         
     init() {
-        self.viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement, ))
+        self.viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement))
         self.view = GameView(viewModel: viewModel)
     }
 
-    @Test func `Scenario: Player places a ship successfully`() throws {
+    @Test func `Scenario: Player places a ship successfully`() async throws {
         try `Given I have an empty board`()
-        try `When I start a drag from A1`()
-        try `And end the drag at A5`()
+        try await `When I tap at A1`()
+        try await `And then tap at A5`()
         try `Then the cells A1 through A5 display 🚢`()
         try `And the ship placement is confirmed`()
     }
     
     @Test func `Scenario: Player confirms being done with placing ships`() async throws {
-        try await `Given I placed all my ships`(usingDrag: true)
+        try await `Given I placed all my ships`()
         try await `When I confirm placement`()
         try `Then the game shows my board is done`()
         try `And it shows the target board as well`()
@@ -41,7 +42,7 @@ import Combine
     }
     
     @Test func `Scenario: Player wants to replace ships`() async throws {
-        try await `Given I placed all my ships`(usingDrag: false)
+        try await `Given I placed all my ships`()
         try `When I cancel placement`()
         try `Then I get a new empty board to place ships`()
     }
@@ -50,23 +51,14 @@ import Combine
 
 // MARK: Steps
 extension `Feature: Ship Placement` {
-    private func gesture() throws -> InspectableView<ViewType.Gesture<DragGesture>> {
-        let inspectedView = try getPlayerBoard(from: view)
-        return try inspectedView.grid(0).gesture(DragGesture.self)
-    }
-
     private func `Given I have an empty board`() throws {
     }
     
-    private func `When I start a drag from A1`() throws {
-        let value = DragGesture.Value(time: Date(), location: CGPoint(x: 56, y: 301), startLocation: CGPoint(x: 56, y: 301), velocity: .zero)
-        try gesture().callOnChanged(value: value)
-        view.publisher.send()
+    private func `When I tap at A1`() async throws {
+        await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
     }
-    private func `And end the drag at A5`() throws {
-        let value = DragGesture.Value(time: Date(), location: CGPoint(x: 185, y: 301), startLocation: CGPoint(x: 185, y: 301), velocity: .zero)
-        try gesture().callOnEnded(value: value)
-        view.publisher.send()
+    private func `And then tap at A5`() async throws {
+        await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
     }
     
     private func `Then the cells A1 through A5 display 🚢`() throws {
@@ -76,7 +68,7 @@ extension `Feature: Ship Placement` {
         let columns = row.findAll(CellView.self)
         
         for col in 0 ..< 5 {
-            #expect(try columns[col].geometryReader().text().string() == "🚢")
+            #expect(try columns[col].text().string() == "🚢")
         }
     }
     
@@ -85,16 +77,7 @@ extension `Feature: Ship Placement` {
         #expect(try inspectedView.text().string().contains("Carrier(5)") == false)
     }
     
-    private func `Given I placed all my ships`(usingDrag: Bool) async throws {
-        if usingDrag {
-            try drag(from: CGPoint(x: 56, y: 301), to: CGPoint(x: 185, y: 301), in: view)
-            try drag(from: CGPoint(x: 248, y: 301), to: CGPoint(x: 248, y: 397), in: view)
-            try drag(from: CGPoint(x: 56, y: 365), to: CGPoint(x: 120, y: 365), in: view)
-            try drag(from: CGPoint(x: 312, y: 301), to: CGPoint(x: 312, y: 365), in: view)
-            try drag(from: CGPoint(x: 312, y: 461), to: CGPoint(x: 344, y: 461), in: view)
-        } else {
-            await completePlacement(on: viewModel)
-        }
+    private func `Given I placed all my ships`() async throws {
         
         #expect(viewModel.state == .awaitingConfirmation)
     }
