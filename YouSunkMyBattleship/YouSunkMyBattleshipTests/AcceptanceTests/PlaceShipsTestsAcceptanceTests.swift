@@ -33,15 +33,15 @@ import Combine
     }
     
     @Test func `Scenario: Player confirms being done with placing ships`() async throws {
-        try `Given I placed all my ships`(usingDrag: true)
+        try await `Given I placed all my ships`(usingDrag: true)
         try await `When I confirm placement`()
         try `Then the game shows my board is done`()
         try `And it shows the target board as well`()
         try `And it shows that there are 5 ships remaining to be destroyed`()
     }
     
-    @Test func `Scenario: Player wants to replace ships`() throws {
-        try `Given I placed all my ships`(usingDrag: false)
+    @Test func `Scenario: Player wants to replace ships`() async throws {
+        try await `Given I placed all my ships`(usingDrag: false)
         try `When I cancel placement`()
         try `Then I get a new empty board to place ships`()
     }
@@ -85,7 +85,7 @@ extension `Feature: Ship Placement` {
         #expect(try inspectedView.text().string().contains("Carrier(5)") == false)
     }
     
-    private func `Given I placed all my ships`(usingDrag: Bool) throws {
+    private func `Given I placed all my ships`(usingDrag: Bool) async throws {
         if usingDrag {
             try drag(from: CGPoint(x: 56, y: 301), to: CGPoint(x: 185, y: 301), in: view)
             try drag(from: CGPoint(x: 248, y: 301), to: CGPoint(x: 248, y: 397), in: view)
@@ -93,7 +93,7 @@ extension `Feature: Ship Placement` {
             try drag(from: CGPoint(x: 312, y: 301), to: CGPoint(x: 312, y: 365), in: view)
             try drag(from: CGPoint(x: 312, y: 461), to: CGPoint(x: 344, y: 461), in: view)
         } else {
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
         }
         
         #expect(viewModel.state == .awaitingConfirmation)

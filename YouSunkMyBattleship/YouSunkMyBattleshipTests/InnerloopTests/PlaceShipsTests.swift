@@ -55,63 +55,23 @@ import WSDataProvider
 
         @Test
         func
-            `given a drag already started, when a drag moves to  195,370 then the cells A5, B5 and C5 becomes a ship`()
+            `given a player already tapped at A5, when they tap at C5, then cells A5, B5 and C5 show 🚢`() async
         {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-
-            viewModel.startDrag(at: CGPoint(x: 195, y: 370))
-
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+            
             #expect(viewModel.cells[.player1]![0][4] == "🚢")
             #expect(viewModel.cells[.player1]![1][4] == "🚢")
             #expect(viewModel.cells[.player1]![2][4] == "🚢")
         }
 
-        @Test
-        func
-            `given a drag already started, when a end at 195,370 then the cells A5, B5 and C5 becomes a ship`()
-        {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
+        @Test func `given a ship placement has ended, a new one can be started`() async {
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
 
-            viewModel.endDrag(at: CGPoint(x: 195, y: 370))
-
-            #expect(viewModel.cells[.player1]![0][4] == "🚢")
-            #expect(viewModel.cells[.player1]![1][4] == "🚢")
-            #expect(viewModel.cells[.player1]![2][4] == "🚢")
-        }
-
-        @Test
-        func
-            `given a drag already started, when a drag is outside of an ocean tile, the cells remain ships`()
-        {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-            viewModel.startDrag(at: CGPoint(x: 195, y: 370))
-
-            viewModel.startDrag(at: CGPoint(x: 195, y: 389))
-
-            #expect(viewModel.cells[.player1]![0][4] == "🚢")
-            #expect(viewModel.cells[.player1]![1][4] == "🚢")
-            #expect(viewModel.cells[.player1]![2][4] == "🚢")
-        }
-
-        @Test
-        func
-            `given a drag already started, when a drag ends outside of the board, the drag is reset`()
-        {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 370))
-            viewModel.endDrag(at: CGPoint(x: 0, y: 0))
-
-            viewModel.startDrag(at: CGPoint(x: 312, y: 461))
-            viewModel.endDrag(at: CGPoint(x: 344, y: 461))
-
-            #expect(viewModel.cells[.player1]![5][8] == "🚢")
-            #expect(viewModel.cells[.player1]![5][9] == "🚢")
-        }
-
-        @Test func `given a drag has ended, a new drag can be started`() {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-            viewModel.endDrag(at: CGPoint(x: 195, y: 370))
-
-            viewModel.startDrag(at: CGPoint(x: 248, y: 461))
+            
+            await viewModel.tap(Coordinate("F7"), boardForPlayer: .player1)
 
             #expect(viewModel.cells[.player1]![0][4] == "🚢")
             #expect(viewModel.cells[.player1]![1][4] == "🚢")
@@ -119,17 +79,17 @@ import WSDataProvider
             #expect(viewModel.cells[.player1]![5][6] == "🚢")
         }
 
-        @Test func `when a valid ship has been placed, it is removed from the ships to place list`()
+        @Test func `when a valid ship has been placed, it is removed from the ships to place list`() async
         {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-            viewModel.endDrag(at: CGPoint(x: 195, y: 370))
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
 
             #expect(viewModel.shipsToPlace.contains("Cruiser(3)") == false)
         }
 
         @Test
-        func `when all ships have been placed, the viewmodel should signal to confirm placement`() {
-            completePlacement(on: viewModel)
+        func `when all ships have been placed, the viewmodel should signal to confirm placement`() async {
+            await completePlacement(on: viewModel)
 
             #expect(viewModel.state == .awaitingConfirmation)
         }
@@ -141,7 +101,7 @@ import WSDataProvider
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 
@@ -155,7 +115,7 @@ import WSDataProvider
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 
@@ -177,9 +137,9 @@ import WSDataProvider
 
         @Test
         func
-            `given all ships have been placed, when the player cancels placement, the board is reset`()
+            `given all ships have been placed, when the player cancels placement, the board is reset`() async
         {
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             viewModel.reset()
 
@@ -193,7 +153,7 @@ import WSDataProvider
             async throws
         {
             let viewModel = ClientViewModel(dataProvider: DummyDataProvider())
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 

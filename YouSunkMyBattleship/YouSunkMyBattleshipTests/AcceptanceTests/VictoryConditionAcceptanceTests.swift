@@ -22,7 +22,7 @@ import YouSunkMyBattleshipCommon
     
     init() async {
         viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: victoryState))
-        completePlacement(on: viewModel)
+        await completePlacement(on: viewModel)
         await viewModel.confirmPlacement()
         view = GameView(viewModel: viewModel)
     }

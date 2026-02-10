@@ -50,11 +50,11 @@ import YouSunkMyBattleshipCommon
 
     @MainActor
     @Suite struct ViewModelTests {
-        @Test func `the boards for both player are independent of eachother`() {
+        @Test func `the boards for both player are independent of eachother`() async {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
 
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
             
             #expect(viewModel.cells[.player1] != viewModel.cells[.player2])
         }

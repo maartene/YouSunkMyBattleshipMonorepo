@@ -69,8 +69,25 @@ final class ClientViewModel: GameViewModel {
     }
     
     private func tapToPlaceShip(at coordinate: Coordinate, player: Player) {
-        startShip = coordinate
-        endShip = coordinate
+        if let startShip {
+            endShip = coordinate
+            
+            let shipCoordinates = tryCreateShip(from: startShip, to: coordinate)
+            boardInProgress.placeShip(at: shipCoordinates)
+            updateShipsToPlace()
+            
+            if shipsToPlace.isEmpty {
+                state = .awaitingConfirmation
+            }
+            
+            self.startShip = nil
+            endShip = nil
+            
+        } else {
+            startShip = coordinate
+            endShip = coordinate
+
+        }
         
         cells[.player1] = cellsForPlayer()
     }

@@ -37,7 +37,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Sinking Detection` {
     func `Given the enemy has a Destroyer at I9-J9`() async throws {
-        completePlacement(on: viewModel)
+        await completePlacement(on: viewModel)
         await viewModel.confirmPlacement()
         
         while viewModel.state != .play {

@@ -111,17 +111,21 @@ func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGes
     return try inspectedView.grid(0).gesture(DragGesture.self)
 }
 
-func completePlacement(on viewModel: any GameViewModel) {
-//    viewModel.startDrag(at: CGPoint(x: 56, y: 301))
-//    viewModel.endDrag(at: CGPoint(x: 185, y: 301))
-//    viewModel.startDrag(at: CGPoint(x: 248, y: 301))
-//    viewModel.endDrag(at: CGPoint(x: 248, y: 397))
-//    viewModel.startDrag(at: CGPoint(x: 56, y: 365))
-//    viewModel.endDrag(at: CGPoint(x: 120, y: 365))
-//    viewModel.startDrag(at: CGPoint(x: 312, y: 301))
-//    viewModel.endDrag(at: CGPoint(x: 312, y: 365))
-//    viewModel.startDrag(at: CGPoint(x: 312, y: 461))
-//    viewModel.endDrag(at: CGPoint(x: 344, y: 461))
+func completePlacement(on viewModel: any GameViewModel) async {
+    await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+    
+    await viewModel.tap(Coordinate("B2"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("E2"), boardForPlayer: .player1)
+    
+    await viewModel.tap(Coordinate("C3"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+    
+    await viewModel.tap(Coordinate("G8"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("I8"), boardForPlayer: .player1)
+    
+    await viewModel.tap(Coordinate("F6"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("F7"), boardForPlayer: .player1)
 }
 
 func getPlayerBoard(from view: GameView) throws -> InspectableView<ViewType.View<GameBoardView>> {
