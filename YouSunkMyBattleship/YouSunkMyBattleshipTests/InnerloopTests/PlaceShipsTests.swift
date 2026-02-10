@@ -31,7 +31,9 @@ import WSDataProvider
             
             try randomCell.text().callOnTapGesture()
             
-            while viewModelSpy.tapWasCalledWithCoordinate(try randomCell.actualView().coordinate, for: .player2) == false {
+            while viewModelSpy.tapWasCalledWithCoordinate(
+                try randomCell.actualView().coordinate,
+                for: try randomCell.actualView().owner) == false {
                 try await Task.sleep(nanoseconds: 1000)
             }
         }
@@ -45,8 +47,8 @@ import WSDataProvider
             viewModel = ClientViewModel(dataProvider: DummyDataProvider())
         }
 
-        @Test func `when a drag starts at 195,301 then the cell at A5 becomes a ship`() {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
+        @Test func `when a player taps cell at A5, it becomes a ship`() async {
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
 
             #expect(viewModel.cells[.player1]![0][4] == "🚢")
         }

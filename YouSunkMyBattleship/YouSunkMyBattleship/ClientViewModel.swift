@@ -69,7 +69,10 @@ final class ClientViewModel: GameViewModel {
     }
     
     private func tapToPlaceShip(at coordinate: Coordinate, player: Player) {
+        startShip = coordinate
+        endShip = coordinate
         
+        cells[.player1] = cellsForPlayer()
     }
     
     private func tapToFire(at coordinate: Coordinate, player: Player) async {
