@@ -46,7 +46,6 @@ extension `Feature: Firing Shots` {
         viewModel = ClientViewModel(dataProvider: dataProvider)
         view = GameView(viewModel: viewModel)
         
-        addViewsToViewModel(viewModel)
         completePlacement(on: viewModel)
         await viewModel.confirmPlacement()
         

@@ -24,11 +24,11 @@ struct GameView: View {
     var body: some View {
         VStack(spacing: 12) {
             GameStateView(viewModel: viewModel)
-            GameBoardView(viewModel: viewModel, owner: .player1, isDraggable: true)
+            GameBoardView(viewModel: viewModel, owner: .player1)
                 .padding()
                 .border(Color.green, width: 4)
             if viewModel.state == .play || viewModel.state == .finished {
-                GameBoardView(viewModel: viewModel, owner: .player2, isDraggable: false)
+                GameBoardView(viewModel: viewModel, owner: .player2)
                     .padding()
                     .border(Color.red, width: 4)
                     .transition(

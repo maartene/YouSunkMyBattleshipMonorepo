@@ -11,7 +11,6 @@ import YouSunkMyBattleshipCommon
 struct GameBoardView: View {
     let viewModel: any GameViewModel
     let owner: Player
-    let isDraggable: Bool
     let columnLabels = {
         Board.columns.map { String($0) }
     }()
@@ -29,18 +28,10 @@ struct GameBoardView: View {
                 GridRow(alignment: .bottom) {
                     BoardRowView(
                         viewModel: viewModel, columns: row.element, rowIndex: row.offset,
-                        owner: owner, isDraggable: isDraggable)
+                        owner: owner)
                 }
             }
-        }.gesture(
-            DragGesture(minimumDistance: 0, coordinateSpace: .global)
-                .onChanged { dragData in
-                    viewModel.startDrag(at: dragData.location)
-                }
-                .onEnded {
-                    viewModel.endDrag(at: $0.location)
-                }
-        )
+        }
     }
 }
 
@@ -49,7 +40,6 @@ struct BoardRowView: View {
     let columns: [String]
     let rowIndex: Int
     let owner: Player
-    let isDraggable: Bool
 
     var body: some View {
         Text(Board.rows[rowIndex])
@@ -57,7 +47,7 @@ struct BoardRowView: View {
         ForEach(columns.enumerated(), id: \.offset) { cell in
             CellView(
                 content: cell.element, coordinate: Coordinate(x: cell.offset, y: rowIndex),
-                owner: owner, isDraggable: isDraggable, viewModel: viewModel)
+                owner: owner, viewModel: viewModel)
         }
     }
 }
@@ -67,29 +57,20 @@ struct CellView: View {
     let viewModel: GameViewModel?
     let coordinate: Coordinate
     let owner: Player
-    let isDraggable: Bool
 
     init(
-        content: String, coordinate: Coordinate, owner: Player, isDraggable: Bool,
+        content: String, coordinate: Coordinate, owner: Player,
         viewModel: GameViewModel? = nil
     ) {
         self.content = content
         self.coordinate = coordinate
         self.owner = owner
         self.viewModel = viewModel
-        self.isDraggable = isDraggable
     }
 
     var body: some View {
         GeometryReader { reader in
             Text(content)
-                .onAppear {
-                    if isDraggable {
-                        viewModel?.addCell(
-                            coordinate: coordinate, rectangle: reader.frame(in: .global),
-                            player: owner)
-                    }
-                }
                 .onTapGesture {
                     Task {
                         await viewModel?.tap(coordinate, boardForPlayer: owner)

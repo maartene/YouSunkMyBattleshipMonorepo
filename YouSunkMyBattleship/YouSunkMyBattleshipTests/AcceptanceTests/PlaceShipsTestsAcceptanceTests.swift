@@ -56,8 +56,8 @@ extension `Feature: Ship Placement` {
     }
 
     private func `Given I have an empty board`() throws {
-        addViewsToViewModel(viewModel)
     }
+    
     private func `When I start a drag from A1`() throws {
         let value = DragGesture.Value(time: Date(), location: CGPoint(x: 56, y: 301), startLocation: CGPoint(x: 56, y: 301), velocity: .zero)
         try gesture().callOnChanged(value: value)
@@ -86,7 +86,6 @@ extension `Feature: Ship Placement` {
     }
     
     private func `Given I placed all my ships`(usingDrag: Bool) throws {
-        addViewsToViewModel(viewModel)
         if usingDrag {
             try drag(from: CGPoint(x: 56, y: 301), to: CGPoint(x: 185, y: 301), in: view)
             try drag(from: CGPoint(x: 248, y: 301), to: CGPoint(x: 248, y: 397), in: view)

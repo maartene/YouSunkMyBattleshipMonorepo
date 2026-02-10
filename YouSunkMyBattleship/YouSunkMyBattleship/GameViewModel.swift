@@ -11,9 +11,6 @@ import YouSunkMyBattleshipCommon
 
 // MARK: ViewModel protocol (PORT)
 protocol GameViewModel {
-    func startDrag(at location: CGPoint)
-    func endDrag(at location: CGPoint)
-    func addCell(coordinate: Coordinate, rectangle: CGRect, player: Player)
     func confirmPlacement() async
     func reset()
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async

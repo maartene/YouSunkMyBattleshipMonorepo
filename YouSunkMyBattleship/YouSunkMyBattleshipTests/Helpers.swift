@@ -112,16 +112,16 @@ func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGes
 }
 
 func completePlacement(on viewModel: any GameViewModel) {
-    viewModel.startDrag(at: CGPoint(x: 56, y: 301))
-    viewModel.endDrag(at: CGPoint(x: 185, y: 301))
-    viewModel.startDrag(at: CGPoint(x: 248, y: 301))
-    viewModel.endDrag(at: CGPoint(x: 248, y: 397))
-    viewModel.startDrag(at: CGPoint(x: 56, y: 365))
-    viewModel.endDrag(at: CGPoint(x: 120, y: 365))
-    viewModel.startDrag(at: CGPoint(x: 312, y: 301))
-    viewModel.endDrag(at: CGPoint(x: 312, y: 365))
-    viewModel.startDrag(at: CGPoint(x: 312, y: 461))
-    viewModel.endDrag(at: CGPoint(x: 344, y: 461))
+//    viewModel.startDrag(at: CGPoint(x: 56, y: 301))
+//    viewModel.endDrag(at: CGPoint(x: 185, y: 301))
+//    viewModel.startDrag(at: CGPoint(x: 248, y: 301))
+//    viewModel.endDrag(at: CGPoint(x: 248, y: 397))
+//    viewModel.startDrag(at: CGPoint(x: 56, y: 365))
+//    viewModel.endDrag(at: CGPoint(x: 120, y: 365))
+//    viewModel.startDrag(at: CGPoint(x: 312, y: 301))
+//    viewModel.endDrag(at: CGPoint(x: 312, y: 365))
+//    viewModel.startDrag(at: CGPoint(x: 312, y: 461))
+//    viewModel.endDrag(at: CGPoint(x: 344, y: 461))
 }
 
 func getPlayerBoard(from view: GameView) throws -> InspectableView<ViewType.View<GameBoardView>> {

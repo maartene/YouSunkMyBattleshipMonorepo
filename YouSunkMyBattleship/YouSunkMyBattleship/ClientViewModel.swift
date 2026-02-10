@@ -25,9 +25,8 @@ final class ClientViewModel: GameViewModel {
         let coordinate: Coordinate
     }
     
-    private var cellsLocationMap: [PlayerCoordinate: CGRect] = [:]
-    private var startDragPosition: Coordinate?
-    private var endDragPosition: Coordinate?
+    private var startShip: Coordinate?
+    private var endShip: Coordinate?
     private var boardInProgress = Board()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
@@ -40,57 +39,6 @@ final class ClientViewModel: GameViewModel {
     }
     
     // MARK: Commands
-    func startDrag(at location: CGPoint) {
-        guard state == .placingShips else {
-            return
-        }
-        
-        guard let coordinate = cellForLocation(location) else {
-            return
-        }
-        
-        if startDragPosition == nil {
-            startDragPosition = coordinate
-            endDragPosition = coordinate
-        } else {
-            endDragPosition = coordinate
-        }
-        
-        cells[.player1] = cellsForPlayer()
-    }
-    
-    func endDrag(at location: CGPoint) {
-        guard state == .placingShips else {
-            return
-        }
-        
-        guard let coordinate = cellForLocation(location) else {
-            startDragPosition = nil
-            endDragPosition = nil
-            return
-        }
-        
-        if let startDragPosition {
-            let shipCoordinates = tryCreateShip(from: startDragPosition, to: coordinate)
-            boardInProgress.placeShip(at: shipCoordinates)
-            
-            updateShipsToPlace()
-        }
-        
-        startDragPosition = nil
-        
-        if boardInProgress.shipsToPlace.isEmpty {
-            state = .awaitingConfirmation
-        }
-        
-        cells[.player1] = cellsForPlayer()
-    }
-    
-    func addCell(coordinate: Coordinate, rectangle: CGRect, player: Player) {
-        print("Adding cell: \(coordinate), to \(ObjectIdentifier(self))")
-        cellsLocationMap[PlayerCoordinate(player: player, coordinate: coordinate)] = rectangle
-    }
-    
     func confirmPlacement() async {
         do {
             dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
@@ -110,7 +58,22 @@ final class ClientViewModel: GameViewModel {
     }
     
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
-        guard boardForPlayer != owner else {
+        switch state {
+        case .placingShips:
+            tapToPlaceShip(at: coordinate, player: boardForPlayer)
+        case .play:
+            await tapToFire(at: coordinate, player: boardForPlayer)
+        default:
+            break
+        }
+    }
+    
+    private func tapToPlaceShip(at coordinate: Coordinate, player: Player) {
+        
+    }
+    
+    private func tapToFire(at coordinate: Coordinate, player: Player) async {
+        guard player != owner else {
             return
         }
         
@@ -140,27 +103,12 @@ final class ClientViewModel: GameViewModel {
         }
     }
     
-    private func cellForLocation(_ location: CGPoint) -> Coordinate? {
-        cellsLocationMap.filter { entry in
-            entry.value.contains(location)
-        }
-        .first?.key.coordinate
-    }
-    
     private func tryCreateShip(from startCoordinate: Coordinate, to endCoordinate: Coordinate) -> [Coordinate] {
         if startCoordinate.x == endCoordinate.x || startCoordinate.y == endCoordinate.y {
             return Coordinate.makeSquare(startCoordinate, endCoordinate)
         }
         
         return []
-    }
-    
-    private var boardBoundingBox: CGRect {
-        let minX = cellsLocationMap.values.map { $0.minX }.min() ?? 0
-        let minY = cellsLocationMap.values.map { $0.minY }.min() ?? 0
-        let maxX = cellsLocationMap.values.map { $0.maxX }.max() ?? 0
-        let maxY = cellsLocationMap.values.map { $0.maxY }.max() ?? 0
-        return CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
     }
     
     private func updateShipsToPlace() {
@@ -189,8 +137,8 @@ final class ClientViewModel: GameViewModel {
     }
 
     private func postProcessDraggingShip(cells: inout [[String]]) {
-        if let startDragPosition, let endDragPosition {
-            tryCreateShip(from: startDragPosition, to: endDragPosition).forEach {
+        if let startShip, let endShip {
+            tryCreateShip(from: startShip, to: endShip).forEach {
                 coordinate in
                 cells[coordinate.y][coordinate.x] = "🚢"
             }

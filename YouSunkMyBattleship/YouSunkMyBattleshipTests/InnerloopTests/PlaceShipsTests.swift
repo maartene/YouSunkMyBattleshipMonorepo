@@ -23,69 +23,9 @@ import WSDataProvider
         init() {
             self.view = GameView(viewModel: viewModelSpy)
         }
-
-        @Test func `when a drag starts, the viewmodel is notified`() throws {
-            // Send gesture
-            let value = DragGesture.Value(
-                time: Date(), location: CGPoint(x: 70, y: 300),
-                startLocation: CGPoint(x: 70, y: 300), velocity: .zero)
-            try gesture(view: view).callOnChanged(value: value)
-            view.publisher.send()
-
-            #expect(viewModelSpy.startDragWasCalled(with: CGPoint(x: 70, y: 300)))
-        }
-
-        @Test func `when a drag ends, the viewmodel is notified`() throws {
-            let value = DragGesture.Value(
-                time: Date(), location: CGPoint(x: 200, y: 300),
-                startLocation: CGPoint(x: 200, y: 300), velocity: .zero)
-            try gesture(view: view).callOnEnded(value: value)
-            view.publisher.send()
-
-            #expect(viewModelSpy.endDragWasCalled(with: CGPoint(x: 200, y: 300)))
-        }
-
-        @Test func `only the player board is draggable`() throws {
-            let viewModelSpy = ViewModelSpy(state: .play)
-            let view = GameView(viewModel: viewModelSpy)
-            
-            let playerBoard = try getPlayerBoard(from: view)
-            let opponentBoard = try getEnemyBoard(from: view)
-
-            #expect(try playerBoard.actualView().isDraggable == true)
-            #expect(try opponentBoard.actualView().isDraggable == false)
-        }
-
-        @Test func `the player board triggers adding views to viewmodel`() throws {
-            let viewModelSpy = ViewModelSpy(state: .play)
-            let view = GameView(viewModel: viewModelSpy)
-            
-            let playerBoard = try getPlayerBoard(from: view)
-
-            let cells = playerBoard.findAll(CellView.self)
-
-            try cells.randomElement()!
-                .geometryReader()
-                .text()
-                .callOnAppear()
-            
-            #expect(viewModelSpy.addCellWasCalled)
-        }
         
-        @Test func `the target board does not trigger adding views to viewmodel`() throws {
-            let viewModelSpy = ViewModelSpy(state: .play)
-            let view = GameView(viewModel: viewModelSpy)
-            
-            let enemyBoard = try getEnemyBoard(from: view)
-
-            let cells = enemyBoard.findAll(CellView.self)
-
-            try cells.randomElement()!
-                .geometryReader()
-                .text()
-                .callOnAppear()
-            
-            #expect(viewModelSpy.addCellWasCalled == false)
+        @Test func `when a cell is tapped, the viewmodel is notified`() {
+            notImplemented()
         }
     }
 
@@ -95,7 +35,6 @@ import WSDataProvider
 
         init() {
             viewModel = ClientViewModel(dataProvider: DummyDataProvider())
-            addViewsToViewModel(viewModel)
         }
 
         @Test func `when a drag starts at 195,301 then the cell at A5 becomes a ship`() {
@@ -192,7 +131,6 @@ import WSDataProvider
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
@@ -207,7 +145,6 @@ import WSDataProvider
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
@@ -246,7 +183,6 @@ import WSDataProvider
             async throws
         {
             let viewModel = ClientViewModel(dataProvider: DummyDataProvider())
-            addViewsToViewModel(viewModel)
             completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
@@ -414,4 +350,9 @@ import WSDataProvider
             #expect(board.shipsToPlace.isEmpty)
         }
     }
+}
+
+extension GameViewModel {
+    func startDrag(at point: CGPoint) { }
+    func endDrag(at point: CGPoint) { }
 }
