@@ -11,8 +11,10 @@ import Foundation
 
 #if targetEnvironment(simulator)
 let wsURL = URL(string: "ws://localhost:8080/game")!
+let httpURL = URL(string: "http://localhost:8080/games")!
 #else
 let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game")!
+let httpURL = URL(string: "https://service-ykxo8.ondigitalocean.app/games")!
 #endif
 
 @main

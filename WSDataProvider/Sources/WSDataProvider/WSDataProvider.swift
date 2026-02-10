@@ -5,6 +5,7 @@ public protocol DataProvider {
     func wsSend(data: Data) async throws
     func wsSyncSend(data: Data)
     func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void)
+    func syncGet(url: URL) throws -> Data?
 }
 
 public struct DummyDataProvider: DataProvider {
@@ -12,6 +13,7 @@ public struct DummyDataProvider: DataProvider {
     public func wsSyncSend(data: Data) {}
     public func wsSend(data: Data) async throws {}
     public func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) { }
+    public func syncGet(url: URL) throws -> Data? { nil }
 }
 
 
@@ -34,8 +36,8 @@ public final class URLSessionDataProvider: DataProvider {
         }
     }
     
-    public func register(onReceive: @escaping (Data) -> Void) {
-        self.onReceive = onReceive
+    public func syncGet(url: URL) throws -> Data? {
+        nil
     }
         
     public func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {

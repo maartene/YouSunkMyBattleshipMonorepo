@@ -94,6 +94,19 @@ final class ViewModelSpy: GameViewModel {
     let numberOfShipsToBeDestroyed = 0
 }
 
+struct DummyGameViewModel: GameViewModel {
+    func confirmPlacement() async { }
+    func reset() { }
+    func tap(_ coordinate: Coordinate, boardForPlayer: Player) async { }
+    func load(_ gameID: String) { }
+    let shipsToPlace = [String]()
+    let state: GameViewModelState = .placingShips
+    let lastMessage: String = ""
+    let numberOfShipsToBeDestroyed = 5
+    let cells: [Player : [[String]]] = [:]
+    let currentPlayer = Player.player1
+}
+
 // MARK: Helper functions
 func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGesture>> {
     let inspectedView = try view.inspect().find(GameBoardView.self)
@@ -169,6 +182,7 @@ func almostSinkAllShips(on viewModel: GameViewModel) async {
 final class DataProviderSpy: DataProvider {
     private var receivedData: [Data] = []
     private var onReceive: ((Data) -> Void)?
+    private var getCalls = [URL]()
     
     func triggerOnReceiveWith(_ data: Data) {
         onReceive?(data)
@@ -196,6 +210,16 @@ final class DataProviderSpy: DataProvider {
     func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
         self.onReceive = onReceive
     }
+    
+    func syncGet(url: URL) throws -> Data? {
+        getCalls.append(url)
+        
+        return nil
+    }
+    
+    func getWasCalled(with url: URL) -> Bool {
+        getCalls.contains(url)
+    }
 }
 
 final class MockDataProvider: DataProvider {
@@ -216,5 +240,9 @@ final class MockDataProvider: DataProvider {
     
     func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
         self.onReceive = onReceive
+    }
+    
+    func syncGet(url: URL) throws -> Data? {
+        nil
     }
 }

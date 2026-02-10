@@ -28,6 +28,16 @@ import YouSunkMyBattleshipCommon
             _ = try inspectedView.find(text: "game3")
         }
         
+        @Test func `the view tries to load a list of games that are in progress`() throws {
+            let dataProvider = DataProviderSpy()
+            let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
+            let inspectedView = try view.inspect()
+            
+            try inspectedView.vStack().callOnAppear()
+            
+            #expect(dataProvider.getWasCalled(with: URL(string: "http://localhost:8080/games")!))
+        }
+        
         @Test func `when clicking on a game, the game to load is passed in`() async throws {
             let inspectedView = try view.inspect()
             let link = try inspectedView.find(navigationLink: "game2")

@@ -9,10 +9,7 @@ import SwiftUI
 import WSDataProvider
 
 struct MainMenuView: View {
-    let games = [
-        "game1",
-        "game2",
-        "game3",
+    @State var games: [String] = [
     ]
     
     let dataProvider: DataProvider
@@ -35,6 +32,24 @@ struct MainMenuView: View {
                     GameView(viewModel: gameViewModel, gameID: nil)
                 }
                 .navigationTitle("Main Menu")
+            }
+        }
+        .onAppear() {
+            self.games = [
+            "game1",
+            "game2",
+            "game3",
+            ]
+            
+            do {
+                guard let data = try dataProvider.syncGet(url: httpURL) else {
+                    NSLog("Did not receive a response")
+                    return
+                }
+                let games = try JSONDecoder().decode([String].self, from: data)
+                
+            } catch {
+                NSLog("Failed to load games: \(error)")
             }
         }
     }
