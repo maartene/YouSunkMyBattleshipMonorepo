@@ -69,17 +69,15 @@ struct CellView: View {
     }
 
     var body: some View {
-        GeometryReader { reader in
-            Text(content)
-                .onTapGesture {
-                    Task {
-                        await viewModel?.tap(coordinate, boardForPlayer: owner)
-                    }
+        Text(content)
+            .onTapGesture {
+                Task {
+                    await viewModel?.tap(coordinate, boardForPlayer: owner)
                 }
-                .animation(.easeInOut(duration: 0.18), value: content)
-                .transition(.scale.combined(with: .opacity))
-        }
-        .font(.system(size: 28))
-        .frame(width: 28, height: 28)
+            }
+            .animation(.easeInOut(duration: 0.18), value: content)
+            .transition(.scale.combined(with: .opacity))
+            .font(.system(size: 28))
+            .frame(width: 28, height: 28)
     }
 }

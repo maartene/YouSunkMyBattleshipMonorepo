@@ -24,8 +24,16 @@ import WSDataProvider
             self.view = GameView(viewModel: viewModelSpy)
         }
         
-        @Test func `when a cell is tapped, the viewmodel is notified`() {
-            notImplemented()
+        @Test func `when a cell is tapped, the viewmodel is notified`() async throws {
+            let inspectedView = try view.inspect()
+            let cells = inspectedView.findAll(CellView.self)
+            let randomCell = try #require(cells.randomElement())
+            
+            try randomCell.text().callOnTapGesture()
+            
+            while viewModelSpy.tapWasCalledWithCoordinate(try randomCell.actualView().coordinate, for: .player2) == false {
+                try await Task.sleep(nanoseconds: 1000)
+            }
         }
     }
 
