@@ -16,12 +16,17 @@ struct MainMenuView: View {
     ]
     
     let dataProvider: DataProvider
-    
+    let gameViewModel: GameViewModel
     @State var shouldShowBoard = false
+    
+    init(dataProvider: DataProvider, gameViewModel: GameViewModel) {
+        self.dataProvider = dataProvider
+        self.gameViewModel = gameViewModel
+    }
     
     var body: some View {
         if shouldShowBoard {
-            GameView(viewModel: ClientViewModel(dataProvider: dataProvider), gameID: nil)
+            GameView(viewModel: gameViewModel, gameID: nil)
         } else {
             Button("New game") {
                 shouldShowBoard = true
@@ -31,5 +36,5 @@ struct MainMenuView: View {
 }
 
 #Preview {
-    MainMenuView(dataProvider: DummyDataProvider())
+    MainMenuView(dataProvider: DummyDataProvider(), gameViewModel: ClientViewModel(dataProvider: DummyDataProvider()))
 }

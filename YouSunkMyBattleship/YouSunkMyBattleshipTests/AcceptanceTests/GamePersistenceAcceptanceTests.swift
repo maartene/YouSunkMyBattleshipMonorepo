@@ -22,7 +22,7 @@ import WSDataProvider
     let view: MainMenuView
     
     init() {
-        view = MainMenuView(dataProvider: dataProvider)
+        view = MainMenuView(dataProvider: dataProvider, gameViewModel: ClientViewModel(dataProvider: dataProvider))
     }
     
     @Test func `Scenario: Player saves and resumes game`() async throws {

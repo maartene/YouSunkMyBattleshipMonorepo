@@ -18,14 +18,16 @@ let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game")!
 @main
 struct YouSunkMyBattleshipApp: App {
     let dataProvider: DataProvider
+    let gameViewModel: GameViewModel
     
     init() {
         dataProvider = URLSessionDataProvider()
+        gameViewModel = ClientViewModel(dataProvider: dataProvider)
     }
 
     var body: some Scene {
         WindowGroup {
-            MainMenuView(dataProvider: dataProvider)
+            MainMenuView(dataProvider: dataProvider, gameViewModel: gameViewModel)
         }
     }
 }

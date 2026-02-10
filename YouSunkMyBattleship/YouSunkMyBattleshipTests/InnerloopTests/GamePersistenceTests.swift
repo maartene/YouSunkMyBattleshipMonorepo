@@ -18,7 +18,7 @@ import YouSunkMyBattleshipCommon
         let view: MainMenuView
         
         init() {
-            view = MainMenuView(dataProvider: dataProvider)
+            view = MainMenuView(dataProvider: dataProvider, gameViewModel: ClientViewModel(dataProvider: dataProvider))
         }
         
         @Test func `the view shows a list of all games that are in progress`() throws {
