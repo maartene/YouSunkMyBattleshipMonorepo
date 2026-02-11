@@ -37,7 +37,7 @@ public final class URLSessionDataProvider: DataProvider {
     }
     
     public func syncGet(url: URL) throws -> Data? {
-        nil
+        try Data(contentsOf: url)
     }
         
     public func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {

@@ -42,4 +42,15 @@ import Foundation
 
         #expect(receivedStrings.contains("Mirroring: Hello, World!"))
     }
+    
+    @Test func `can perform a GET request synchronously`() throws {
+        struct TestData: Decodable, Equatable {
+            let name: String
+            let count: Int
+        }
+        let data = try #require(try dataProvider.syncGet(url: URL(string: "http://localhost:8080/hello")!))
+        let receivedData = try JSONDecoder().decode(TestData.self, from: data)
+        
+        #expect(receivedData == TestData(name: "a test", count: 42))
+    }
 }
