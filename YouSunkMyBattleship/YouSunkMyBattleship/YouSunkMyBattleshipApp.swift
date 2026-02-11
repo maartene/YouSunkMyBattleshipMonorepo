@@ -21,15 +21,20 @@ let httpURL = URL(string: "https://service-ykxo8.ondigitalocean.app/games")!
 struct YouSunkMyBattleshipApp: App {
     let dataProvider: DataProvider
     let gameViewModel: GameViewModel
+    let mainMenuViewModel: ClientMainMenuViewModel
     
     init() {
         dataProvider = URLSessionDataProvider()
         gameViewModel = ClientViewModel(dataProvider: dataProvider)
+        mainMenuViewModel = ClientMainMenuViewModel(dataProvider: dataProvider)
     }
 
     var body: some Scene {
         WindowGroup {
-            MainMenuView(dataProvider: dataProvider, gameViewModel: gameViewModel)
+            MainMenuView(
+                mainMenuViewModel: mainMenuViewModel,
+                gameViewModel: gameViewModel
+            )
         }
     }
 }

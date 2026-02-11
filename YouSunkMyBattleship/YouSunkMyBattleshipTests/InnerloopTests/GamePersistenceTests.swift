@@ -18,7 +18,9 @@ import YouSunkMyBattleshipCommon
         let view: MainMenuView
         
         init() {
-            view = MainMenuView(dataProvider: dataProvider, gameViewModel: ClientViewModel(dataProvider: dataProvider))
+            view = MainMenuView(
+                mainMenuViewModel: ClientMainMenuViewModel(dataProvider: dataProvider),
+                gameViewModel: ClientViewModel(dataProvider: dataProvider))
         }
         
         @Test func `the view shows a list of all games that are in progress`() async throws {
@@ -31,7 +33,10 @@ import YouSunkMyBattleshipCommon
         
         @Test func `the view tries to load a list of games that are in progress`() throws {
             let dataProvider = DataProviderSpy()
-            _ = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
+            _ = MainMenuView(
+                mainMenuViewModel: ClientMainMenuViewModel(dataProvider: dataProvider),
+                gameViewModel: DummyGameViewModel()
+            )
             
             #expect(dataProvider.getWasCalled(with: URL(string: "http://localhost:8080/games")!))
         }
@@ -57,16 +62,21 @@ import YouSunkMyBattleshipCommon
         
         @Test func `when no games can be loaded, display message to try again`() async throws {
             let dataProvider = ThrowingDataProvider()
-            let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
+            let view = MainMenuView(
+                mainMenuViewModel: ClientMainMenuViewModel(dataProvider: dataProvider),
+                gameViewModel: DummyGameViewModel()
+            )
             let inspectedView = try view.inspect()
             
             _ = try inspectedView.find(text: "Could not retrieve games. Try again")
         }
         
         @Test func `when main menu is pulled, it tries to reload games`() async throws {
-            let dataProvider = DataProviderSpy()
             let mainMenuViewModel = MainMenuViewModelSpy()
-            let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel(), mainMenuViewModel: mainMenuViewModel)
+            let view = MainMenuView(
+                mainMenuViewModel: mainMenuViewModel,
+                gameViewModel: DummyGameViewModel()
+            )
             let inspectedView = try view.inspect()
             
             let button = try inspectedView.find(button: "Could not retrieve games. Try again")

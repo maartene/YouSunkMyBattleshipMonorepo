@@ -9,17 +9,13 @@ import SwiftUI
 import WSDataProvider
 
 struct MainMenuView: View {
-    let dataProvider: DataProvider
     let gameViewModel: GameViewModel
-    
-    @State private var shouldShowRefreshMessage = false
     
     let mainMenuViewModel: MainMenuViewModel
     
-    init(dataProvider: DataProvider, gameViewModel: GameViewModel, mainMenuViewModel: MainMenuViewModel? = nil) {
-        self.dataProvider = dataProvider
+    init(mainMenuViewModel: MainMenuViewModel, gameViewModel: GameViewModel, ) {
         self.gameViewModel = gameViewModel
-        self.mainMenuViewModel = mainMenuViewModel ?? ClientMainMenuViewModel(dataProvider: dataProvider)
+        self.mainMenuViewModel = mainMenuViewModel
     }
     
     var body: some View {
@@ -46,7 +42,10 @@ struct MainMenuView: View {
 }
 
 #Preview {
-    MainMenuView(dataProvider: DummyDataProvider(), gameViewModel: ClientViewModel(dataProvider: DummyDataProvider()))
+    MainMenuView(
+        mainMenuViewModel: ClientMainMenuViewModel(dataProvider: DummyDataProvider()),
+        gameViewModel: ClientViewModel(dataProvider: DummyDataProvider())
+    )
 }
 
 protocol MainMenuViewModel {
