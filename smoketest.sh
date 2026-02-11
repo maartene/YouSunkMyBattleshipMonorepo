@@ -19,6 +19,8 @@ if [ -z "$COMPOSE_CMD" ]; then
 fi
 
 echo "Using compose command: $COMPOSE_CMD"
+echo "Enabling BuildKit for better performance"
+DOCKER_BUILDKIT=1
 echo "Starting containers"
 eval "$COMPOSE_CMD up -d --build"
 sleep 1s

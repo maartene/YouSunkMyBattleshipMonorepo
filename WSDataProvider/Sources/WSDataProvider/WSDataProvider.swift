@@ -2,34 +2,54 @@ import Foundation
 
 @MainActor
 public protocol DataProvider {
-    func send(data: Data) async throws
-    func register(onReceive: @escaping (Data) -> Void)
+    func wsSend(data: Data) async throws
+    func wsSyncSend(data: Data)
+    func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void)
+    func syncGet(url: URL) throws -> Data?
 }
 
+public struct DummyDataProvider: DataProvider {
+    public init() { }
+    public func wsSyncSend(data: Data) {}
+    public func wsSend(data: Data) async throws {}
+    public func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) { }
+    public func syncGet(url: URL) throws -> Data? { nil }
+}
+
+
 @MainActor
-public final class WSDataProvider: DataProvider {
-    private let task: URLSessionWebSocketTask
+public final class URLSessionDataProvider: DataProvider {
+    private var task: URLSessionWebSocketTask?
     private var receiveTask: Task<Void, Never>?
     private var onReceive: ((Data) -> Void)?
     
-    public func send(data: Data) async throws {
+    public init() { }
+    
+    public func wsSend(data: Data) async throws {
         let message = URLSessionWebSocketTask.Message.data(data)
-        try await task.send(message)
+        try await task?.send(message)
     }
     
-    public func register(onReceive: @escaping (Data) -> Void) {
-        self.onReceive = onReceive
+    public func wsSyncSend(data: Data) {
+        let message = URLSessionWebSocketTask.Message.data(data)
+        task?.send(message) { _ in
+        }
+    }
+    
+    public func syncGet(url: URL) throws -> Data? {
+        try Data(contentsOf: url)
     }
         
-    public init(url: URL) {
+    public func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
         task = URLSession.shared.webSocketTask(with: url)
-        task.resume()
+        self.onReceive = onReceive
+        task?.resume()
         startReceiveLoop()
     }
 
     deinit {
         receiveTask?.cancel()
-        task.cancel(with: .normalClosure, reason: nil)
+        task?.cancel(with: .normalClosure, reason: nil)
     }
     
     private func startReceiveLoop() {
@@ -46,7 +66,7 @@ public final class WSDataProvider: DataProvider {
     }
         
     private func receive() async throws {
-        let message = try await task.receive()
+        let message = try await task?.receive()
         switch message {
         case .data(let data):
             self.onReceive?(data)

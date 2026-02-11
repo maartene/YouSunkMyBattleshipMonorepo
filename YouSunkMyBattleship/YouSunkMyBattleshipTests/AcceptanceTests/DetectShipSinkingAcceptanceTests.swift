@@ -37,8 +37,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Sinking Detection` {
     func `Given the enemy has a Destroyer at I9-J9`() async throws {
-        addViewsToViewModel(viewModel)
-        completePlacement(on: viewModel)
+        await completePlacement(on: viewModel)
         await viewModel.confirmPlacement()
         
         while viewModel.state != .play {
@@ -61,7 +60,7 @@ extension `Feature: Ship Sinking Detection` {
             let row = rows[rowIndex]
             let columns = row.findAll(CellView.self)
             
-            #expect(try columns[8].geometryReader().text().string() == "🔥")
+            #expect(try columns[8].text().string() == "🔥")
         }
     }
     

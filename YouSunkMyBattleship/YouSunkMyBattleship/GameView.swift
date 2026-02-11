@@ -11,17 +11,24 @@ import WSDataProvider
 import YouSunkMyBattleshipCommon
 
 struct GameView: View {
-    let viewModel: any ViewModel
+    let viewModel: any GameViewModel
+    let gameID: String?
+    
     internal let publisher = PassthroughSubject<Void, Never>()
 
+    init(viewModel: any GameViewModel, gameID: String? = nil) {
+        self.viewModel = viewModel
+        self.gameID = gameID
+    }
+    
     var body: some View {
         VStack(spacing: 12) {
             GameStateView(viewModel: viewModel)
-            GameBoardView(viewModel: viewModel, owner: .player1, isDraggable: true)
+            GameBoardView(viewModel: viewModel, owner: .player1)
                 .padding()
                 .border(Color.green, width: 4)
             if viewModel.state == .play || viewModel.state == .finished {
-                GameBoardView(viewModel: viewModel, owner: .player2, isDraggable: false)
+                GameBoardView(viewModel: viewModel, owner: .player2)
                     .padding()
                     .border(Color.red, width: 4)
                     .transition(
@@ -31,14 +38,16 @@ struct GameView: View {
             }
         }
         .animation(.easeInOut(duration: 0.35), value: viewModel.state)
+        .onAppear() {
+            if let gameID {
+                viewModel.load(gameID)
+            } else {
+                viewModel.reset()
+            }
+        }
     }
 }
 
 #Preview {
     GameView(viewModel: ClientViewModel(dataProvider: DummyDataProvider()))
-}
-
-struct DummyDataProvider: DataProvider {
-    func send(data: Data) async throws {}
-    func register(onReceive: @escaping (Data) -> Void) {}
 }

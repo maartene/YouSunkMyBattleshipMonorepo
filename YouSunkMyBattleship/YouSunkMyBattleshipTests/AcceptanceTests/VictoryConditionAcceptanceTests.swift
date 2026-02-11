@@ -22,8 +22,7 @@ import YouSunkMyBattleshipCommon
     
     init() async {
         viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: victoryState))
-        addViewsToViewModel(viewModel)
-        completePlacement(on: viewModel)
+        await completePlacement(on: viewModel)
         await viewModel.confirmPlacement()
         view = GameView(viewModel: viewModel)
     }
@@ -57,7 +56,7 @@ extension `Feature: Victory Condition` {
             #expect(columns.count == 10)
             
             for cell in columns {
-                #expect(try cell.geometryReader().text().string() == "🌊")
+                #expect(try cell.text().string() == "🌊")
             }
         }
     }

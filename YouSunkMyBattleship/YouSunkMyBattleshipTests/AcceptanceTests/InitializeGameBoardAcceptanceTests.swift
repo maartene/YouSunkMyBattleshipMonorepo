@@ -10,6 +10,7 @@ import Testing
 import ViewInspector
 import SwiftUI
 import Combine
+import WSDataProvider
 
 /// As a player
 /// I want to see an empty game board
@@ -46,7 +47,7 @@ extension `Feature: Game Board Initialization` {
             #expect(columns.count == 10)
             
             for cell in columns {
-                #expect(try cell.geometryReader().text().string() == "🌊")
+                #expect(try cell.text().string() == "🌊")
             }
         }
     }

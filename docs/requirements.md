@@ -173,6 +173,6 @@ So that I don't lose progress
 Feature: Game Persistence  
     Scenario: Player saves and resumes game    
         Given I'm in an active game against CPU    
-        When I save the game as "game1"    
-        And I restart and load "game1"    
+        When I save the game as "game1"
+        And I restart and load "game1"
         Then the board state is exactly as I left it

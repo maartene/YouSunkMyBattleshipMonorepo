@@ -10,6 +10,7 @@ import SwiftUI
 import Testing
 import ViewInspector
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 @testable import YouSunkMyBattleship
 
@@ -22,69 +23,19 @@ import YouSunkMyBattleshipCommon
         init() {
             self.view = GameView(viewModel: viewModelSpy)
         }
-
-        @Test func `when a drag starts, the viewmodel is notified`() throws {
-            // Send gesture
-            let value = DragGesture.Value(
-                time: Date(), location: CGPoint(x: 70, y: 300),
-                startLocation: CGPoint(x: 70, y: 300), velocity: .zero)
-            try gesture(view: view).callOnChanged(value: value)
-            view.publisher.send()
-
-            #expect(viewModelSpy.startDragWasCalled(with: CGPoint(x: 70, y: 300)))
-        }
-
-        @Test func `when a drag ends, the viewmodel is notified`() throws {
-            let value = DragGesture.Value(
-                time: Date(), location: CGPoint(x: 200, y: 300),
-                startLocation: CGPoint(x: 200, y: 300), velocity: .zero)
-            try gesture(view: view).callOnEnded(value: value)
-            view.publisher.send()
-
-            #expect(viewModelSpy.endDragWasCalled(with: CGPoint(x: 200, y: 300)))
-        }
-
-        @Test func `only the player board is draggable`() throws {
-            let viewModelSpy = ViewModelSpy(state: .play)
-            let view = GameView(viewModel: viewModelSpy)
-            
-            let playerBoard = try getPlayerBoard(from: view)
-            let opponentBoard = try getEnemyBoard(from: view)
-
-            #expect(try playerBoard.actualView().isDraggable == true)
-            #expect(try opponentBoard.actualView().isDraggable == false)
-        }
-
-        @Test func `the player board triggers adding views to viewmodel`() throws {
-            let viewModelSpy = ViewModelSpy(state: .play)
-            let view = GameView(viewModel: viewModelSpy)
-            
-            let playerBoard = try getPlayerBoard(from: view)
-
-            let cells = playerBoard.findAll(CellView.self)
-
-            try cells.randomElement()!
-                .geometryReader()
-                .text()
-                .callOnAppear()
-            
-            #expect(viewModelSpy.addCellWasCalled)
-        }
         
-        @Test func `the target board does not trigger adding views to viewmodel`() throws {
-            let viewModelSpy = ViewModelSpy(state: .play)
-            let view = GameView(viewModel: viewModelSpy)
+        @Test func `when a cell is tapped, the viewmodel is notified`() async throws {
+            let inspectedView = try view.inspect()
+            let cells = inspectedView.findAll(CellView.self)
+            let randomCell = try #require(cells.randomElement())
             
-            let enemyBoard = try getEnemyBoard(from: view)
-
-            let cells = enemyBoard.findAll(CellView.self)
-
-            try cells.randomElement()!
-                .geometryReader()
-                .text()
-                .callOnAppear()
+            try randomCell.text().callOnTapGesture()
             
-            #expect(viewModelSpy.addCellWasCalled == false)
+            while viewModelSpy.tapWasCalledWithCoordinate(
+                try randomCell.actualView().coordinate,
+                for: try randomCell.actualView().owner) == false {
+                try await Task.sleep(nanoseconds: 1000)
+            }
         }
     }
 
@@ -94,74 +45,33 @@ import YouSunkMyBattleshipCommon
 
         init() {
             viewModel = ClientViewModel(dataProvider: DummyDataProvider())
-            addViewsToViewModel(viewModel)
         }
 
-        @Test func `when a drag starts at 195,301 then the cell at A5 becomes a ship`() {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
+        @Test func `when a player taps cell at A5, it becomes a ship`() async {
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
 
             #expect(viewModel.cells[.player1]![0][4] == "🚢")
         }
 
         @Test
         func
-            `given a drag already started, when a drag moves to  195,370 then the cells A5, B5 and C5 becomes a ship`()
+            `given a player already tapped at A5, when they tap at C5, then cells A5, B5 and C5 show 🚢`() async
         {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-
-            viewModel.startDrag(at: CGPoint(x: 195, y: 370))
-
-            #expect(viewModel.cells[.player1]![0][4] == "🚢")
-            #expect(viewModel.cells[.player1]![1][4] == "🚢")
-            #expect(viewModel.cells[.player1]![2][4] == "🚢")
-        }
-
-        @Test
-        func
-            `given a drag already started, when a end at 195,370 then the cells A5, B5 and C5 becomes a ship`()
-        {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-
-            viewModel.endDrag(at: CGPoint(x: 195, y: 370))
-
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+            
             #expect(viewModel.cells[.player1]![0][4] == "🚢")
             #expect(viewModel.cells[.player1]![1][4] == "🚢")
             #expect(viewModel.cells[.player1]![2][4] == "🚢")
         }
 
-        @Test
-        func
-            `given a drag already started, when a drag is outside of an ocean tile, the cells remain ships`()
-        {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-            viewModel.startDrag(at: CGPoint(x: 195, y: 370))
+        @Test func `given a ship placement has ended, a new one can be started`() async {
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
 
-            viewModel.startDrag(at: CGPoint(x: 195, y: 389))
-
-            #expect(viewModel.cells[.player1]![0][4] == "🚢")
-            #expect(viewModel.cells[.player1]![1][4] == "🚢")
-            #expect(viewModel.cells[.player1]![2][4] == "🚢")
-        }
-
-        @Test
-        func
-            `given a drag already started, when a drag ends outside of the board, the drag is reset`()
-        {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 370))
-            viewModel.endDrag(at: CGPoint(x: 0, y: 0))
-
-            viewModel.startDrag(at: CGPoint(x: 312, y: 461))
-            viewModel.endDrag(at: CGPoint(x: 344, y: 461))
-
-            #expect(viewModel.cells[.player1]![5][8] == "🚢")
-            #expect(viewModel.cells[.player1]![5][9] == "🚢")
-        }
-
-        @Test func `given a drag has ended, a new drag can be started`() {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-            viewModel.endDrag(at: CGPoint(x: 195, y: 370))
-
-            viewModel.startDrag(at: CGPoint(x: 248, y: 461))
+            
+            await viewModel.tap(Coordinate("F7"), boardForPlayer: .player1)
 
             #expect(viewModel.cells[.player1]![0][4] == "🚢")
             #expect(viewModel.cells[.player1]![1][4] == "🚢")
@@ -169,19 +79,48 @@ import YouSunkMyBattleshipCommon
             #expect(viewModel.cells[.player1]![5][6] == "🚢")
         }
 
-        @Test func `when a valid ship has been placed, it is removed from the ships to place list`()
+        @Test func `when a valid ship has been placed, it is removed from the ships to place list`() async
         {
-            viewModel.startDrag(at: CGPoint(x: 195, y: 301))
-            viewModel.endDrag(at: CGPoint(x: 195, y: 370))
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
 
             #expect(viewModel.shipsToPlace.contains("Cruiser(3)") == false)
         }
 
         @Test
-        func `when all ships have been placed, the viewmodel should signal to confirm placement`() {
-            completePlacement(on: viewModel)
+        func `when all ships have been placed, the viewmodel should signal to confirm placement`() async {
+            await completePlacement(on: viewModel)
 
             #expect(viewModel.state == .awaitingConfirmation)
+        }
+        
+        @Test
+        func `when all ships have been placed, the viewmodel should show them all`() async {
+            await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A7"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("D7"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A9"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C9"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C1"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C3"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("F9"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("G9"), boardForPlayer: .player1)
+            
+            #expect(viewModel.cells[.player1] ==
+                [
+                    ["🚢","🚢","🚢","🚢","🚢","🌊","🚢","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🚢","🌊"],
+                    ["🚢","🚢","🚢","🌊","🌊","🌊","🚢","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"]
+                ]
+            )
         }
 
         @Test
@@ -191,8 +130,7 @@ import YouSunkMyBattleshipCommon
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            addViewsToViewModel(viewModel)
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 
@@ -206,8 +144,7 @@ import YouSunkMyBattleshipCommon
         {
             let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            addViewsToViewModel(viewModel)
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 
@@ -219,7 +156,7 @@ import YouSunkMyBattleshipCommon
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
-                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"]
@@ -229,9 +166,9 @@ import YouSunkMyBattleshipCommon
 
         @Test
         func
-            `given all ships have been placed, when the player cancels placement, the board is reset`()
+            `given all ships have been placed, when the player cancels placement, the board is reset`() async
         {
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             viewModel.reset()
 
@@ -245,8 +182,7 @@ import YouSunkMyBattleshipCommon
             async throws
         {
             let viewModel = ClientViewModel(dataProvider: DummyDataProvider())
-            addViewsToViewModel(viewModel)
-            completePlacement(on: viewModel)
+            await completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 
@@ -413,4 +349,9 @@ import YouSunkMyBattleshipCommon
             #expect(board.shipsToPlace.isEmpty)
         }
     }
+}
+
+extension GameViewModel {
+    func startDrag(at point: CGPoint) { }
+    func endDrag(at point: CGPoint) { }
 }
