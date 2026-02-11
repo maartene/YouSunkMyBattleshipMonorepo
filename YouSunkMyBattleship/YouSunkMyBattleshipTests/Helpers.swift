@@ -243,6 +243,12 @@ final class MockDataProvider: DataProvider {
     }
     
     func syncGet(url: URL) throws -> Data? {
-        nil
+        let games = [
+            "game1",
+            "game2",
+            "game3",
+        ]
+        
+        return try JSONEncoder().encode(games)
     }
 }

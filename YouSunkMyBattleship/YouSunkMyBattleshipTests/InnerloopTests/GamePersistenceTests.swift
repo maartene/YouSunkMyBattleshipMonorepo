@@ -14,16 +14,17 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`Unit tests`)) struct GamePersistenceTests {
     @MainActor
     @Suite struct `Interaction between View and ViewModel` {
-        let dataProvider = DataProviderSpy()
+        let dataProvider = MockDataProvider(dataToReceiveOnSend: Data())
         let view: MainMenuView
         
         init() {
             view = MainMenuView(dataProvider: dataProvider, gameViewModel: ClientViewModel(dataProvider: dataProvider))
         }
         
-        @Test func `the view shows a list of all games that are in progress`() throws {
+        @Test func `the view shows a list of all games that are in progress`() async throws {
             let inspectedView = try view.inspect()
-            _ = try inspectedView.find(text: "game1")
+            
+            _ = try inspectedView.find(navigationLink: "game1")
             _ = try inspectedView.find(text: "game2")
             _ = try inspectedView.find(text: "game3")
         }
@@ -31,15 +32,13 @@ import YouSunkMyBattleshipCommon
         @Test func `the view tries to load a list of games that are in progress`() throws {
             let dataProvider = DataProviderSpy()
             let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
-            let inspectedView = try view.inspect()
-            
-            try inspectedView.vStack().callOnAppear()
             
             #expect(dataProvider.getWasCalled(with: URL(string: "http://localhost:8080/games")!))
         }
         
         @Test func `when clicking on a game, the game to load is passed in`() async throws {
             let inspectedView = try view.inspect()
+            
             let link = try inspectedView.find(navigationLink: "game2")
             
             let nextView = try link.view(GameView.self).actualView()
@@ -68,6 +67,17 @@ import YouSunkMyBattleshipCommon
             try inspectedView.vStack().callOnAppear()
             
             #expect(viewModel.loadWasCalledWithGameID("game1"))
+        }
+        
+        @Test func `when a gameview does not have a gameID set, it will reset the viewModel`() throws {
+            let viewModel = ViewModelSpy()
+            let view = GameView(viewModel: viewModel, gameID: nil)
+            
+            let inspectedView = try view.inspect()
+            
+            try inspectedView.vStack().callOnAppear()
+            
+            #expect(viewModel.resetWasCalled)
         }
     }
     

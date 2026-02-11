@@ -41,6 +41,8 @@ struct GameView: View {
         .onAppear() {
             if let gameID {
                 viewModel.load(gameID)
+            } else {
+                viewModel.reset()
             }
         }
     }

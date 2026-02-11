@@ -60,6 +60,7 @@ final class ClientViewModel: GameViewModel {
     func load(_ gameID: String) {
         let command = GameCommand.load(gameID: gameID)
         let data = try! encoder.encode(command)
+        dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
         dataProvider.wsSyncSend(data: data)
     }
     
@@ -82,20 +83,21 @@ final class ClientViewModel: GameViewModel {
             boardInProgress.placeShip(at: shipCoordinates)
             updateShipsToPlace()
             
+            
             if shipsToPlace.isEmpty {
                 state = .awaitingConfirmation
             }
             
+            cells[.player1] = cellsForPlayer()
+            
+            
             self.startShip = nil
             endShip = nil
-            
         } else {
             startShip = coordinate
             endShip = coordinate
-
+            cells[.player1] = cellsForPlayer()
         }
-        
-        cells[.player1] = cellsForPlayer()
     }
     
     private func tapToFire(at coordinate: Coordinate, player: Player) async {
