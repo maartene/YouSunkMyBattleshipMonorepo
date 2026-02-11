@@ -9,37 +9,35 @@ import SwiftUI
 import WSDataProvider
 
 struct MainMenuView: View {
-    struct SavedGame: Identifiable {
-        let id: String
-    }
-    
-    let games: [String]
-    
     let dataProvider: DataProvider
     let gameViewModel: GameViewModel
+    
+    @State private var shouldShowRefreshMessage = false
+    
+    let mainMenuViewModel: MainMenuViewModel
     
     init(dataProvider: DataProvider, gameViewModel: GameViewModel) {
         self.dataProvider = dataProvider
         self.gameViewModel = gameViewModel
-        if let data = try? dataProvider.syncGet(url: httpURL) {
-            self.games = (try? JSONDecoder().decode([String].self, from: data)) ?? []
-        } else {
-            self.games = []
-        }
+        self.mainMenuViewModel = MainMenuViewModel(dataProvider: dataProvider)
     }
     
     var body: some View {
         VStack {
-            NavigationStack {
-                List(games, id: \.self) { game in
-                    NavigationLink(game) {
-                        GameView(viewModel: gameViewModel, gameID: game)
+            if mainMenuViewModel.shouldShowRefreshMessage {
+                Text("Could not retrieve games. Pull to refresh")
+            } else {
+                NavigationStack {
+                    List(mainMenuViewModel.games) { game in
+                        NavigationLink(game.id) {
+                            GameView(viewModel: gameViewModel, gameID: game.id)
+                        }
                     }
+                    NavigationLink("New game") {
+                        GameView(viewModel: gameViewModel, gameID: nil)
+                    }
+                    .navigationTitle("Main Menu")
                 }
-                NavigationLink("New game") {
-                    GameView(viewModel: gameViewModel, gameID: nil)
-                }
-                .navigationTitle("Main Menu")
             }
         }
     }
@@ -47,4 +45,31 @@ struct MainMenuView: View {
 
 #Preview {
     MainMenuView(dataProvider: DummyDataProvider(), gameViewModel: ClientViewModel(dataProvider: DummyDataProvider()))
+}
+
+@Observable
+final class MainMenuViewModel {
+    var games: [SavedGame] = []
+    var shouldShowRefreshMessage = false
+    let dataProvider: DataProvider
+    
+    init(dataProvider: DataProvider) {
+        self.dataProvider = dataProvider
+        refreshGames()
+    }
+    
+    private func refreshGames() {
+        do {
+            let data = try dataProvider.syncGet(url: httpURL)
+            let gameNames = (try? JSONDecoder().decode([String].self, from: data ?? Data())) ?? []
+            self.games = gameNames.map { SavedGame(id: $0) }
+            shouldShowRefreshMessage = false
+        } catch {
+            shouldShowRefreshMessage = true
+        }
+    }
+}
+
+struct SavedGame: Identifiable {
+    let id: String
 }

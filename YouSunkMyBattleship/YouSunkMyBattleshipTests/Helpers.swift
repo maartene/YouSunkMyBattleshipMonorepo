@@ -252,3 +252,25 @@ final class MockDataProvider: DataProvider {
         return try JSONEncoder().encode(games)
     }
 }
+
+final class ThrowingDataProvider: DataProvider {
+    func wsSend(data: Data) async throws {
+        throw DataProviderErrors.anError
+    }
+    
+    func wsSyncSend(data: Data) {
+        
+    }
+    
+    func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
+        
+    }
+    
+    func syncGet(url: URL) throws -> Data? {
+        throw DataProviderErrors.anError
+    }
+    
+    enum DataProviderErrors: Error {
+        case anError
+    }
+}

@@ -24,14 +24,14 @@ import YouSunkMyBattleshipCommon
         @Test func `the view shows a list of all games that are in progress`() async throws {
             let inspectedView = try view.inspect()
             
-            _ = try inspectedView.find(navigationLink: "game1")
+            _ = try inspectedView.find(text: "game1")
             _ = try inspectedView.find(text: "game2")
             _ = try inspectedView.find(text: "game3")
         }
         
         @Test func `the view tries to load a list of games that are in progress`() throws {
             let dataProvider = DataProviderSpy()
-            let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
+            _ = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
             
             #expect(dataProvider.getWasCalled(with: URL(string: "http://localhost:8080/games")!))
         }
@@ -53,6 +53,14 @@ import YouSunkMyBattleshipCommon
             let nextView = try link.view(GameView.self).actualView()
             
             #expect(nextView.gameID == nil)
+        }
+        
+        @Test func `when no games can be loaded, display message to try again`() async throws {
+            let dataProvider = ThrowingDataProvider()
+            let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
+            let inspectedView = try view.inspect()
+            
+            _ = try inspectedView.find(text: "Could not retrieve games. Pull to refresh")
         }
     }
     
