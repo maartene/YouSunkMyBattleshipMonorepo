@@ -83,14 +83,12 @@ final class ClientViewModel: GameViewModel {
             boardInProgress.placeShip(at: shipCoordinates)
             updateShipsToPlace()
             
+            cells[.player1] = cellsForPlayer()
             
             if shipsToPlace.isEmpty {
                 state = .awaitingConfirmation
             }
-            
-            cells[.player1] = cellsForPlayer()
-            
-            
+
             self.startShip = nil
             endShip = nil
         } else {

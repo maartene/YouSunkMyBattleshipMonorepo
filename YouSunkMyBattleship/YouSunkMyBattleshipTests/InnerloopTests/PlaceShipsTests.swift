@@ -93,6 +93,35 @@ import WSDataProvider
 
             #expect(viewModel.state == .awaitingConfirmation)
         }
+        
+        @Test
+        func `when all ships have been placed, the viewmodel should show them all`() async {
+            await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A7"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("D7"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A9"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C9"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C1"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C3"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("F9"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("G9"), boardForPlayer: .player1)
+            
+            #expect(viewModel.cells[.player1] ==
+                [
+                    ["🚢","🚢","🚢","🚢","🚢","🌊","🚢","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🚢","🌊"],
+                    ["🚢","🚢","🚢","🌊","🌊","🌊","🚢","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"]
+                ]
+            )
+        }
 
         @Test
         func
@@ -127,7 +156,7 @@ import WSDataProvider
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
-                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
+                    ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🚢","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],
                     ["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"]
