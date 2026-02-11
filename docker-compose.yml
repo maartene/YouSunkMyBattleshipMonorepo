@@ -9,7 +9,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - mongodb_data:/data/db
 
   service:
     build:
@@ -33,5 +33,5 @@ services:
   #     - service
 
 volumes:
-  db_data:
+  mongodb_data:
     driver: local
