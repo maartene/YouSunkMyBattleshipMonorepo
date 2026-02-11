@@ -60,7 +60,19 @@ import YouSunkMyBattleshipCommon
             let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel())
             let inspectedView = try view.inspect()
             
-            _ = try inspectedView.find(text: "Could not retrieve games. Pull to refresh")
+            _ = try inspectedView.find(text: "Could not retrieve games. Try again")
+        }
+        
+        @Test func `when main menu is pulled, it tries to reload games`() async throws {
+            let dataProvider = DataProviderSpy()
+            let mainMenuViewModel = MainMenuViewModelSpy()
+            let view = MainMenuView(dataProvider: dataProvider, gameViewModel: DummyGameViewModel(), mainMenuViewModel: mainMenuViewModel)
+            let inspectedView = try view.inspect()
+            
+            let button = try inspectedView.find(button: "Could not retrieve games. Try again")
+            try button.tap()
+            
+            #expect(mainMenuViewModel.refreshWasCalled)
         }
     }
     

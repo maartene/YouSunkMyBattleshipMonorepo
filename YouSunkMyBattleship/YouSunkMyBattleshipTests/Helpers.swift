@@ -274,3 +274,15 @@ final class ThrowingDataProvider: DataProvider {
         case anError
     }
 }
+
+// MARK: MainMenuViewModel fakes
+final class MainMenuViewModelSpy: MainMenuViewModel {
+    let games: [SavedGame] = []
+    let shouldShowRefreshMessage = true
+    
+    private(set) var refreshWasCalled = false
+    
+    func refreshGames() {
+        refreshWasCalled = true
+    }
+}

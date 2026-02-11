@@ -16,16 +16,18 @@ struct MainMenuView: View {
     
     let mainMenuViewModel: MainMenuViewModel
     
-    init(dataProvider: DataProvider, gameViewModel: GameViewModel) {
+    init(dataProvider: DataProvider, gameViewModel: GameViewModel, mainMenuViewModel: MainMenuViewModel? = nil) {
         self.dataProvider = dataProvider
         self.gameViewModel = gameViewModel
-        self.mainMenuViewModel = MainMenuViewModel(dataProvider: dataProvider)
+        self.mainMenuViewModel = mainMenuViewModel ?? ClientMainMenuViewModel(dataProvider: dataProvider)
     }
     
     var body: some View {
         VStack {
             if mainMenuViewModel.shouldShowRefreshMessage {
-                Text("Could not retrieve games. Pull to refresh")
+                Button("Could not retrieve games. Try again") {
+                    mainMenuViewModel.refreshGames()
+                }
             } else {
                 NavigationStack {
                     List(mainMenuViewModel.games) { game in
@@ -47,8 +49,15 @@ struct MainMenuView: View {
     MainMenuView(dataProvider: DummyDataProvider(), gameViewModel: ClientViewModel(dataProvider: DummyDataProvider()))
 }
 
+protocol MainMenuViewModel {
+    var games: [SavedGame] { get }
+    var shouldShowRefreshMessage: Bool { get }
+    
+    func refreshGames()
+}
+
 @Observable
-final class MainMenuViewModel {
+final class ClientMainMenuViewModel: MainMenuViewModel {
     var games: [SavedGame] = []
     var shouldShowRefreshMessage = false
     let dataProvider: DataProvider
@@ -58,7 +67,7 @@ final class MainMenuViewModel {
         refreshGames()
     }
     
-    private func refreshGames() {
+    func refreshGames() {
         do {
             let data = try dataProvider.syncGet(url: httpURL)
             let gameNames = (try? JSONDecoder().decode([String].self, from: data ?? Data())) ?? []
