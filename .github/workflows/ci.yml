@@ -69,6 +69,8 @@ jobs:
             -Dsonar.projectKey=YouSunkMyBattleshipMonorepo
             -Dsonar.projectName=YouSunkMyBattleshipMonorepo
             -Dsonar.organization=maarten-engels
+            -Dsonar.branch.name=${{ github.ref_name }}
+            -Dsonar.qualitygate.wait=false
 
       
           
