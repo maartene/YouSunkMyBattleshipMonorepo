@@ -68,7 +68,7 @@ jobs:
                   echo "Generated coverage/common/coverage.lcov"
                 else
                   echo "llvm-cov not found in PATH; attempting to use swiftly toolchain llvm-cov"
-                  TOOLCHAIN_BIN="${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/swift/usr/bin"
+                  TOOLCHAIN_BIN="/usr/local/bin"
                   if [ -x "$TOOLCHAIN_BIN/llvm-cov" ]; then
                     "$TOOLCHAIN_BIN/llvm-cov" export "$BINARY" -instr-profile="$PROFDATA" -format=lcov > coverage/common/coverage.lcov 2>&1 || true
                     echo "Generated coverage/common/coverage.lcov using toolchain llvm-cov"
