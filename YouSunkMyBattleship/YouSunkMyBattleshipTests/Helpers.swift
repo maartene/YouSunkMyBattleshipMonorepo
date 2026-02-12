@@ -270,11 +270,11 @@ final class ThrowingDataProvider: DataProvider {
     }
     
     func wsSyncSend(data: Data) {
-        
+        // no-op
     }
     
     func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
-        
+        // no-op
     }
     
     func syncGet(url: URL) throws -> Data? {

@@ -71,7 +71,7 @@ final class ClientViewModel: GameViewModel {
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
         switch state {
         case .placingShips:
-            tapToPlaceShip(at: coordinate, player: boardForPlayer)
+            tapToPlaceShip(at: coordinate)
         case .play:
             await tapToFire(at: coordinate, player: boardForPlayer)
         default:
@@ -79,7 +79,7 @@ final class ClientViewModel: GameViewModel {
         }
     }
     
-    private func tapToPlaceShip(at coordinate: Coordinate, player: Player) {
+    private func tapToPlaceShip(at coordinate: Coordinate) {
         if let startShip {
             endShip = coordinate
             

@@ -110,7 +110,6 @@ extension `Feature: Ship Placement` {
     private func `Then the game shows my board is done`() throws {
         
         let inspectedView = try view.inspect()
-        let gameStateView = try inspectedView.find(GameStateView.self)
         _ = try inspectedView.find(text: "Play!")
     }
     
