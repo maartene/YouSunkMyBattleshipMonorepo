@@ -99,16 +99,15 @@ jobs:
           set -e
           
           if [ -f coverage/common/coverage.lcov ]; then
-            echo "Converting LCOV to SonarQube Generic Coverage XML format..."
+            echo "Converting LCOV to SonarQube Generic Coverage XML format (version 1)..."
             
-            # Install lcov_cobertura converter (Python tool)
-            pip install lcov_cobertura
-            
-            # Convert LCOV to Cobertura XML format
-            lcov_cobertura coverage/common/coverage.lcov --output coverage/common/coverage.xml
+            # Use our custom converter script
+            python3 .github/scripts/lcov_to_sonar.py coverage/common/coverage.lcov coverage/common/coverage.xml
             
             echo "Generated coverage/common/coverage.xml"
             ls -lh coverage/common/
+            echo "First few lines of coverage.xml:"
+            head -20 coverage/common/coverage.xml
           else
             echo "Warning: No LCOV file found to convert"
           fi
