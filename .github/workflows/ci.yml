@@ -19,14 +19,63 @@ jobs:
         run: |
           set -e
           swift build
-          swift test
+          swift test --enable-code-coverage
 
       - name: Build and test YouSunkMyBattleshipBE
         working-directory: YouSunkMyBattleshipBE
         run: |
           set -e
           swift build
-          swift test    
+          swift test --enable-code-coverage
+
+      - name: Install coverage conversion tools
+        run: |
+          gem install xcov
+
+      - name: Export Swift coverage to LCOV format
+        run: |
+          set -e
+          mkdir -p coverage
+          
+          # Export coverage for YouSunkMyBattleshipCommon
+          if [ -d "YouSunkMyBattleshipCommon/.build/debug/codecov" ]; then
+            echo "Converting YouSunkMyBattleshipCommon coverage..."
+            cd YouSunkMyBattleshipCommon
+            
+            # Get the binary path
+            BINARY=$(find .build/debug -name "*YouSunkMyBattleshipCommon*" -type f ! -name "*.d" ! -name "*.o" ! -name "*.swiftmodule" ! -name "*.swiftdoc" | head -1)
+            
+            if [ -n "$BINARY" ]; then
+              # Use xcov to generate reports
+              xcov --workspace . --scheme YouSunkMyBattleshipCommon --output_directory ../coverage/common --json_report true || echo "xcov conversion for Common completed with warnings"
+            fi
+            cd ..
+          fi
+          
+          # Export coverage for YouSunkMyBattleshipBE
+          if [ -d "YouSunkMyBattleshipBE/.build/debug/codecov" ]; then
+            echo "Converting YouSunkMyBattleshipBE coverage..."
+            cd YouSunkMyBattleshipBE
+            
+            # Get the binary path
+            BINARY=$(find .build/debug -name "*YouSunkMyBattleshipBE*" -type f ! -name "*.d" ! -name "*.o" ! -name "*.swiftmodule" ! -name "*.swiftdoc" | head -1)
+            
+            if [ -n "$BINARY" ]; then
+              # Use xcov to generate reports
+              xcov --workspace . --scheme YouSunkMyBattleshipBE --output_directory ../coverage/be --json_report true || echo "xcov conversion for BE completed with warnings"
+            fi
+            cd ..
+          fi
+          
+          # List generated coverage files for debugging
+          echo "Generated coverage files:"
+          find coverage -type f -name "*.xml" -o -name "*.json" -o -name "*.lcov" 2>/dev/null || true
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       
           
