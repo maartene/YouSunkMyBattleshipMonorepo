@@ -13,7 +13,7 @@ elif command -v docker-compose >/dev/null 2>&1; then
   COMPOSE_CMD="docker-compose"
 fi
 
-if [ -z "$COMPOSE_CMD" ]; then
+if [[ -z "$COMPOSE_CMD" ]]; then
   echo "Error: neither podman-compose, podman compose, docker-compose nor docker compose found in PATH" >&2
   exit 1
 fi

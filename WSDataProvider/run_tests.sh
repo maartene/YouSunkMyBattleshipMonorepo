@@ -9,7 +9,7 @@ elif command -v podman >/dev/null 2>&1 && podman version >/dev/null 2>&1; then
   DOCKER_CMD="podman"
 fi
 
-if [ -z "$DOCKER_CMD" ]; then
+if [[ -z "$DOCKER_CMD" ]]; then
   echo "Error: neither podman nor docker found in PATH" >&2
   exit 1
 fi
