@@ -19,8 +19,10 @@ This repository contains a small Battleship game split into three parts:
 - `YouSunkMyBattleshipBE/` — backend Swift package and Dockerfiles (service & infra)
 - `YouSunkMyBattleshipCommon/` — shared Swift package (DTOs, model)
 - `api/contract/ContractTest/` — small CLI program that drives the websocket api endpoint and validates that it conforms to the contract
+- `WSDataProvider/` - mockable http and websocket client
+- `GameRepository/` - mockable MongoDB client
 - `docker-compose.yml` — Compose file to run the backend and supporting services
-- `smoketest.sh` — simple script that runs quick integration checks against the running stack
+- `smoketest.sh` — simple script that spins up the backend stack and runs quick integration checks
 
 **Requirements**
 - macOS with Docker Desktop (or an alternative like Podman Desktop) installed (for Docker Compose)
@@ -41,13 +43,13 @@ Notes:
 - If you have an older Docker installation using `docker-compose` (hyphen), use `docker-compose up --build -d`.
 - Use `docker compose logs -f` to follow logs and `docker compose down` to stop and remove containers.
 
-2) Run the smoketest
+2) Run the Contract tests
 
-The `smoketest.sh` script runs a set of quick checks against the running backend. Ensure the Compose stack is up before running it.
+The Contract Test package runs a set of quick checks against the running backend. Ensure the Compose stack is up before running it.
 
 ```bash
-chmod +x smoketest.sh
-./smoketest.sh
+cd api/contract/ContractTest
+swift run
 ```
 
 3) Run the iOS app (development)
@@ -86,6 +88,9 @@ swift test
 cd ../YouSunkMyBattleshipCommon
 swift test
 ```
+
+6) Run smoketest
+Use the `smoketest.sh` script to run the Contract Test in one go. This script spins up and winds down the backend stack and runs the ContractTest package.
 
 API contract
 
