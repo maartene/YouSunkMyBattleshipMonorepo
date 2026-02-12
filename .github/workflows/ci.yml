@@ -44,19 +44,36 @@ jobs:
           set -e
           mkdir -p coverage
           
-          # Export coverage using llvm-cov (comes with Swift)
+          # Convert Swift coverage to LCOV format for SonarCloud
           if [ -d "YouSunkMyBattleshipCommon/.build/debug/codecov" ]; then
-            echo "Converting YouSunkMyBattleshipCommon coverage to LCOV format..."
+            echo "Converting YouSunkMyBattleshipCommon coverage..."
             mkdir -p coverage/common
             
-            # Find the coverage index
-            COVERAGE_INDEX=$(find YouSunkMyBattleshipCommon/.build/debug/codecov -name "index.json" | head -1)
-            if [ -n "$COVERAGE_INDEX" ]; then
-              # Use llvm-cov to convert to LCOV format
-              llvm-cov export "$COVERAGE_INDEX" \
-                --format="lcov" \
-                --instr-profile="$COVERAGE_INDEX" \
-                > coverage/common/coverage.lcov || echo "Warning: llvm-cov export failed"
+            # Find all .profraw files and the binary
+            BINARY=$(find YouSunkMyBattleshipCommon/.build/debug -type f -name "*YouSunkMyBattleshipCommon" ! -name "*.o" ! -name "*.d" ! -name "*.swiftmodule" ! -name "*.swiftdoc" | head -1)
+            PROFDATA=$(find YouSunkMyBattleshipCommon/.build/debug/codecov -name "*.profdata" | head -1)
+            PROFRAW_FILES=$(find YouSunkMyBattleshipCommon/.build/debug/codecov -name "*.profraw")
+            
+            if [ -n "$BINARY" ] && [ -n "$PROFRAW_FILES" ]; then
+              # Merge profraw files if multiple exist
+              MERGED_PROFDATA="/tmp/merged_common.profdata"
+              xcrun llvm-profdata merge -o "$MERGED_PROFDATA" $PROFRAW_FILES
+              
+              # Export to LCOV format
+              xcrun llvm-cov export "$BINARY" \
+                -instr-profile="$MERGED_PROFDATA" \
+                -format=lcov \
+                > coverage/common/coverage.lcov || echo "Warning: Coverage export had issues"
+            elif [ -n "$PROFDATA" ] && [ -n "$BINARY" ]; then
+              # Use existing profdata
+              xcrun llvm-cov export "$BINARY" \
+                -instr-profile="$PROFDATA" \
+                -format=lcov \
+                > coverage/common/coverage.lcov || echo "Warning: Coverage export had issues"
+            else
+              echo "Warning: Could not find profiling data for YouSunkMyBattleshipCommon"
+              echo "Available files in codecov:"
+              find YouSunkMyBattleshipCommon/.build/debug/codecov -type f | head -20
             fi
           fi
           
