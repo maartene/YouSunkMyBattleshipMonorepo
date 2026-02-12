@@ -44,6 +44,8 @@ jobs:
           set -e
           mkdir -p coverage
           
+          which swift
+
           # Convert Swift coverage to LCOV format for SonarCloud
           if [ -d "YouSunkMyBattleshipCommon/.build" ]; then
             echo "Converting YouSunkMyBattleshipCommon coverage..."
