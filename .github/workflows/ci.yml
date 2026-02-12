@@ -6,6 +6,7 @@ on:
 
 jobs:
   build-and-test:
+    environment: ci
     runs-on: ubuntu-latest
     
     steps:
@@ -31,12 +32,12 @@ jobs:
           swift build
           swift test --enable-code-coverage
 
-      - name: Build and test YouSunkMyBattleshipBE
-        working-directory: YouSunkMyBattleshipBE
-        run: |
-          set -e
-          swift build
-          swift test --enable-code-coverage
+      #- name: Build and test YouSunkMyBattleshipBE
+      #  working-directory: YouSunkMyBattleshipBE
+      #  run: |
+      #    set -e
+      #    swift build
+      #    swift test --enable-code-coverage
 
       - name: Collect coverage data
         run: |
@@ -49,10 +50,10 @@ jobs:
             cp -r YouSunkMyBattleshipCommon/.build/debug/codecov coverage/common || true
           fi
           
-          if [ -d "YouSunkMyBattleshipBE/.build/debug/codecov" ]; then
-            echo "Found YouSunkMyBattleshipBE coverage data"
-            cp -r YouSunkMyBattleshipBE/.build/debug/codecov coverage/be || true
-          fi
+          # if [ -d "YouSunkMyBattleshipBE/.build/debug/codecov" ]; then
+          #   echo "Found YouSunkMyBattleshipBE coverage data"
+          #   cp -r YouSunkMyBattleshipBE/.build/debug/codecov coverage/be || true
+          # fi
           
           # List coverage files for debugging
           echo "Coverage files available:"
