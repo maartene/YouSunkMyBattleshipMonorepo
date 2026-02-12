@@ -45,7 +45,7 @@ extension `Feature: CPU Opponent` {
     }
     
     private func `When the CPU fires`() async throws {
-        
+        // no action needed, the CPU fires automatically after the player fires
     }
     
     private func `Then I see "CPU fires at [coordinate]"`() async throws {

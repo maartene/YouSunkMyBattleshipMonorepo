@@ -31,8 +31,12 @@ import WSDataProvider
 
 // MARK: Steps
 extension `Feature: Game Board Initialization` {
-    private func `Given I start a new Battleship game`() { }
-    private func `When the game initializes`() { }
+    private func `Given I start a new Battleship game`() {
+        // taken care of during test initialization
+    }
+    private func `When the game initializes`() {
+        // taken care of during test initialization
+    }
 
     private func `Then I see a 10x10 grid filled with 🌊 emojis`() throws {
         let gameBoards = try view.inspect().findAll(GameBoardView.self)

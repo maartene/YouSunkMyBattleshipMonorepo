@@ -13,7 +13,7 @@ public protocol Bot: Sendable {
 
 public struct RandomBot: Bot {
     public init() {
-
+        // added to provide a public initializer
     }
 
     public func getNextMoves(board: Board) async -> [Coordinate] {

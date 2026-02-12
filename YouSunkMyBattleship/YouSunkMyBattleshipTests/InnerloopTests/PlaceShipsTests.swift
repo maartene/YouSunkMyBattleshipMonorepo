@@ -350,8 +350,3 @@ import WSDataProvider
         }
     }
 }
-
-extension GameViewModel {
-    func startDrag(at point: CGPoint) { }
-    func endDrag(at point: CGPoint) { }
-}

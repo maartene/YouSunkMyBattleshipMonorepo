@@ -90,6 +90,9 @@ import Foundation
 
 extension GameCommand {
     func toData() -> Data {
-        try! JSONEncoder().encode(self)
+        guard let data = try? JSONEncoder().encode(self) else {
+            fatalError("Failed to encode GameCommand \(self) to Data")
+        }
+        return data
     }
 }

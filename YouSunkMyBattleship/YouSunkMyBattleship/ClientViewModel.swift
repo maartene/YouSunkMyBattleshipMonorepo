@@ -59,9 +59,13 @@ final class ClientViewModel: GameViewModel {
     
     func load(_ gameID: String) {
         let command = GameCommand.load(gameID: gameID)
-        let data = try! encoder.encode(command)
-        dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
-        dataProvider.wsSyncSend(data: data)
+        do {
+            let data = try encoder.encode(command)
+            dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
+            dataProvider.wsSyncSend(data: data)
+        } catch {
+            NSLog("Failed to encode command \(command): \(error)")
+        }
     }
     
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {

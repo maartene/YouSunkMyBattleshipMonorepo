@@ -58,7 +58,10 @@ final class ViewModelSpy: GameViewModel {
         loadWasCalled = gameID
     }
     
-    func confirmPlacement() { }
+    func confirmPlacement() {
+        // no-op
+    }
+    
     func reset() {
         resetWasCalled = true
     }
@@ -95,10 +98,18 @@ final class ViewModelSpy: GameViewModel {
 }
 
 struct DummyGameViewModel: GameViewModel {
-    func confirmPlacement() async { }
-    func reset() { }
-    func tap(_ coordinate: Coordinate, boardForPlayer: Player) async { }
-    func load(_ gameID: String) { }
+    func confirmPlacement() async {
+        // no-op
+    }
+    func reset() {
+        // no-op
+    }
+    func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
+        // no-op
+    }
+    func load(_ gameID: String) {
+        // no-op
+    }
     let shipsToPlace = [String]()
     let state: GameViewModelState = .placingShips
     let lastMessage: String = ""

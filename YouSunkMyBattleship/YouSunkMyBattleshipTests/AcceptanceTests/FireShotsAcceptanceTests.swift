@@ -74,7 +74,7 @@ extension `Feature: Firing Shots` {
     }
     
     private func `And one of the ship has a piece place on C5`() throws {
-        
+        // taken care of during test setup
     }
 
     private func `When I fire at coordinate C5`() async throws {

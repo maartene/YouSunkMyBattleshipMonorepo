@@ -52,6 +52,7 @@ import YouSunkMyBattleshipCommon
 // MARK: Steps
 extension `Feature: Ship Placement` {
     private func `Given I have an empty board`() throws {
+        // no action required: default state for a new board
     }
     
     private func `When I tap at A1`() async throws {
