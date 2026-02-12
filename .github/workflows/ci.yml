@@ -42,9 +42,14 @@ jobs:
       - name: Collect coverage data
         run: |
           set -e
+          
+          # Source swiftly environment to get access to Swift toolchain (including llvm-cov)
+          . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh"
+          
           mkdir -p coverage
           
-          which swift
+          echo "Swift location: $(which swift)"
+          echo "llvm-cov location: $(which llvm-cov || echo 'not found')"
 
           # Convert Swift coverage to LCOV format for SonarCloud
           if [ -d "YouSunkMyBattleshipCommon/.build" ]; then
@@ -62,19 +67,19 @@ jobs:
 
               if [ -n "$BINARY" ]; then
                 echo "Using binary: $BINARY"
-                # Prefer llvm-cov in PATH; if not available try the swift toolchain installed by swiftly
+                
+                # Use llvm-cov from Swift toolchain (should be in PATH after sourcing env.sh)
                 if command -v llvm-cov >/dev/null 2>&1; then
                   llvm-cov export "$BINARY" -instr-profile="$PROFDATA" -format=lcov > coverage/common/coverage.lcov 2>&1 || true
-                  echo "Generated coverage/common/coverage.lcov"
-                else
-                  echo "llvm-cov not found in PATH; attempting to use swiftly toolchain llvm-cov"
-                  TOOLCHAIN_BIN="/usr/local/bin"
-                  if [ -x "$TOOLCHAIN_BIN/llvm-cov" ]; then
-                    "$TOOLCHAIN_BIN/llvm-cov" export "$BINARY" -instr-profile="$PROFDATA" -format=lcov > coverage/common/coverage.lcov 2>&1 || true
-                    echo "Generated coverage/common/coverage.lcov using toolchain llvm-cov"
+                  
+                  if [ -f coverage/common/coverage.lcov ]; then
+                    echo "Successfully generated coverage/common/coverage.lcov"
                   else
-                    echo "Warning: llvm-cov not available; cannot produce LCOV"
+                    echo "Error: coverage.lcov file was not created"
                   fi
+                else
+                  echo "Error: llvm-cov not found in PATH after sourcing swiftly env"
+                  echo "PATH: $PATH"
                 fi
               else
                 echo "Warning: No executable binary found under .build; listing .build for debugging"
