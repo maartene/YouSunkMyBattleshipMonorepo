@@ -188,19 +188,28 @@ jobs:
 
       
           
-  # smoketest:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+  smoketest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       
-  #     - name: Install Swift version
-  #       uses: swift-actions/setup-swift@v3
+      - name: Install curl
+        run: |
+          sudo apt install curl -y
 
-  #     - name: Run smoketest
-  #       run: |
-  #         set -e
-  #         chmod +x smoketest.sh
-  #         ./smoketest.sh
+      - name: Install Swift version
+        run: |
+          curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz && \
+          tar zxf swiftly-$(uname -m).tar.gz && \
+          ./swiftly init --quiet-shell-followup && \
+          . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" && \
+          hash -r          
+
+      - name: Run smoketest
+        run: |
+          set -e
+          chmod +x smoketest.sh
+          ./smoketest.sh
         
     
