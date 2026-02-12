@@ -94,6 +94,25 @@ jobs:
           echo "Coverage files available:"
           find coverage -type f 2>/dev/null | head -20 || echo "No coverage files found"
 
+      - name: Convert LCOV to SonarQube Generic Coverage XML
+        run: |
+          set -e
+          
+          if [ -f coverage/common/coverage.lcov ]; then
+            echo "Converting LCOV to SonarQube Generic Coverage XML format..."
+            
+            # Install lcov_cobertura converter (Python tool)
+            pip install lcov_cobertura
+            
+            # Convert LCOV to Cobertura XML format
+            lcov_cobertura coverage/common/coverage.lcov --output coverage/common/coverage.xml
+            
+            echo "Generated coverage/common/coverage.xml"
+            ls -lh coverage/common/
+          else
+            echo "Warning: No LCOV file found to convert"
+          fi
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
