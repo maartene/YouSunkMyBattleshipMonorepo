@@ -6,13 +6,19 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container: swift:6.2
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Swift version
-        uses: swift-actions/setup-swift@v3
+        run: |
+          curl -O https://download.swift.org/swiftly/linux/swiftly-$(uname -m).tar.gz && \
+          tar zxf swiftly-$(uname -m).tar.gz && \
+          ./swiftly init --quiet-shell-followup && \
+          . "${SWIFTLY_HOME_DIR:-$HOME/.local/share/swiftly}/env.sh" && \
+          hash -r          
         
       - name: Build and test YouSunkMyBattleshipCommon
         working-directory: YouSunkMyBattleshipCommon
