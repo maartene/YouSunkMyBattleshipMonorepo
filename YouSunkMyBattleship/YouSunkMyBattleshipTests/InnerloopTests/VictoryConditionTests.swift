@@ -15,11 +15,11 @@ import YouSunkMyBattleshipCommon
     @Suite struct `Interaction between View and ViewModel` {
         let viewModelSpy = ViewModelSpy(state: .finished)
         let view: GameView
-        
+
         init() {
             self.view = GameView(viewModel: viewModelSpy)
         }
-        
+
         @Test func `when a player taps the "New game" button, the ViewModel is notified`() async throws {
             let inspectedView = try view.inspect()
             try inspectedView.find(button: "New Game").tap()

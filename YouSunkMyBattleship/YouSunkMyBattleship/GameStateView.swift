@@ -9,7 +9,7 @@ import SwiftUI
 
 struct GameStateView: View {
     private let viewModel: any GameViewModel
-    
+
     private var shipsToPlace: String {
         viewModel.shipsToPlace.joined(separator: "\t")
     }
@@ -17,7 +17,7 @@ struct GameStateView: View {
     init(viewModel: any GameViewModel) {
         self.viewModel = viewModel
     }
-    
+
     var body: some View {
         if viewModel.state == .awaitingConfirmation {
             VStack {

@@ -15,14 +15,14 @@ protocol GameViewModel {
     func reset()
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async
     func load(_ gameID: String)
-    
+
     var shipsToPlace: [String] { get }
     var state: GameViewModelState { get }
     var lastMessage: String { get }
     var numberOfShipsToBeDestroyed: Int { get }
     var cells: [Player: [[String]]] { get }
     var currentPlayer: Player { get }
-    
+
 }
 
 enum GameViewModelState {
@@ -30,7 +30,7 @@ enum GameViewModelState {
     case awaitingConfirmation
     case play
     case finished
-    
+
     static func fromGameState(_ gameState: GameState.State) -> GameViewModelState {
         return switch gameState {
         case .play:

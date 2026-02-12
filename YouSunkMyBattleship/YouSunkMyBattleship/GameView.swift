@@ -13,14 +13,14 @@ import YouSunkMyBattleshipCommon
 struct GameView: View {
     let viewModel: any GameViewModel
     let gameID: String?
-    
+
     internal let publisher = PassthroughSubject<Void, Never>()
 
     init(viewModel: any GameViewModel, gameID: String? = nil) {
         self.viewModel = viewModel
         self.gameID = gameID
     }
-    
+
     var body: some View {
         VStack(spacing: 12) {
             GameStateView(viewModel: viewModel)
@@ -38,7 +38,7 @@ struct GameView: View {
             }
         }
         .animation(.easeInOut(duration: 0.35), value: viewModel.state)
-        .onAppear() {
+        .onAppear {
             if let gameID {
                 viewModel.load(gameID)
             } else {

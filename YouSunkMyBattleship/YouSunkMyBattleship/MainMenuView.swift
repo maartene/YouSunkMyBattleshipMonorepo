@@ -10,14 +10,14 @@ import WSDataProvider
 
 struct MainMenuView: View {
     let gameViewModel: GameViewModel
-    
+
     let mainMenuViewModel: MainMenuViewModel
-    
+
     init(mainMenuViewModel: MainMenuViewModel, gameViewModel: GameViewModel, ) {
         self.gameViewModel = gameViewModel
         self.mainMenuViewModel = mainMenuViewModel
     }
-    
+
     var body: some View {
         VStack {
             if mainMenuViewModel.shouldShowRefreshMessage {
@@ -51,7 +51,7 @@ struct MainMenuView: View {
 protocol MainMenuViewModel {
     var games: [SavedGame] { get }
     var shouldShowRefreshMessage: Bool { get }
-    
+
     func refreshGames()
 }
 
@@ -60,12 +60,12 @@ final class ClientMainMenuViewModel: MainMenuViewModel {
     var games: [SavedGame] = []
     var shouldShowRefreshMessage = false
     let dataProvider: DataProvider
-    
+
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
         refreshGames()
     }
-    
+
     func refreshGames() {
         do {
             let data = try dataProvider.syncGet(url: httpURL)

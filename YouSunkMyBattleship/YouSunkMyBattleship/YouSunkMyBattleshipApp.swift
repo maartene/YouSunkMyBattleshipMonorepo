@@ -22,7 +22,7 @@ struct YouSunkMyBattleshipApp: App {
     let dataProvider: DataProvider
     let gameViewModel: GameViewModel
     let mainMenuViewModel: ClientMainMenuViewModel
-    
+
     init() {
         dataProvider = URLSessionDataProvider()
         gameViewModel = ClientViewModel(dataProvider: dataProvider)
