@@ -101,8 +101,12 @@ jobs:
           if [ -f coverage/common/coverage.lcov ]; then
             echo "Converting LCOV to SonarQube Generic Coverage XML format (version 1)..."
             
-            # Use our custom converter script
-            python3 .github/scripts/lcov_to_sonar.py coverage/common/coverage.lcov coverage/common/coverage.xml
+            # Show a sample of the LCOV file to debug path issues
+            echo "Sample LCOV file paths:"
+            grep "^SF:" coverage/common/coverage.lcov | head -5
+            
+            # Use our custom converter script with workspace root for relative paths
+            python3 .github/scripts/lcov_to_sonar.py coverage/common/coverage.lcov coverage/common/coverage.xml "$GITHUB_WORKSPACE"
             
             echo "Generated coverage/common/coverage.xml"
             ls -lh coverage/common/
