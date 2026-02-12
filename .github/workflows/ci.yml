@@ -44,16 +44,21 @@ jobs:
           set -e
           mkdir -p coverage
           
-          # Copy coverage index files to coverage directory for SonarCloud
+          # Export coverage using llvm-cov (comes with Swift)
           if [ -d "YouSunkMyBattleshipCommon/.build/debug/codecov" ]; then
-            echo "Found YouSunkMyBattleshipCommon coverage data"
-            cp -r YouSunkMyBattleshipCommon/.build/debug/codecov coverage/common || true
+            echo "Converting YouSunkMyBattleshipCommon coverage to LCOV format..."
+            mkdir -p coverage/common
+            
+            # Find the coverage index
+            COVERAGE_INDEX=$(find YouSunkMyBattleshipCommon/.build/debug/codecov -name "index.json" | head -1)
+            if [ -n "$COVERAGE_INDEX" ]; then
+              # Use llvm-cov to convert to LCOV format
+              llvm-cov export "$COVERAGE_INDEX" \
+                --format="lcov" \
+                --instr-profile="$COVERAGE_INDEX" \
+                > coverage/common/coverage.lcov || echo "Warning: llvm-cov export failed"
+            fi
           fi
-          
-          # if [ -d "YouSunkMyBattleshipBE/.build/debug/codecov" ]; then
-          #   echo "Found YouSunkMyBattleshipBE coverage data"
-          #   cp -r YouSunkMyBattleshipBE/.build/debug/codecov coverage/be || true
-          # fi
           
           # List coverage files for debugging
           echo "Coverage files available:"
