@@ -9,10 +9,18 @@ public protocol DataProvider {
 }
 
 public struct DummyDataProvider: DataProvider {
-    public init() { }
-    public func wsSyncSend(data: Data) {}
-    public func wsSend(data: Data) async throws {}
-    public func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) { }
+    public init() { 
+        // added to provide a public initializers
+    }
+    public func wsSyncSend(data: Data) {
+        // no-op
+    }
+    public func wsSend(data: Data) async throws {
+        // no-op
+    }
+    public func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) { 
+        // no-op
+    }
     public func syncGet(url: URL) throws -> Data? { nil }
 }
 
@@ -23,7 +31,9 @@ public final class URLSessionDataProvider: DataProvider {
     private var receiveTask: Task<Void, Never>?
     private var onReceive: ((Data) -> Void)?
     
-    public init() { }
+    public init() {
+        // added to provide a public initializer
+    }
     
     public func wsSend(data: Data) async throws {
         let message = URLSessionWebSocketTask.Message.data(data)
@@ -33,6 +43,7 @@ public final class URLSessionDataProvider: DataProvider {
     public func wsSyncSend(data: Data) {
         let message = URLSessionWebSocketTask.Message.data(data)
         task?.send(message) { _ in
+            // no-op
         }
     }
     

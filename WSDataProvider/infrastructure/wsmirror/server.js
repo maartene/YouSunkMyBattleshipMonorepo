@@ -1,6 +1,6 @@
-const { exit } = require('process');
+const { exit } = require('node:process');
 const WebSocket = require('ws');
-const http = require('http');
+const http = require('node:http');
 
 const port = process.env.PORT || 8080;
 
