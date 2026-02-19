@@ -186,9 +186,7 @@ jobs:
             -Dsonar.projectName=YouSunkMyBattleshipMonorepo
             -Dsonar.organization=maartene
             -Dsonar.branch.name=${{ github.ref_name }}
-            -Dsonar.qualitygate.wait=false
-
-      
+            -Dsonar.qualitygate.wait=false    
           
   smoketest:
     runs-on: ubuntu-latest
@@ -213,5 +211,18 @@ jobs:
           set -e
           chmod +x smoketest.sh
           ./smoketest.sh
-        
-    
+
+  container-linting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install hadolint
+        run: |
+          sudo apt install hadolint -y
+
+      - name: Lint Dockerfiles
+        run: |
+          hadolint infrastructure/service/Dockerfile
+          hadolint infrastructure/database/Dockerfile
