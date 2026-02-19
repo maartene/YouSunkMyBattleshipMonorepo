@@ -1,4 +1,4 @@
-FROM mongo:latest
+FROM mongo:8.2.5-noble
 
 # Expose MongoDB port
 EXPOSE 27017
