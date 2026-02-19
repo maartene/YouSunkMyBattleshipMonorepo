@@ -213,14 +213,14 @@ jobs:
           ./smoketest.sh
 
   container-linting:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install hadolint
         run: |
-          sudo apt install hadolint -y
+          brew install hadolint
 
       - name: Lint Dockerfiles
         run: |
