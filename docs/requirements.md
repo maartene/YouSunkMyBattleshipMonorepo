@@ -176,3 +176,22 @@ Feature: Game Persistence
         When I save the game as "game1"
         And I restart and load "game1"
         Then the board state is exactly as I left it
+
+## Story 10: Enable Player vs Player Setup
+As a player
+I want to create or join a two-player game
+So that I can play against another human
+
+### Acceptance Criteria:
+1. Create game returns game ID and player token
+2. Second player joins with game ID
+3. Each player connects from separate container
+4. Turn enforcement between players
+
+### Scenario
+Feature: Two Player Setup
+    Scenario: Second player joins game
+    Given Player 1 created game "xyz789"
+    When Player 2 joins game "xyz789"
+    Then both players are connected
+    And the game begins with Player 1's turn

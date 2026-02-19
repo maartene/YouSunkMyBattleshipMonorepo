@@ -10,14 +10,22 @@ import Foundation
 public struct Game {
     public private(set) var currentPlayer = Player.player1
     
-    public private(set) var player1Board: Board
-    public private(set) var player2Board: Board
+    public var player1Board: Board {
+        playerBoards[.player1]!
+    }
+    
+    public var player2Board: Board {
+        playerBoards[.player2]!
+    }
+    
     public let gameID: String
+    private var playerBoards = [Player: Board]()
     
     public init(gameID: String? = nil, player1Board: Board, player2Board: Board) {
-        self.player1Board = player1Board
-        self.player2Board = player2Board
         self.gameID = gameID ?? UUID().uuidString
+        
+        playerBoards[.player1] = player1Board
+        playerBoards[.player2] = player2Board
     }
     
     public mutating func fireAt(_ coordinate: Coordinate, target: Player) {
@@ -27,13 +35,13 @@ public struct Game {
         }
         
         if target == .player1 {
-            player1Board.fire(at: coordinate)
+            playerBoards[target]?.fire(at: coordinate)
             
             if player1Board.hitCells.count % 3 == 0 {
                 currentPlayer = .player1
             }
         } else {
-            player2Board.fire(at: coordinate)
+            playerBoards[target]?.fire(at: coordinate)
             
             if player2Board.hitCells.count % 3 == 0 {
                 currentPlayer = .player2
