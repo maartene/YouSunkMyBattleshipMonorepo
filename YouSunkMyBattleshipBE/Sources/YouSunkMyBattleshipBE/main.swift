@@ -18,9 +18,11 @@ func configure(_ app: Application, repository: GameRepository) throws {
         return "Health check OK"
     }
 
-    app.webSocket("game") { req, ws in
+    app.webSocket("game", ":playerID") { req, ws in
         req.logger.info("Connection established.")
-        let gameService = GameService(repository: app.gameRepository!, bot: RandomBot(), ws: ws)
+        let playerID = req.parameters.get("playerID")!
+        let player = Player(id: playerID)
+        let gameService = GameService(repository: app.gameRepository!, owner: player, bot: RandomBot(), ws: ws)
         ws.send("Welcome!".data(using: .utf8)!)
 
         ws.onBinary { ws, data in

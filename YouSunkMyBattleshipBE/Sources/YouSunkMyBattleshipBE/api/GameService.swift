@@ -17,7 +17,7 @@ actor GameService {
     private let bot: Bot
     private let ws: WebSocket?
     private var speed: GameSpeed = .slow
-    var gameID: String = "A game"
+    private(set) var gameID: String = "A game"
     private let owner: Player
 
     init(repository: GameRepository, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
@@ -167,7 +167,6 @@ actor GameService {
         game.fireAt(coordinate, target: owner)
         try await saveAndSendGameState(game)
     }
-
 }
 
 enum GameServiceError: Error {
