@@ -15,10 +15,10 @@ import YouSunkMyBattleshipCommon
     let repository = InmemoryGameRepository()
     let gameService: GameService
     let gameID: String
-    
+    let player = Player()
     
     init() async throws {
-        self.gameService = GameService(repository: repository, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
+        self.gameService = GameService(repository: repository, owner: player, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
         try await createGame(player1Board: .makeFilledBoard(), in: gameService)
         gameID = await gameService.gameID
     }
@@ -55,7 +55,7 @@ extension `Feature: CPU Opponent` {
     
     private func `And my board updates with hit 💥 or miss ❌`() async throws {
         let gameState = try await gameService.getGameState()
-        let cells = try #require(gameState.cells[.player1])
+        let cells = try #require(gameState.cells[player])
         #expect(cells[1][1] == "💥")
         #expect(cells[2][1] == "💥")
         #expect(cells[0][0] == "❌")

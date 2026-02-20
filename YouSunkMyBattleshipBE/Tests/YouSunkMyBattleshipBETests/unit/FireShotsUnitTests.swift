@@ -13,17 +13,24 @@ import YouSunkMyBattleshipCommon
     let repository = InmemoryGameRepository()
     let gameService: GameService
     let gameID: String
+    let player: Player
+    let opponent: Player
     
     init() async throws {
-        gameService = GameService(repository: repository)
+        let player = Player()
+        self.player = player
+        gameService = GameService(repository: repository, owner: player)
         try await createGame(player1Board: .makeFilledBoard(), in: gameService)
         gameID = await gameService.gameID
+        let gameState = try await gameService.getGameState()
+        let opponent = try #require(gameState.cells.keys.first { $0 != player })
+        self.opponent = opponent
     }
     
     @Test func `the boards for both player are independent of eachother`() async throws {
         let gameState = try await gameService.getGameState()
         
-        #expect(gameState.cells[.player1] != gameState.cells[.player2])
+        #expect(gameState.cells[player] != gameState.cells[opponent])
     }
         
     @Test func `given there is no ship at B5, when the player taps the opponents board at B5, then the cell should register as a miss`() async throws {
@@ -32,7 +39,7 @@ import YouSunkMyBattleshipCommon
         try await gameService.receive(command.toData())
             
         let gameState = try await gameService.getGameState()
-        let cells = try #require(gameState.cells[.player2])
+        let cells = try #require(gameState.cells[opponent])
         #expect(cells[1][4] == "❌")
     }
     
@@ -42,7 +49,7 @@ import YouSunkMyBattleshipCommon
         try await gameService.receive(command.toData())
             
         let gameState = try await gameService.getGameState()
-        let cells = try #require(gameState.cells[.player2])
+        let cells = try #require(gameState.cells[opponent])
         #expect(cells[1][1] == "🌊")
     }
 }

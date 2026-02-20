@@ -17,9 +17,10 @@ import YouSunkMyBattleshipCommon
     let repository = InmemoryGameRepository()
     let gameService: GameService
     let gameID: String
+    let player = Player()
     
     init() async {
-        gameService = GameService(repository: repository)
+        gameService = GameService(repository: repository, owner: player)
         gameID = await gameService.gameID
     }
     
@@ -38,7 +39,7 @@ extension `Feature: Victory Condition` {
         let (player2Board, lastCellToHit) = createNearlyCompletedBoard()
         self.lastCellToHit = lastCellToHit
         
-        await repository.setGame(Game(gameID: gameID, player1Board: .makeAnotherFilledBoard(), player2Board: player2Board))
+        await repository.setGame(Game(gameID: gameID, player1Board: .makeAnotherFilledBoard(), player2Board: player2Board, player1: player))
     }
     
     func `When I fire at the last ship's remaining cell`() async throws {

@@ -18,12 +18,13 @@ actor GameService {
     private let ws: WebSocket?
     private var speed: GameSpeed = .slow
     var gameID: String = "A game"
-    private let owner: Player = .player1
+    private let owner: Player
 
-    init(repository: GameRepository, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
+    init(repository: GameRepository, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
         self.repository = repository
         self.bot = bot
         self.ws = ws
+        self.owner = owner ?? Player(id: UUID().uuidString)
     }
 
     func receive(_ data: Data) async throws {
@@ -46,7 +47,7 @@ actor GameService {
 
         return GameState(
             cells: cells,
-            shipsToDestroy: game.shipsToDestroy,
+            shipsToDestroy: try game.shipsToDestroy(player: owner),
             state: game.state,
             lastMessage: lastMessage,
             currentPlayer: game.currentPlayer
@@ -74,7 +75,7 @@ actor GameService {
             throw GameServiceError.invalidBoard
         }
 
-        let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard())
+        let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: owner)
 
         self.speed = speed
         self.gameID = game.gameID
@@ -163,7 +164,7 @@ actor GameService {
 
     private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
         try await Task.sleep(nanoseconds: speed.nanoSecondDelay)
-        game.fireAt(coordinate, target: .player1)
+        game.fireAt(coordinate, target: owner)
         try await saveAndSendGameState(game)
     }
 
@@ -177,12 +178,20 @@ enum GameServiceError: Error {
 }
 
 extension Game {
-    var shipsToDestroy: Int {
-        playerBoards[.player2]?.aliveShips.count ?? -1
+    func shipsToDestroy(player: Player) throws -> Int {
+        guard let opponent = opponentOf(player) else {
+            throw GameServiceError.opponentNotFound
+        }
+        
+        guard let board = playerBoards[opponent] else {
+            throw GameServiceError.boardNotFound
+        }
+        
+        return board.aliveShips.count
     }
 
     var state: GameState.State {
-        (shipsToDestroy == 0 || playerBoards[.player1]?.aliveShips.isEmpty ?? false) ? .finished : .play
+        playerBoards.contains { $0.value.aliveShips.isEmpty } ? .finished : .play
     }
 }
 

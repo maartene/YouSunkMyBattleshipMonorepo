@@ -8,16 +8,19 @@
 import Foundation
 
 public struct Game {
-    public private(set) var currentPlayer = Player.player1
+    public private(set) var currentPlayer: Player
     
     public let gameID: String
     public private(set) var playerBoards = [Player: Board]()
     
-    public init(gameID: String? = nil, player1Board: Board, player2Board: Board) {
+    public init(gameID: String? = nil, player1Board: Board, player2Board: Board, player1: Player? = nil, player2: Player? = nil) {
         self.gameID = gameID ?? UUID().uuidString
+        let player1 = player1 ?? Player(id: UUID().uuidString)
+        let player2 = player2 ?? Player(id: UUID().uuidString)
+        self.currentPlayer = player1
         
-        playerBoards[.player1] = player1Board
-        playerBoards[.player2] = player2Board
+        playerBoards[player1] = player1Board
+        playerBoards[player2] = player2Board
     }
     
     public mutating func fireAt(_ coordinate: Coordinate, target: Player) {

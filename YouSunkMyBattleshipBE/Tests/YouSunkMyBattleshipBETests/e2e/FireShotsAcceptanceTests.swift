@@ -13,9 +13,12 @@ import YouSunkMyBattleshipCommon
     let repository = InmemoryGameRepository()
     let gameService: GameService
     let gameID = "A game"
+    let player: Player
     
-    init() async {
-        gameService = GameService(repository: repository)
+    init() async throws {
+        let player = Player()
+        self.player = player
+        gameService = GameService(repository: repository, owner: player)
     }
     
     @Test func `Scenario: Player fires and misses`() async throws {
@@ -36,7 +39,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Firing Shots` {
     private func `Given the game has started with all ships placed`() async {
-        await repository.setGame(Game(gameID: gameID, player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard()))
+        await repository.setGame(Game(gameID: gameID, player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard(), player1: player))
     }
     
     private func `When I fire at coordinate B5`() async throws {
@@ -46,7 +49,8 @@ extension `Feature: Firing Shots` {
     
     private func `Then the tracking board shows ❌ at B5`() async throws {
         let gameState = try await gameService.getGameState()
-        #expect(gameState.cells[.player2]![1][4] == "❌")
+        let opponent = try await getOpponent(from: gameService, for: player)
+        #expect(gameState.cells[opponent]![1][4] == "❌")
     }
     
     private func `And I receive feedback "Miss!"`() async throws {
@@ -56,7 +60,8 @@ extension `Feature: Firing Shots` {
     
     private func `And one of the ship has a piece place on H3`() async throws {
         let game = await repository.getGame(id: gameID)!
-        let board = try #require(game.playerBoards[.player2])
+        let opponent = try await getOpponent(from: gameService, for: player)
+        let board = try #require(game.playerBoards[opponent])
         #expect(board.placedShips.contains(where: { ship in
             ship.coordinates.contains(Coordinate("H3"))
         }))
@@ -69,7 +74,8 @@ extension `Feature: Firing Shots` {
     
     private func `Then the tracking board shows 💥 at H3`() async throws {
         let gameState = try await gameService.getGameState()
-        #expect(gameState.cells[.player2]![7][2] == "💥")
+        let opponent = try await getOpponent(from: gameService, for: player)
+        #expect(gameState.cells[opponent]![7][2] == "💥")
     }
     
     private func `And I receive feedback "Hit!"`() async throws {
