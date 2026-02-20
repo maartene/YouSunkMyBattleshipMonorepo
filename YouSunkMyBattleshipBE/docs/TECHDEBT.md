@@ -1,7 +1,9 @@
-# TECHDEBT
+# TECHDEBT 🧹
 
-## TODO
-- [ ] GameService assumes in many places that two players already exist. This requires more robust error handling.
+## ⚠️ TODO
 
-## DOING
-- [ ] Player should have arbitrary IDs instead of being enum cases.
+## 🚧 DOING
+
+## ✅ DONE
+- [X] GameService assumes in many places that two players already exist. This requires more robust error handling.
+- [X] Player should have arbitrary IDs instead of being enum cases.
