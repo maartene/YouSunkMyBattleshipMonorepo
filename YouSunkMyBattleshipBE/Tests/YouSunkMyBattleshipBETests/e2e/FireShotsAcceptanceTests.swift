@@ -27,7 +27,7 @@ import YouSunkMyBattleshipCommon
         
     @Test func `Scenario: Player fires and hits`() async throws {
         await `Given the game has started with all ships placed`()
-        await `And one of the ship has a piece place on H3`()
+        try await `And one of the ship has a piece place on H3`()
         try await `When I fire at coordinate H3`()
         try await `Then the tracking board shows 💥 at H3`()
         try await `And I receive feedback "Hit!"`()
@@ -54,9 +54,9 @@ extension `Feature: Firing Shots` {
         #expect(gameState.lastMessage == "Miss!")
     }
     
-    private func `And one of the ship has a piece place on H3`() async {
+    private func `And one of the ship has a piece place on H3`() async throws {
         let game = await repository.getGame(id: gameID)!
-        let board = game.player2Board
+        let board = try #require(game.playerBoards[.player2])
         #expect(board.placedShips.contains(where: { ship in
             ship.coordinates.contains(Coordinate("H3"))
         }))

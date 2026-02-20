@@ -34,12 +34,17 @@ actor GameService {
         guard let game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
+        
+        let cells = game.playerBoards.reduce(into: [Player:[[String]]]())  { result, entry in
+            if entry.key == .player1 {
+                result[entry.key] = entry.value.toStringsAsPlayerBoard()
+            } else {
+                result[entry.key] = entry.value.toStringsAsTargetBoard()
+            }
+        }
 
         return GameState(
-            cells: [
-                .player1: game.player1Board.toStringsAsPlayerBoard(),
-                .player2: game.player2Board.toStringsAsTargetBoard(),
-            ],
+            cells: cells,
             shipsToDestroy: game.shipsToDestroy,
             state: game.state,
             lastMessage: lastMessage,
@@ -87,7 +92,9 @@ actor GameService {
 
         game.fireAt(coordinate, target: .player2)
 
-        let player2Board = game.player2Board
+        guard let player2Board = game.playerBoards[.player2] else {
+            return
+        }
         
         switch player2Board.cells[coordinate.y][coordinate.x] {
         case .hitShip: lastMessage = "Hit!"
@@ -114,15 +121,19 @@ actor GameService {
         }
 
         try await saveAndSendGameState(game)
-
-        let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
+        
+        guard let player1Board = game.playerBoards[.player1] else {
+            return
+        }
+        
+        let botCoordinates = await self.bot.getNextMoves(board: player1Board)
         lastMessage = getCPUFiresMessage(botCoordinates: botCoordinates)
 
         for botCoordinate in botCoordinates {
             try await cpuFire(at: botCoordinate, in: &game)
         }
 
-        if game.player1Board.aliveShips.isEmpty {
+        if game.playerBoards[.player1]?.aliveShips.isEmpty ?? false {
             lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
         }
 
@@ -161,11 +172,11 @@ enum GameServiceError: Error {
 
 extension Game {
     var shipsToDestroy: Int {
-        player2Board.aliveShips.count
+        playerBoards[.player2]?.aliveShips.count ?? -1
     }
 
     var state: GameState.State {
-        (shipsToDestroy == 0 || player1Board.aliveShips.isEmpty) ? .finished : .play
+        (shipsToDestroy == 0 || playerBoards[.player1]?.aliveShips.isEmpty ?? false) ? .finished : .play
     }
 }
 

@@ -10,16 +10,8 @@ import Foundation
 public struct Game {
     public private(set) var currentPlayer = Player.player1
     
-    public var player1Board: Board {
-        playerBoards[.player1]!
-    }
-    
-    public var player2Board: Board {
-        playerBoards[.player2]!
-    }
-    
     public let gameID: String
-    private var playerBoards = [Player: Board]()
+    public private(set) var playerBoards = [Player: Board]()
     
     public init(gameID: String? = nil, player1Board: Board, player2Board: Board) {
         self.gameID = gameID ?? UUID().uuidString
