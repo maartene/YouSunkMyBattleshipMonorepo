@@ -8,12 +8,15 @@
 import SwiftUI
 import WSDataProvider
 import Foundation
+import YouSunkMyBattleshipCommon
 
 #if targetEnvironment(simulator)
-let wsURL = URL(string: "ws://localhost:8080/game")!
+let player = Player(id: "simulator_player")
+let wsURL = URL(string: "ws://localhost:8080/game/\(player.id)")!
 let httpURL = URL(string: "http://localhost:8080/games")!
 #else
-let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game")!
+let player = Player(id: "device_player")
+let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game/\(player.id)")!
 let httpURL = URL(string: "https://service-ykxo8.ondigitalocean.app/games")!
 #endif
 

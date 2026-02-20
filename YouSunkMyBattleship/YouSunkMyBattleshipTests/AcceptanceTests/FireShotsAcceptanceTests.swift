@@ -21,8 +21,8 @@ import WSDataProvider
     var viewModel: ClientViewModel!
     var view: GameView!
 
-    let dataProvider1 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringMiss)
-    let dataProvider2 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHit)
+    let dataProvider1 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringMissJSON)
+    let dataProvider2 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHitJSON)
 
     @Test mutating func `Scenario: Player fires and misses`() async throws {
         try await `Given a game has started with all ships placed`(dataProvider1)
@@ -55,7 +55,7 @@ extension `Feature: Firing Shots` {
     }
 
     func `When I fire at coordinate B5`() async throws {
-        await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: .player2)
+        await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: anOpponent)
     }
 
     func `Then the tracking board shows ❌ at B5`() throws {
@@ -78,7 +78,7 @@ extension `Feature: Firing Shots` {
     }
 
     private func `When I fire at coordinate C5`() async throws {
-        await viewModel.tap(Coordinate(x: 4, y: 2), boardForPlayer: .player2)
+        await viewModel.tap(Coordinate(x: 4, y: 2), boardForPlayer: anOpponent)
     }
 
     private func `Then the tracking board shows 💥 at C5`() throws {

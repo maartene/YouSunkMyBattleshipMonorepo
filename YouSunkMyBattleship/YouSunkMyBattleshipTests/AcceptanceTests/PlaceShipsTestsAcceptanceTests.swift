@@ -21,7 +21,7 @@ import YouSunkMyBattleshipCommon
     let view: GameView
 
     init() {
-        self.viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement))
+        self.viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacementJSON))
         self.view = GameView(viewModel: viewModel)
     }
 
@@ -55,10 +55,10 @@ extension `Feature: Ship Placement` {
     }
 
     private func `When I tap at A1`() async throws {
-        await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("A1"), boardForPlayer: player)
     }
     private func `And then tap at A5`() async throws {
-        await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
     }
 
     private func `Then the cells A1 through A5 display 🚢`() throws {
@@ -78,20 +78,20 @@ extension `Feature: Ship Placement` {
     }
 
     private func `Given I placed all my ships`() async throws {
-        await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
-        await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("A1"), boardForPlayer: player)
+        await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
 
-        await viewModel.tap(Coordinate("B2"), boardForPlayer: .player1)
-        await viewModel.tap(Coordinate("E2"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("B2"), boardForPlayer: player)
+        await viewModel.tap(Coordinate("E2"), boardForPlayer: player)
 
-        await viewModel.tap(Coordinate("C3"), boardForPlayer: .player1)
-        await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("C3"), boardForPlayer: player)
+        await viewModel.tap(Coordinate("C5"), boardForPlayer: player)
 
-        await viewModel.tap(Coordinate("G8"), boardForPlayer: .player1)
-        await viewModel.tap(Coordinate("I8"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("G8"), boardForPlayer: player)
+        await viewModel.tap(Coordinate("I8"), boardForPlayer: player)
 
-        await viewModel.tap(Coordinate("F6"), boardForPlayer: .player1)
-        await viewModel.tap(Coordinate("F7"), boardForPlayer: .player1)
+        await viewModel.tap(Coordinate("F6"), boardForPlayer: player)
+        await viewModel.tap(Coordinate("F7"), boardForPlayer: player)
 
         #expect(viewModel.state == .awaitingConfirmation)
     }

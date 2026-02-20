@@ -22,6 +22,7 @@ protocol GameViewModel {
     var numberOfShipsToBeDestroyed: Int { get }
     var cells: [Player: [[String]]] { get }
     var currentPlayer: Player { get }
+    var opponent: Player? { get }
 
 }
 
