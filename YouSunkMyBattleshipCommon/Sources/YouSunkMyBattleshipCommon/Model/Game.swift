@@ -33,20 +33,18 @@ public struct Game {
             print("Its not your turn")
             return
         }
+                
+        playerBoards[target]?.fire(at: coordinate)
         
-        if target == .player1 {
-            playerBoards[target]?.fire(at: coordinate)
-            
-            if player1Board.hitCells.count % 3 == 0 {
-                currentPlayer = .player1
-            }
-        } else {
-            playerBoards[target]?.fire(at: coordinate)
-            
-            if player2Board.hitCells.count % 3 == 0 {
-                currentPlayer = .player2
-            }
+        if playerBoards[target]!.hitCells.count % 3 == 0 {
+            currentPlayer = opponentOf(currentPlayer)!
         }
+    }
+    
+    public func opponentOf(_ player: Player) -> Player? {
+        playerBoards
+            .map { $0.key }
+            .first { $0 != player }
     }
 }
 
