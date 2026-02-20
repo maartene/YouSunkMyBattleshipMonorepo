@@ -18,6 +18,7 @@ actor GameService {
     private let ws: WebSocket?
     private var speed: GameSpeed = .slow
     var gameID: String = "A game"
+    private let owner: Player = .player1
 
     init(repository: GameRepository, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
         self.repository = repository
@@ -36,7 +37,7 @@ actor GameService {
         }
         
         let cells = game.playerBoards.reduce(into: [Player:[[String]]]())  { result, entry in
-            if entry.key == .player1 {
+            if entry.key == owner {
                 result[entry.key] = entry.value.toStringsAsPlayerBoard()
             } else {
                 result[entry.key] = entry.value.toStringsAsTargetBoard()
@@ -89,24 +90,28 @@ actor GameService {
         guard var game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
+        
+        guard let opponent = game.opponentOf(owner) else {
+            throw GameServiceError.opponentNotFound
+        }
 
-        game.fireAt(coordinate, target: .player2)
+        game.fireAt(coordinate, target: opponent)
 
-        guard let player2Board = game.playerBoards[.player2] else {
+        guard let opponentBoard = game.playerBoards[opponent] else {
             return
         }
         
-        switch player2Board.cells[coordinate.y][coordinate.x] {
+        switch opponentBoard.cells[coordinate.y][coordinate.x] {
         case .hitShip: lastMessage = "Hit!"
         case .destroyedShip:
-            let destroyedShip = player2Board.destroyedShips.first(where: {
+            let destroyedShip = opponentBoard.destroyedShips.first(where: {
                 $0.coordinates.contains(coordinate)
             })!
             lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
         default: lastMessage = "Miss!"
         }
 
-        if player2Board.aliveShips.isEmpty == false {
+        if opponentBoard.aliveShips.isEmpty == false {
             try await processPlayer2Turn(&game)
         } else {
             lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
@@ -168,6 +173,7 @@ enum GameServiceError: Error {
     case invalidBoard
     case boardNotFound
     case gameNotFound
+    case opponentNotFound
 }
 
 extension Game {
