@@ -15,9 +15,10 @@ import YouSunkMyBattleshipCommon
     var gameService: GameService
     var activeGameGameState: GameState?
     var gameID = ""
+    let player = Player()
 
     init() async throws {
-        gameService = GameService(repository: repository)
+        gameService = GameService(repository: repository, owner: player)
     }
     
     @Test mutating func `Scenario: Player saves and resumes game`() async throws {
@@ -47,7 +48,7 @@ extension `Feature: Game Persistence` {
     }
     
     private mutating func `And I restart and load "game1"`() async throws {
-        gameService = GameService(repository: repository)
+        gameService = GameService(repository: repository, owner: player)
         
         let loadCommand = GameCommand.load(gameID: gameID)
         

@@ -48,37 +48,37 @@ import WSDataProvider
         }
 
         @Test func `when a player taps cell at A5, it becomes a ship`() async {
-            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
 
-            #expect(viewModel.cells[.player1]![0][4] == "🚢")
+            #expect(viewModel.cells[player]![0][4] == "🚢")
         }
 
         @Test
         func `given a player already tapped at A5, when they tap at C5, then cells A5, B5 and C5 show 🚢`() async {
-            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
 
-            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: player)
 
-            #expect(viewModel.cells[.player1]![0][4] == "🚢")
-            #expect(viewModel.cells[.player1]![1][4] == "🚢")
-            #expect(viewModel.cells[.player1]![2][4] == "🚢")
+            #expect(viewModel.cells[player]![0][4] == "🚢")
+            #expect(viewModel.cells[player]![1][4] == "🚢")
+            #expect(viewModel.cells[player]![2][4] == "🚢")
         }
 
         @Test func `given a ship placement has ended, a new one can be started`() async {
-            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: player)
 
-            await viewModel.tap(Coordinate("F7"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("F7"), boardForPlayer: player)
 
-            #expect(viewModel.cells[.player1]![0][4] == "🚢")
-            #expect(viewModel.cells[.player1]![1][4] == "🚢")
-            #expect(viewModel.cells[.player1]![2][4] == "🚢")
-            #expect(viewModel.cells[.player1]![5][6] == "🚢")
+            #expect(viewModel.cells[player]![0][4] == "🚢")
+            #expect(viewModel.cells[player]![1][4] == "🚢")
+            #expect(viewModel.cells[player]![2][4] == "🚢")
+            #expect(viewModel.cells[player]![5][6] == "🚢")
         }
 
         @Test func `when a valid ship has been placed, it is removed from the ships to place list`() async {
-            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: player)
 
             #expect(viewModel.shipsToPlace.contains("Cruiser(3)") == false)
         }
@@ -92,18 +92,18 @@ import WSDataProvider
 
         @Test
         func `when all ships have been placed, the viewmodel should show them all`() async {
-            await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("A7"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("D7"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("A9"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("C9"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("C1"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("C3"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("F9"), boardForPlayer: .player1)
-            await viewModel.tap(Coordinate("G9"), boardForPlayer: .player1)
+            await viewModel.tap(Coordinate("A1"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("A7"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("D7"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("A9"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("C9"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("C1"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("C3"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("F9"), boardForPlayer: player)
+            await viewModel.tap(Coordinate("G9"), boardForPlayer: player)
 
-            #expect(viewModel.cells[.player1] ==
+            #expect(viewModel.cells[player] ==
                 [
                     ["🚢", "🚢", "🚢", "🚢", "🚢", "🌊", "🚢", "🌊", "🚢", "🌊"],
                     ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊", "🚢", "🌊"],
@@ -122,7 +122,7 @@ import WSDataProvider
         @Test
         func `given all ships have been placed, when the player confirms placement, the viewmodels state should move to play`()
             async throws {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacementJSON)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
             await completePlacement(on: viewModel)
 
@@ -134,13 +134,13 @@ import WSDataProvider
         @Test
         func `given all ships have been placed, when the player confirms placement, the game should receive a board with the placed ships`()
             async {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacementJSON)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
             await completePlacement(on: viewModel)
 
             await viewModel.confirmPlacement()
 
-            #expect(viewModel.cells[.player1] ==
+            #expect(viewModel.cells[player] ==
                 [
                     ["🚢", "🚢", "🚢", "🚢", "🚢", "🌊", "🚢", "🌊", "🚢", "🌊"],
                     ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊", "🚢", "🌊"],

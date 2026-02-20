@@ -17,9 +17,12 @@ import YouSunkMyBattleshipCommon
     let repository = InmemoryGameRepository()
     let gameService: GameService
     let gameID: String
+    let player: Player
     
-    init() async {
-        self.gameService = GameService(repository: repository)
+    init() async throws {
+        let player = Player()
+        self.player = player
+        self.gameService = GameService(repository: repository, owner: player)
         gameID = await gameService.gameID
     }
     
@@ -35,7 +38,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Sinking Detection` {
     func `Given the enemy has a Destroyer at I9-J9`() async throws {
-        await repository.setGame(Game(gameID: gameID, player1Board: .makeAnotherFilledBoard(), player2Board: .makeFilledBoard()))
+        await repository.setGame(Game(gameID: gameID, player1Board: .makeAnotherFilledBoard(), player2Board: .makeFilledBoard(), player1: player))
     }
 
     func `And I have hit I9`() async throws {
@@ -50,7 +53,8 @@ extension `Feature: Ship Sinking Detection` {
 
     func `Then both I9 and J9 show 🔥`() async throws {
         let gameState = try await gameService.getGameState()
-        let cells = try #require(gameState.cells[.player2])
+        let opponent = try await getOpponent(from: gameService, for: player)
+        let cells = try #require(gameState.cells[opponent])
         #expect(cells[8][8] == "🔥")
         #expect(cells[9][8] == "🔥")
     }

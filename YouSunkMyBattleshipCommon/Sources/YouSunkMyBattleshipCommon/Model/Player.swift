@@ -5,7 +5,12 @@
 //  Created by Engels, Maarten MAK on 28/01/2026.
 //
 
-public enum Player: Codable, Sendable {
-    case player1
-    case player2
+import Foundation
+
+public struct Player: Codable, Sendable, Identifiable, Equatable, Hashable {
+    public let id: String
+    
+    public init(id: String = UUID().uuidString) {
+        self.id = id
+    }
 }

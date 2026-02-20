@@ -12,11 +12,14 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`Unit tests`)) struct VictoryConditionTests {
     @Test func `when a new game is started, the player2 board is reset`() async throws {
         let repository = InmemoryGameRepository()
-        let gameService = GameService(repository: repository)
+        let player = Player()
+        let opponent = Player()
+        let gameService = GameService(repository: repository, owner: player)
         let gameID = await gameService.gameID
         
         let (player2Board, _) = createNearlyCompletedBoard()
-        await repository.setGame(Game(gameID: gameID, player1Board: .makeFilledBoard(), player2Board: player2Board))
+        let game = Game(gameID: gameID, player1Board: .makeFilledBoard(), player2Board: player2Board, player1: player, player2: opponent)
+        await repository.setGame(game)
         
         let gameStateBeforeNewGame = try await gameService.getGameState()
         
@@ -26,6 +29,6 @@ import YouSunkMyBattleshipCommon
         
         let gameStateAfterNewGame = try await gameService.getGameState()
         
-        #expect(gameStateBeforeNewGame.cells[.player2] != gameStateAfterNewGame.cells[.player2])
+        #expect(gameStateBeforeNewGame.cells[opponent] != gameStateAfterNewGame.cells[opponent])
     }
 }

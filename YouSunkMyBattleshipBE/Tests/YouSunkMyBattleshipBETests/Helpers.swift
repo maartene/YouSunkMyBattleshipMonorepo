@@ -56,3 +56,8 @@ func createGame(player1Board: Board, in gameService: GameService) async throws {
     
     try await gameService.receive(createGameCommand.toData())
 }
+
+func getOpponent(from gameService: GameService, for player: Player) async throws -> Player {
+    let gameState = try await gameService.getGameState()
+    return try #require(gameState.cells.keys.first { $0 != player })
+}

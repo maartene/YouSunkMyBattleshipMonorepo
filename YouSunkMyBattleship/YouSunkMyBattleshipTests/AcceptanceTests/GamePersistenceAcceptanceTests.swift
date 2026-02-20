@@ -18,7 +18,7 @@ import WSDataProvider
 // So that I don't lose progress
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Game Persistence` {
-    let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHit)
+    let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHitJSON)
     let viewModel: ClientViewModel
     let view: GameView
 
@@ -37,7 +37,7 @@ import WSDataProvider
 
 extension `Feature: Game Persistence` {
     private func `Given I was in an active game against CPU`() async throws {
-        // handled by backend
+        
     }
 
     private func `And the game was saved as "game1"`() async throws {

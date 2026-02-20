@@ -8,16 +8,19 @@
 import Foundation
 
 public struct Game {
-    public private(set) var currentPlayer = Player.player1
+    public private(set) var currentPlayer: Player
     
-    public private(set) var player1Board: Board
-    public private(set) var player2Board: Board
     public let gameID: String
+    public private(set) var playerBoards = [Player: Board]()
     
-    public init(gameID: String? = nil, player1Board: Board, player2Board: Board) {
-        self.player1Board = player1Board
-        self.player2Board = player2Board
+    public init(gameID: String? = nil, player1Board: Board, player2Board: Board, player1: Player? = nil, player2: Player? = nil) {
         self.gameID = gameID ?? UUID().uuidString
+        let player1 = player1 ?? Player(id: UUID().uuidString)
+        let player2 = player2 ?? Player(id: UUID().uuidString)
+        self.currentPlayer = player1
+        
+        playerBoards[player1] = player1Board
+        playerBoards[player2] = player2Board
     }
     
     public mutating func fireAt(_ coordinate: Coordinate, target: Player) {
@@ -25,20 +28,18 @@ public struct Game {
             print("Its not your turn")
             return
         }
+                
+        playerBoards[target]?.fire(at: coordinate)
         
-        if target == .player1 {
-            player1Board.fire(at: coordinate)
-            
-            if player1Board.hitCells.count % 3 == 0 {
-                currentPlayer = .player1
-            }
-        } else {
-            player2Board.fire(at: coordinate)
-            
-            if player2Board.hitCells.count % 3 == 0 {
-                currentPlayer = .player2
-            }
+        if playerBoards[target]!.hitCells.count % 3 == 0 {
+            currentPlayer = opponentOf(currentPlayer)!
         }
+    }
+    
+    public func opponentOf(_ player: Player) -> Player? {
+        playerBoards
+            .map { $0.key }
+            .first { $0 != player }
     }
 }
 

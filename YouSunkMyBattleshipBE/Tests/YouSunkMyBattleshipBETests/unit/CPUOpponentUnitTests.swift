@@ -13,9 +13,10 @@ import YouSunkMyBattleshipCommon
     let repository = InmemoryGameRepository()
     let gameService: GameService
     let gameID: String
+    let player = Player()
     
     init() async {
-        gameService = GameService(repository: repository)
+        gameService = GameService(repository: repository, owner: player)
         self.gameID = await gameService.gameID
     }
     
@@ -30,7 +31,7 @@ import YouSunkMyBattleshipCommon
     
     @Test func `when the CPU wins the game, it notifies the player`() async throws {
         let board = createCompletedBoard()
-        await repository.setGame(Game(gameID: gameID,player1Board: board, player2Board: .makeAnotherFilledBoard()))
+        await repository.setGame(Game(gameID: gameID,player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: player))
         
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A1")).toData())
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A2")).toData())

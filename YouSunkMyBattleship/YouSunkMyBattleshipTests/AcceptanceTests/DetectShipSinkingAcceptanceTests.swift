@@ -21,7 +21,7 @@ import YouSunkMyBattleshipCommon
     let view: GameView
 
     init() {
-        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroying))
+        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroyingJSON))
         view = GameView(viewModel: viewModel)
     }
 
@@ -46,11 +46,11 @@ extension `Feature: Ship Sinking Detection` {
     }
 
     func `And I have hit I9`() async throws {
-        await viewModel.tap(Coordinate("I9"), boardForPlayer: .player2)
+        await viewModel.tap(Coordinate("I9"), boardForPlayer: anOpponent)
     }
 
     func `When I fire at J9`() async throws {
-        await viewModel.tap(Coordinate("J9"), boardForPlayer: .player2)
+        await viewModel.tap(Coordinate("J9"), boardForPlayer: anOpponent)
     }
 
     func `Then both I9 and J9 show 🔥`() throws {

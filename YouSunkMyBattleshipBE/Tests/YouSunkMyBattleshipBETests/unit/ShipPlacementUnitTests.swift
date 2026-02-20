@@ -12,8 +12,15 @@ import Foundation
 @testable import YouSunkMyBattleshipBE
 
 @Suite struct `Ship Placement tests` {
-    let gameService = GameService(repository: InmemoryGameRepository())
+    let gameService: GameService
     let board = Board.makeFilledBoard()
+    let player: Player
+    
+    init() async throws {
+        let player = Player()
+        self.player = player
+        gameService = GameService(repository: InmemoryGameRepository(), owner: player)
+    }
     
     @Test func `when a valid board is submitted, gamestate is returned`() async throws {
         let placedShips = board.placedShips.map { $0.toDTO() }
@@ -48,7 +55,7 @@ import Foundation
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊"],
         ]
 
-        let player2Cells = try await gameService.getGameState().cells[.player2]
+        let player2Cells = try await gameService.getGameState().cells[getOpponent(from: gameService, for: player)]
         #expect(player2Cells == expectedCells)
     }
 

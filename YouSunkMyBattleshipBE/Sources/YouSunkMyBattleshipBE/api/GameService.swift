@@ -17,12 +17,14 @@ actor GameService {
     private let bot: Bot
     private let ws: WebSocket?
     private var speed: GameSpeed = .slow
-    var gameID: String = "A game"
+    private(set) var gameID: String = "A game"
+    private let owner: Player
 
-    init(repository: GameRepository, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
+    init(repository: GameRepository, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
         self.repository = repository
         self.bot = bot
         self.ws = ws
+        self.owner = owner ?? Player(id: UUID().uuidString)
     }
 
     func receive(_ data: Data) async throws {
@@ -34,13 +36,18 @@ actor GameService {
         guard let game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
+        
+        let cells = game.playerBoards.reduce(into: [Player:[[String]]]())  { result, entry in
+            if entry.key == owner {
+                result[entry.key] = entry.value.toStringsAsPlayerBoard()
+            } else {
+                result[entry.key] = entry.value.toStringsAsTargetBoard()
+            }
+        }
 
         return GameState(
-            cells: [
-                .player1: game.player1Board.toStringsAsPlayerBoard(),
-                .player2: game.player2Board.toStringsAsTargetBoard(),
-            ],
-            shipsToDestroy: game.shipsToDestroy,
+            cells: cells,
+            shipsToDestroy: try game.shipsToDestroy(player: owner),
             state: game.state,
             lastMessage: lastMessage,
             currentPlayer: game.currentPlayer
@@ -68,7 +75,7 @@ actor GameService {
             throw GameServiceError.invalidBoard
         }
 
-        let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard())
+        let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: owner)
 
         self.speed = speed
         self.gameID = game.gameID
@@ -84,23 +91,29 @@ actor GameService {
         guard var game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
-
-        game.fireAt(coordinate, target: .player2)
-
-        let player2Board = game.player2Board
         
-        switch player2Board.cells[coordinate.y][coordinate.x] {
+        guard let opponent = game.opponentOf(owner) else {
+            throw GameServiceError.opponentNotFound
+        }
+
+        game.fireAt(coordinate, target: opponent)
+
+        guard let opponentBoard = game.playerBoards[opponent] else {
+            return
+        }
+        
+        switch opponentBoard.cells[coordinate.y][coordinate.x] {
         case .hitShip: lastMessage = "Hit!"
         case .destroyedShip:
-            let destroyedShip = player2Board.destroyedShips.first(where: {
+            let destroyedShip = opponentBoard.destroyedShips.first(where: {
                 $0.coordinates.contains(coordinate)
             })!
             lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
         default: lastMessage = "Miss!"
         }
 
-        if player2Board.aliveShips.isEmpty == false {
-            try await processPlayer2Turn(&game)
+        if opponentBoard.aliveShips.isEmpty == false {
+            try await processBotTurn(&game)
         } else {
             lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
         }
@@ -108,21 +121,25 @@ actor GameService {
         await repository.setGame(game)
     }
 
-    private func processPlayer2Turn(_ game: inout Game) async throws {
-        guard game.currentPlayer == .player2 else {
+    private func processBotTurn(_ game: inout Game) async throws {
+        guard game.currentPlayer == game.opponentOf(owner) else {
             return
         }
 
         try await saveAndSendGameState(game)
-
-        let botCoordinates = await self.bot.getNextMoves(board: game.player1Board)
+        
+        guard let ownerBoard = game.playerBoards[owner] else {
+            return
+        }
+        
+        let botCoordinates = await self.bot.getNextMoves(board: ownerBoard)
         lastMessage = getCPUFiresMessage(botCoordinates: botCoordinates)
 
         for botCoordinate in botCoordinates {
             try await cpuFire(at: botCoordinate, in: &game)
         }
 
-        if game.player1Board.aliveShips.isEmpty {
+        if game.playerBoards[owner]?.aliveShips.isEmpty ?? false {
             lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
         }
 
@@ -147,25 +164,33 @@ actor GameService {
 
     private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
         try await Task.sleep(nanoseconds: speed.nanoSecondDelay)
-        game.fireAt(coordinate, target: .player1)
+        game.fireAt(coordinate, target: owner)
         try await saveAndSendGameState(game)
     }
-
 }
 
 enum GameServiceError: Error {
     case invalidBoard
     case boardNotFound
     case gameNotFound
+    case opponentNotFound
 }
 
 extension Game {
-    var shipsToDestroy: Int {
-        player2Board.aliveShips.count
+    func shipsToDestroy(player: Player) throws -> Int {
+        guard let opponent = opponentOf(player) else {
+            throw GameServiceError.opponentNotFound
+        }
+        
+        guard let board = playerBoards[opponent] else {
+            throw GameServiceError.boardNotFound
+        }
+        
+        return board.aliveShips.count
     }
 
     var state: GameState.State {
-        (shipsToDestroy == 0 || player1Board.aliveShips.isEmpty) ? .finished : .play
+        playerBoards.contains { $0.value.aliveShips.isEmpty } ? .finished : .play
     }
 }
 

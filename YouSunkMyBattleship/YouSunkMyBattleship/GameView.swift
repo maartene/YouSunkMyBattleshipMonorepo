@@ -13,7 +13,6 @@ import YouSunkMyBattleshipCommon
 struct GameView: View {
     let viewModel: any GameViewModel
     let gameID: String?
-
     internal let publisher = PassthroughSubject<Void, Never>()
 
     init(viewModel: any GameViewModel, gameID: String? = nil) {
@@ -24,11 +23,11 @@ struct GameView: View {
     var body: some View {
         VStack(spacing: 12) {
             GameStateView(viewModel: viewModel)
-            GameBoardView(viewModel: viewModel, owner: .player1)
+            GameBoardView(viewModel: viewModel, owner: player)
                 .padding()
                 .border(Color.green, width: 4)
-            if viewModel.state == .play || viewModel.state == .finished {
-                GameBoardView(viewModel: viewModel, owner: .player2)
+            if let opponent = viewModel.opponent, viewModel.state == .play || viewModel.state == .finished {
+                GameBoardView(viewModel: viewModel, owner: opponent)
                     .padding()
                     .border(Color.red, width: 4)
                     .transition(

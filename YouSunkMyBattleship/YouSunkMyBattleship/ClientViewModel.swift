@@ -12,12 +12,13 @@ import WSDataProvider
 @Observable
 final class ClientViewModel: GameViewModel {
     private let dataProvider: DataProvider
-    private let owner = Player.player1
+    private let owner = player
     private(set) var shipsToPlace: [String] = []
     private(set) var state: GameViewModelState = .placingShips
     private(set) var lastMessage = ""
     private(set) var cells: [Player: [[String]]] = [:]
     private(set) var numberOfShipsToBeDestroyed: Int = 5
+    private(set) var opponent: Player?
 
     private struct PlayerCoordinate: Hashable {
         let player: Player
@@ -29,11 +30,11 @@ final class ClientViewModel: GameViewModel {
     private var boardInProgress = Board()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
-    private(set) var currentPlayer = Player.player1
+    private(set) var currentPlayer = player
 
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
-        cells[.player1] = boardInProgress.toStringsAsPlayerBoard()
+        cells[owner] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()
     }
 
@@ -52,7 +53,7 @@ final class ClientViewModel: GameViewModel {
     func reset() {
         boardInProgress = Board()
         state = .placingShips
-        cells[.player1] = boardInProgress.toStringsAsPlayerBoard()
+        cells[owner] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()
     }
 
@@ -86,7 +87,7 @@ final class ClientViewModel: GameViewModel {
             boardInProgress.placeShip(at: shipCoordinates)
             updateShipsToPlace()
 
-            cells[.player1] = cellsForPlayer()
+            cells[owner] = cellsForPlayer()
 
             if shipsToPlace.isEmpty {
                 state = .awaitingConfirmation
@@ -97,7 +98,7 @@ final class ClientViewModel: GameViewModel {
         } else {
             startShip = coordinate
             endShip = coordinate
-            cells[.player1] = cellsForPlayer()
+            cells[owner] = cellsForPlayer()
         }
     }
 
@@ -106,7 +107,7 @@ final class ClientViewModel: GameViewModel {
             return
         }
 
-        guard currentPlayer == .player1 else {
+        guard currentPlayer == owner else {
             return
         }
 
@@ -127,6 +128,7 @@ final class ClientViewModel: GameViewModel {
             self.state = GameViewModelState.fromGameState(gameState.state)
             self.lastMessage = gameState.lastMessage
             self.currentPlayer = gameState.currentPlayer
+            self.opponent = cells.keys.first(where: { $0 != owner })
         } catch {
             NSLog("Error receiving data: \(error)")
         }
@@ -148,7 +150,7 @@ final class ClientViewModel: GameViewModel {
 
     private func cellsForPlayer() -> [[String]] {
         guard state == .placingShips else {
-            return cells[.player1, default: []]
+            return cells[owner, default: []]
         }
 
         var result = boardInProgress.cells.map { row in

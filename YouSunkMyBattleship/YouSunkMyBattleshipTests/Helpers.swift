@@ -24,9 +24,13 @@ extension Tag {
     @Tag static var `Integration tests`: Self
 }
 
+let anOpponent = Player()
+
 // MARK: ViewModel fakes
 final class ViewModelSpy: GameViewModel {
-    let currentPlayer: Player = .player1
+    let opponent: Player? = anOpponent
+    
+    let currentPlayer: Player = player
 
     let state: GameViewModelState
     var startDragLocation: CGPoint?
@@ -67,7 +71,7 @@ final class ViewModelSpy: GameViewModel {
     }
 
     let cells = [
-        Player.player1: [
+        player: [
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ],
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ],
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ],
@@ -79,7 +83,7 @@ final class ViewModelSpy: GameViewModel {
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ],
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ]
         ],
-        .player2: [
+        anOpponent: [
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ],
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ],
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊" ],
@@ -98,6 +102,8 @@ final class ViewModelSpy: GameViewModel {
 }
 
 struct DummyGameViewModel: GameViewModel {
+    let opponent: Player? = nil
+    
     func confirmPlacement() async {
         // no-op
     }
@@ -115,7 +121,7 @@ struct DummyGameViewModel: GameViewModel {
     let lastMessage: String = ""
     let numberOfShipsToBeDestroyed = 5
     let cells: [Player: [[String]]] = [:]
-    let currentPlayer = Player.player1
+    let currentPlayer = player
 }
 
 // MARK: Helper functions
@@ -125,20 +131,20 @@ func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGes
 }
 
 func completePlacement(on viewModel: any GameViewModel) async {
-    await viewModel.tap(Coordinate("A1"), boardForPlayer: .player1)
-    await viewModel.tap(Coordinate("A5"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("A1"), boardForPlayer: player)
+    await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
 
-    await viewModel.tap(Coordinate("B2"), boardForPlayer: .player1)
-    await viewModel.tap(Coordinate("E2"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("B2"), boardForPlayer: player)
+    await viewModel.tap(Coordinate("E2"), boardForPlayer: player)
 
-    await viewModel.tap(Coordinate("C3"), boardForPlayer: .player1)
-    await viewModel.tap(Coordinate("C5"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("C3"), boardForPlayer: player)
+    await viewModel.tap(Coordinate("C5"), boardForPlayer: player)
 
-    await viewModel.tap(Coordinate("G8"), boardForPlayer: .player1)
-    await viewModel.tap(Coordinate("I8"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("G8"), boardForPlayer: player)
+    await viewModel.tap(Coordinate("I8"), boardForPlayer: player)
 
-    await viewModel.tap(Coordinate("F6"), boardForPlayer: .player1)
-    await viewModel.tap(Coordinate("F7"), boardForPlayer: .player1)
+    await viewModel.tap(Coordinate("F6"), boardForPlayer: player)
+    await viewModel.tap(Coordinate("F7"), boardForPlayer: player)
 }
 
 func getPlayerBoard(from view: GameView) throws -> InspectableView<ViewType.View<GameBoardView>> {
@@ -185,7 +191,7 @@ func almostSinkAllShips(on viewModel: GameViewModel) async {
     ]
 
     for coordinate in coordinates {
-        await viewModel.tap(coordinate, boardForPlayer: .player2)
+        await viewModel.tap(coordinate, boardForPlayer: anOpponent)
     }
 }
 

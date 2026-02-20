@@ -5,6 +5,7 @@
 //  Created by Maarten Engels on 27/01/2026.
 //
 
+import Foundation
 import Testing
 import YouSunkMyBattleshipCommon
 @testable import YouSunkMyBattleshipBE
@@ -13,9 +14,11 @@ import YouSunkMyBattleshipCommon
     let repository = InmemoryGameRepository()
     let gameService: GameService
     var placedShips: [Board.PlacedShip] = []
+    let player: Player
     
     init() {
-        self.gameService = GameService(repository: repository)
+        self.player = Player(id: UUID().uuidString)
+        self.gameService = GameService(repository: repository, owner: player)
     }
     
     @Test mutating func `Scenario: Player confirms being done with placing ships`() async throws {
@@ -55,7 +58,7 @@ extension `Feature: Ship Placement` {
         
         let gameState = try await gameService.getGameState()
         
-        #expect(gameState.cells[.player1] == expectedCells)
+        #expect(gameState.cells[player] == expectedCells)
     }
         
     private func `And it shows the game is in play`() async throws {

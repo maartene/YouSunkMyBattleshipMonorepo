@@ -3,6 +3,8 @@ import LCLWebSocket
 import NIO
 import YouSunkMyBattleshipCommon
 
+let player = Player(id: "Player_1")
+
 final class Box<T: Sendable>: @unchecked Sendable {
     private(set) var value: T
 
@@ -21,6 +23,7 @@ final class ContractTest: Sendable {
     let decoder = JSONDecoder()
     let hostname: String
     let port: String
+    
 
     init(hostname: String = "127.0.0.1", port: String = "8080") {
         self.hostname = hostname
@@ -35,7 +38,7 @@ final class ContractTest: Sendable {
     func run() async throws {
         var availableMoves = Set<Coordinate>()
 
-        let currentGameState = Box(value: GameState())
+        let currentGameState = Box(value: GameState(currentPlayer: player))
         let websocket = Box<WebSocket?>(value: nil)
         let locked = Box(value: false)
 
@@ -73,7 +76,7 @@ final class ContractTest: Sendable {
             fatalError("Received error: \(error)")
         }
 
-        _ = client.connect(to: "ws://\(hostname):\(port)/game", configuration: config)
+        _ = client.connect(to: "ws://\(hostname):\(port)/game/\(player.id)", configuration: config)
         try await Task.sleep(nanoseconds: 1_000_000_000)
         let deadline = Date().addingTimeInterval(300)
         while currentGameState.value.state != .finished {
@@ -83,7 +86,7 @@ final class ContractTest: Sendable {
 
             try await Task.sleep(nanoseconds: 100_000_000)
             if locked.value == false, currentGameState.value.state == .play,
-                currentGameState.value.currentPlayer == .player1
+                currentGameState.value.currentPlayer == player
             {
 
                 locked.set(true)
@@ -118,18 +121,22 @@ extension GameState: @retroactive CustomStringConvertible {
         result += "Ships to destroy: \(shipsToDestroy)\n"
 
         result += "Player 1             Player 2\n"
+
+        let player1Cells = cells[player]!
+        let player2Cells = cells.first { $0.key != player }!.value
+
         for y in 0..<Board.rows.count {
             var line = ""
             for x in 0..<Board.columns.count {
                 let coordinate = Coordinate(x: x, y: y)
-                line += cells[.player1, default: []][coordinate.y][coordinate.x]
+                line += player1Cells[coordinate.y][coordinate.x]
             }
 
             line += " "
 
             for x in 0..<Board.columns.count {
                 let coordinate = Coordinate(x: x, y: y)
-                line += cells[.player2, default: []][coordinate.y][coordinate.x]
+                line += player2Cells[coordinate.y][coordinate.x]
             }
 
             result += line + "\n"
