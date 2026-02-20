@@ -112,7 +112,7 @@ actor GameService {
         }
 
         if opponentBoard.aliveShips.isEmpty == false {
-            try await processPlayer2Turn(&game)
+            try await processBotTurn(&game)
         } else {
             lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
         }
@@ -120,25 +120,25 @@ actor GameService {
         await repository.setGame(game)
     }
 
-    private func processPlayer2Turn(_ game: inout Game) async throws {
-        guard game.currentPlayer == .player2 else {
+    private func processBotTurn(_ game: inout Game) async throws {
+        guard game.currentPlayer == game.opponentOf(owner) else {
             return
         }
 
         try await saveAndSendGameState(game)
         
-        guard let player1Board = game.playerBoards[.player1] else {
+        guard let ownerBoard = game.playerBoards[owner] else {
             return
         }
         
-        let botCoordinates = await self.bot.getNextMoves(board: player1Board)
+        let botCoordinates = await self.bot.getNextMoves(board: ownerBoard)
         lastMessage = getCPUFiresMessage(botCoordinates: botCoordinates)
 
         for botCoordinate in botCoordinates {
             try await cpuFire(at: botCoordinate, in: &game)
         }
 
-        if game.playerBoards[.player1]?.aliveShips.isEmpty ?? false {
+        if game.playerBoards[owner]?.aliveShips.isEmpty ?? false {
             lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
         }
 
