@@ -1,6 +1,6 @@
 public enum GameCommand: Codable {
     case createGame(placedShips: [PlacedShipDTO], speed: GameSpeed)
-    case createGameNew
+    case createGameNew(withCPU: Bool, speed: GameSpeed)
     case placeShip(ship: [Coordinate])
     case fireAt(coordinate: Coordinate)
     case load(gameID: String)

@@ -59,8 +59,8 @@ actor GameService {
         switch command {
         case .createGame(let placedShips, let speed):
             try await createGame(with: placedShips, speed: speed)
-        case .createGameNew:
-            try await createGameNew()
+        case .createGameNew(let withCPU, let speed):
+            try await createGameNew(withCPU: withCPU, speed: speed)
         case .placeShip(let ship):
             try await placeShip(ship)
         case .load(let gameID):
@@ -70,9 +70,9 @@ actor GameService {
         }
     }
 
-    private func createGameNew() async throws {
-        let game = Game(player: owner)
-        self.speed = .slow
+    private func createGameNew(withCPU: Bool, speed: GameSpeed) async throws {
+        let game = Game(player: owner, cpu: withCPU)
+        self.speed = speed
         self.gameID = game.gameID
         
         await repository.setGame(game)

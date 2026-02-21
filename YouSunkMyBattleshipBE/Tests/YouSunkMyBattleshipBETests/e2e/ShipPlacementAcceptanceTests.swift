@@ -47,7 +47,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Placement` {
     private func `Given I have an empty board`() async throws {
-        let command = GameCommand.createGameNew
+        let command = GameCommand.createGameNew(withCPU: false, speed: .slow)
         try await gameService.receive(command.toData())
     }
     
