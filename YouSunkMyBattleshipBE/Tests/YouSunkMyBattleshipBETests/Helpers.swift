@@ -43,6 +43,24 @@ func createNearlyCompletedBoard() -> (board: Board, lastCellToHit: Coordinate) {
     return (board, lastCellToHit)
 }
 
+func placeShips(in gameService: GameService) async throws {
+    let placeShipCommands = [
+        ["A1", "A2", "A3", "A4", "A5"],
+        ["B1", "B2", "B3"],
+        ["C1", "C2"],
+        ["D1", "D2", "D3"],
+        ["A8", "B8", "C8", "D8"]
+    ].map { ship in
+        ship.map { Coordinate($0) }
+    }.map {
+        GameCommand.placeShip(ship: $0)
+    }
+    
+    for command in placeShipCommands {
+        try await gameService.receive(command.toData())
+    }
+}
+
 struct FixedBot: Bot {
     func getNextMoves(board: Board) async -> [Coordinate] {
         fixedMoves
