@@ -23,6 +23,15 @@ import YouSunkMyBattleshipCommon
         let game = Game(player: Player(), cpu: true)
         #expect(game.playerBoards.count == 2)
     }
+    
+    @Test func `when a game with a CPU is created, the CPU board should be done`() throws {
+        let player = Player()
+        let game = Game(player: player, cpu: true)
+        
+        let cpu = try #require(game.opponentOf(player))
+        let cpuBoard = try #require(game.playerBoards[cpu])
+        #expect(cpuBoard.shipsToPlace.isEmpty)
+    }
 
     @Suite struct `Turn order` {
         let player1 = Player()
