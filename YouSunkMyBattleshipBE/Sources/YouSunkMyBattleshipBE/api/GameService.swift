@@ -212,7 +212,17 @@ extension Game {
     }
 
     var state: GameState.State {
-        playerBoards.contains { $0.value.aliveShips.isEmpty } ? .finished : .play
+        let incompleteBoards = playerBoards
+            .map { $0.value }
+            .contains { board in
+                board.shipsToPlace.isEmpty == false
+            }
+        
+        if incompleteBoards {
+            return .placingShips
+        }
+        
+        return playerBoards.contains { $0.value.aliveShips.isEmpty } ? .finished : .play
     }
 }
 

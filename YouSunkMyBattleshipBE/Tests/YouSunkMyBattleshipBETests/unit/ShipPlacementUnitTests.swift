@@ -35,6 +35,16 @@ import Foundation
         #expect(allCells.allSatisfy { $0 == "🌊"} )
     }
     
+    @Test func `when a new game is created, it is in the placing ships state`() async throws {
+        try await gameService.receive(
+            GameCommand.createGameNew.toData()
+        )
+        
+        let gameState = try await gameService.getGameState()
+        
+        #expect(gameState.state == .placingShips)
+    }
+    
     @Test func `when a carrier is place from A1 to A5, its cells show "🚢"`() async throws {
         try await gameService.receive(
             GameCommand.createGameNew.toData()

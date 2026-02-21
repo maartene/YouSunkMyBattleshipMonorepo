@@ -1,5 +1,6 @@
 public struct GameState: Codable, Sendable {
     public enum State: Codable, Sendable {
+        case placingShips
         case play
         case finished
     }
@@ -9,7 +10,7 @@ public struct GameState: Codable, Sendable {
     public let state: State
     public let currentPlayer: Player
     
-    public init(cells: [Player: [[String]]] = [:], shipsToDestroy: Int = 5, state: State = .play, lastMessage: String = "Play!", currentPlayer: Player) {
+    public init(cells: [Player: [[String]]] = [:], shipsToDestroy: Int = 5, state: State = .placingShips, lastMessage: String = "Play!", currentPlayer: Player) {
         self.cells = cells
         self.shipsToDestroy = shipsToDestroy
         self.state = state
