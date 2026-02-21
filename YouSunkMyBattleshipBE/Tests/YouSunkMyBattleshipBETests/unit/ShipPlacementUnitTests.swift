@@ -78,7 +78,7 @@ import Foundation
             ["B1", "B2", "B3"],
             ["C1", "C2"],
             ["D1", "D2", "D3"],
-            ["A8", "B8", "B9", "B10"]
+            ["A8", "B8", "C8", "D8"]
         ].map { ship in
             ship.map { Coordinate($0) }
         }.map {
@@ -91,6 +91,26 @@ import Foundation
         
         let gameState = try await gameService.getGameState()
         #expect(gameState.state == .play)
+    }
+    
+    @Test func `when a player attempts to place an illegal ship, it is not placed`() async throws {
+        try await gameService.receive(
+            GameCommand.createGameNew.toData()
+        )
+        let shipCoordinates = [
+            Coordinate("A1"),
+            Coordinate("B2")
+        ]
+        
+        try await gameService.receive(
+            GameCommand.placeShip(ship: shipCoordinates).toData()
+        )
+        
+        let gameState = try await gameService.getGameState()
+        let cells = try #require(gameState.cells[player])
+        for coordinate in shipCoordinates {
+            #expect(cells[coordinate.y][coordinate.x] == "🌊")
+        }
     }
     
     @Test func `when a valid board is submitted, gamestate is returned`() async throws {
