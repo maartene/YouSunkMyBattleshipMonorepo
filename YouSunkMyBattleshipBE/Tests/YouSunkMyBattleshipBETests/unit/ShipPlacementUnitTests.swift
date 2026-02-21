@@ -113,6 +113,32 @@ import Foundation
         }
     }
     
+    @Test func `when a player attempts to place a ship where there already is one, it is not placed`() async throws {
+        try await gameService.receive(
+            GameCommand.createGameNew.toData()
+        )
+        let shipCoordinates = [
+            Coordinate("A1"),
+            Coordinate("A2")
+        ]
+        try await gameService.receive(
+            GameCommand.placeShip(ship: shipCoordinates).toData()
+        )
+        
+        let anotherShipCoordinates = [
+            Coordinate("A1"),
+            Coordinate("B1"),
+            Coordinate("C1"),
+        ]
+        try await gameService.receive(
+            GameCommand.placeShip(ship: anotherShipCoordinates).toData()
+        )
+        
+        let gameState = try await gameService.getGameState()
+        let cells = try #require(gameState.cells[player])
+        #expect(cells[2][0] == "🌊")
+    }
+    
     @Test func `when a valid board is submitted, gamestate is returned`() async throws {
         let placedShips = board.placedShips.map { $0.toDTO() }
         
