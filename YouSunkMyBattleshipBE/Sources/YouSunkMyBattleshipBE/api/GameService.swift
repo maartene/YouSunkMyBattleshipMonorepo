@@ -60,6 +60,8 @@ actor GameService {
             try await createGame(with: placedShips, speed: speed)
         case .createGameNew:
             try await createGameNew()
+        case .placeShip(let ship):
+            try await placeShip(ship)
         case .load(let gameID):
             try await loadGame(gameID: gameID)
         case .fireAt(let coordinate):
@@ -71,6 +73,16 @@ actor GameService {
         let game = Game(player: owner)
         self.speed = .slow
         self.gameID = game.gameID
+        
+        await repository.setGame(game)
+    }
+    
+    private func placeShip(_ ship: PlacedShipDTO) async throws {
+        guard var game = await repository.getGame(id: gameID) else {
+            throw GameServiceError.gameNotFound
+        }
+        
+        game.placeShip(ship.coordinates, owner: owner)
         
         await repository.setGame(game)
     }

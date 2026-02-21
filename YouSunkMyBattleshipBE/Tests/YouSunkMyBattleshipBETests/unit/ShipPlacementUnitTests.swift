@@ -35,6 +35,29 @@ import Foundation
         #expect(allCells.allSatisfy { $0 == "🌊"} )
     }
     
+    @Test func `when a carrier is place from A1 to A5, its cells show "🚢"`() async throws {
+        try await gameService.receive(
+            GameCommand.createGameNew.toData()
+        )
+        let carrierCoordinates = [
+            Coordinate("A1"),
+            Coordinate("A2"),
+            Coordinate("A3"),
+            Coordinate("A4"),
+            Coordinate("A5")
+        ]
+        
+        try await gameService.receive(
+            GameCommand.placeShip(ship: PlacedShipDTO(name: "Carrier", coordinates: carrierCoordinates)).toData()
+        )
+        
+        let gameState = try await gameService.getGameState()
+        let cells = try #require(gameState.cells[player])
+        for coordinate in carrierCoordinates {
+            #expect(cells[coordinate.y][coordinate.x] == "🚢")
+        }
+    }
+    
     @Test func `when a valid board is submitted, gamestate is returned`() async throws {
         let placedShips = board.placedShips.map { $0.toDTO() }
         

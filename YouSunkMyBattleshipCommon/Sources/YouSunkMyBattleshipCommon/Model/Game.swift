@@ -29,6 +29,10 @@ public struct Game {
         playerBoards[player2] = player2Board
     }
     
+    public mutating func placeShip(_ coordinates: [Coordinate], owner: Player) {
+        playerBoards[owner]?.placeShip(at: coordinates)
+    }
+    
     public mutating func fireAt(_ coordinate: Coordinate, target: Player) {
         guard currentPlayer != target else {
             print("Its not your turn")
