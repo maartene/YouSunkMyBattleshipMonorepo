@@ -45,6 +45,20 @@ import Foundation
         #expect(gameState.state == .placingShips)
     }
     
+    @Test func `when a new game is created, all ships need to be placed`() async throws {
+        try await gameService.receive(
+            GameCommand.createGameNew.toData()
+        )
+        
+        let gameState = try await gameService.getGameState()
+        
+        #expect(gameState.shipsToPlace.contains("Carrier(5)"))
+        #expect(gameState.shipsToPlace.contains("Battleship(4)"))
+        #expect(gameState.shipsToPlace.contains("Cruiser(3)"))
+        #expect(gameState.shipsToPlace.contains("Submarine(3)"))
+        #expect(gameState.shipsToPlace.contains("Destroyer(2)"))
+    }
+    
     @Test func `when a carrier is place from A1 to A5, its cells show "🚢"`() async throws {
         try await gameService.receive(
             GameCommand.createGameNew.toData()
