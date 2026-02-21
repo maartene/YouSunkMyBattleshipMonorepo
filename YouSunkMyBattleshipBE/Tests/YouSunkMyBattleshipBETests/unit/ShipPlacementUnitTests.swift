@@ -22,6 +22,19 @@ import Foundation
         gameService = GameService(repository: InmemoryGameRepository(), owner: player)
     }
     
+    @Test func `when a new game is created, the board is empty`() async throws {
+        try await gameService.receive(
+            GameCommand.createGameNew.toData()
+        )
+        
+        let gameState = try await gameService.getGameState()
+        let allCells = try #require(gameState.cells[player])
+            .flatMap { $0 }
+        
+        #expect(allCells.count == 100)
+        #expect(allCells.allSatisfy { $0 == "🌊"} )
+    }
+    
     @Test func `when a valid board is submitted, gamestate is returned`() async throws {
         let placedShips = board.placedShips.map { $0.toDTO() }
         

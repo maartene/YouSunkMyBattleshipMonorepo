@@ -58,6 +58,8 @@ actor GameService {
         switch command {
         case .createGame(let placedShips, let speed):
             try await createGame(with: placedShips, speed: speed)
+        case .createGameNew:
+            try await createGameNew()
         case .load(let gameID):
             try await loadGame(gameID: gameID)
         case .fireAt(let coordinate):
@@ -65,6 +67,14 @@ actor GameService {
         }
     }
 
+    private func createGameNew() async throws {
+        let game = Game(player: owner)
+        self.speed = .slow
+        self.gameID = game.gameID
+        
+        await repository.setGame(game)
+    }
+    
     private func createGame(with placedShips: [PlacedShipDTO], speed: GameSpeed) async throws {
         var board = Board()
         for ship in placedShips {
@@ -179,7 +189,7 @@ enum GameServiceError: Error {
 extension Game {
     func shipsToDestroy(player: Player) throws -> Int {
         guard let opponent = opponentOf(player) else {
-            throw GameServiceError.opponentNotFound
+            return 5
         }
         
         guard let board = playerBoards[opponent] else {

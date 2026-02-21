@@ -13,6 +13,12 @@ public struct Game {
     public let gameID: String
     public private(set) var playerBoards = [Player: Board]()
     
+    public init(gameID: String? = nil, player: Player) {
+        self.gameID = gameID ?? UUID().uuidString
+        self.playerBoards = [player: Board()]
+        self.currentPlayer = player
+    }
+    
     public init(gameID: String? = nil, player1Board: Board, player2Board: Board, player1: Player? = nil, player2: Player? = nil) {
         self.gameID = gameID ?? UUID().uuidString
         let player1 = player1 ?? Player(id: UUID().uuidString)
