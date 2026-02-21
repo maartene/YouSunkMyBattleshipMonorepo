@@ -77,12 +77,12 @@ actor GameService {
         await repository.setGame(game)
     }
     
-    private func placeShip(_ ship: PlacedShipDTO) async throws {
+    private func placeShip(_ coordinates: [Coordinate]) async throws {
         guard var game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
         
-        game.placeShip(ship.coordinates, owner: owner)
+        game.placeShip(coordinates, owner: owner)
         
         await repository.setGame(game)
     }

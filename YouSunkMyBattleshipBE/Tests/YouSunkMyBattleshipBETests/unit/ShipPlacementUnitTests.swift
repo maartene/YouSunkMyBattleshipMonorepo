@@ -58,7 +58,7 @@ import Foundation
         ]
         
         try await gameService.receive(
-            GameCommand.placeShip(ship: PlacedShipDTO(name: "Carrier", coordinates: carrierCoordinates)).toData()
+            GameCommand.placeShip(ship: carrierCoordinates).toData()
         )
         
         let gameState = try await gameService.getGameState()
@@ -66,6 +66,31 @@ import Foundation
         for coordinate in carrierCoordinates {
             #expect(cells[coordinate.y][coordinate.x] == "🚢")
         }
+    }
+    
+    @Test func `when all ships have been placed, the game goes into the play state`() async throws {
+        try await gameService.receive(
+            GameCommand.createGameNew.toData()
+        )
+        
+        let placeShipCommands = [
+            ["A1", "A2", "A3", "A4", "A5"],
+            ["B1", "B2", "B3"],
+            ["C1", "C2"],
+            ["D1", "D2", "D3"],
+            ["A8", "B8", "B9", "B10"]
+        ].map { ship in
+            ship.map { Coordinate($0) }
+        }.map {
+            GameCommand.placeShip(ship: $0)
+        }
+        
+        for command in placeShipCommands {
+            try await gameService.receive(command.toData())
+        }
+        
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.state == .play)
     }
     
     @Test func `when a valid board is submitted, gamestate is returned`() async throws {
