@@ -16,6 +16,14 @@ import YouSunkMyBattleshipCommon
     var placedShips: [Board.PlacedShip] = []
     let player: Player
     
+    let carrierCoordinates = [
+        Coordinate("A1"),
+        Coordinate("A2"),
+        Coordinate("A3"),
+        Coordinate("A4"),
+        Coordinate("A5")
+    ]
+    
     init() {
         self.player = Player(id: UUID().uuidString)
         self.gameService = GameService(repository: repository, owner: player)
@@ -39,20 +47,27 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Placement` {
     private func `Given I have an empty board`() async throws {
-        let command = GameCommand.createGame(placedShips: [], speed: .fast)
+        let command = GameCommand.createGameNew
         try await gameService.receive(command.toData())
     }
     
     private func `When I place the Carrier at position A1 horizontally`() async throws {
-        notImplemented()
+        try await gameService.receive(
+            GameCommand.placeShip(ship: carrierCoordinates).toData()
+        )
     }
     
     private func `Then the cells A1 through A5 display 🚢`() async throws {
-        notImplemented()
+        let gameState = try await gameService.getGameState()
+        let cells = try #require(gameState.cells[player])
+        for coordinate in carrierCoordinates {
+            #expect(cells[coordinate.y][coordinate.x] == "🚢")
+        }
     }
     
     private func `And the ship placement is confirmed`() async throws {
-        notImplemented()
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.shipsToPlace.count == 4)
     }
     
     private mutating func `Given I placed all my ships`() {

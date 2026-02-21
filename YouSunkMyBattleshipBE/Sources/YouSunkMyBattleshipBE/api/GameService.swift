@@ -44,13 +44,14 @@ actor GameService {
                 result[entry.key] = entry.value.toStringsAsTargetBoard()
             }
         }
-
+        
         return GameState(
             cells: cells,
             shipsToDestroy: try game.shipsToDestroy(player: owner),
             state: game.state,
             lastMessage: lastMessage,
-            currentPlayer: game.currentPlayer
+            currentPlayer: game.currentPlayer,
+            shipsToPlace: game.playerBoards[owner]?.shipsToPlace.map { $0.description } ?? []
         )
     }
 

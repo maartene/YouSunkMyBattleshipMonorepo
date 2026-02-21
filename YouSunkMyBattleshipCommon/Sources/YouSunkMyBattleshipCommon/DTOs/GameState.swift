@@ -7,15 +7,17 @@ public struct GameState: Codable, Sendable {
     
     public let cells: [Player: [[String]]]
     public let shipsToDestroy: Int
+    public let shipsToPlace: [String]
     public let state: State
     public let currentPlayer: Player
     
-    public init(cells: [Player: [[String]]] = [:], shipsToDestroy: Int = 5, state: State = .placingShips, lastMessage: String = "Play!", currentPlayer: Player) {
+    public init(cells: [Player: [[String]]] = [:], shipsToDestroy: Int = 5, state: State = .placingShips, lastMessage: String = "Play!", currentPlayer: Player, shipsToPlace: [String] = []) {
         self.cells = cells
         self.shipsToDestroy = shipsToDestroy
         self.state = state
         self.lastMessage = lastMessage
         self.currentPlayer = currentPlayer
+        self.shipsToPlace = shipsToPlace
     }
     
     public let lastMessage: String
