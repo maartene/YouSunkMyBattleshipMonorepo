@@ -43,6 +43,20 @@ func createNearlyCompletedBoard() -> (board: Board, lastCellToHit: Coordinate) {
     return (board, lastCellToHit)
 }
 
+func placeCarrier(in gameService: GameService) async throws {
+    let carrierCoordinates = [
+        Coordinate("A1"),
+        Coordinate("A2"),
+        Coordinate("A3"),
+        Coordinate("A4"),
+        Coordinate("A5")
+    ]
+    
+    try await gameService.receive(
+        GameCommand.placeShip(ship: carrierCoordinates).toData()
+    )
+}
+
 func placeShips(in gameService: GameService) async throws {
     let placeShipCommands = [
         ["A1", "A2", "A3", "A4", "A5"],

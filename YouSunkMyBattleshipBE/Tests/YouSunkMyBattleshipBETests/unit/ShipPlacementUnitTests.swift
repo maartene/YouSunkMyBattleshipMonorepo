@@ -20,13 +20,13 @@ import Foundation
         let player = Player()
         self.player = player
         gameService = GameService(repository: InmemoryGameRepository(), owner: player)
-    }
-    
-    @Test func `when a new game is created, the board is empty`() async throws {
+        
         try await gameService.receive(
             GameCommand.createGameNew.toData()
         )
-        
+    }
+    
+    @Test func `when a new game is created, the board is empty`() async throws {
         let gameState = try await gameService.getGameState()
         let allCells = try #require(gameState.cells[player])
             .flatMap { $0 }
@@ -36,20 +36,12 @@ import Foundation
     }
     
     @Test func `when a new game is created, it is in the placing ships state`() async throws {
-        try await gameService.receive(
-            GameCommand.createGameNew.toData()
-        )
-        
         let gameState = try await gameService.getGameState()
         
         #expect(gameState.state == .placingShips)
     }
     
     @Test func `when a new game is created, all ships need to be placed`() async throws {
-        try await gameService.receive(
-            GameCommand.createGameNew.toData()
-        )
-        
         let gameState = try await gameService.getGameState()
         
         #expect(gameState.shipsToPlace.contains("Carrier(5)"))
@@ -60,9 +52,6 @@ import Foundation
     }
     
     @Test func `when a carrier is place from A1 to A5, its cells show "🚢"`() async throws {
-        try await gameService.receive(
-            GameCommand.createGameNew.toData()
-        )
         let carrierCoordinates = [
             Coordinate("A1"),
             Coordinate("A2"),
@@ -82,11 +71,14 @@ import Foundation
         }
     }
     
-    @Test func `when all ships have been placed, the game goes into the play state`() async throws {
-        try await gameService.receive(
-            GameCommand.createGameNew.toData()
-        )
+    @Test func `when a carrier is place from A1 to A5, it is no longer part of the ships to place list`() async throws {
+        try await placeCarrier(in: gameService)
         
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.shipsToPlace.contains("Carrier(5)") == false)
+    }
+    
+    @Test func `when all ships have been placed, the game goes into the play state`() async throws {
         try await placeShips(in: gameService)
         
         let gameState = try await gameService.getGameState()
@@ -94,9 +86,6 @@ import Foundation
     }
     
     @Test func `when a player attempts to place an illegal ship, it is not placed`() async throws {
-        try await gameService.receive(
-            GameCommand.createGameNew.toData()
-        )
         let shipCoordinates = [
             Coordinate("A1"),
             Coordinate("B2")
@@ -114,9 +103,6 @@ import Foundation
     }
     
     @Test func `when a player attempts to place a ship where there already is one, it is not placed`() async throws {
-        try await gameService.receive(
-            GameCommand.createGameNew.toData()
-        )
         let shipCoordinates = [
             Coordinate("A1"),
             Coordinate("A2")
@@ -140,9 +126,6 @@ import Foundation
     }
     
     @Test func `when a player has already placed 5 ships, they cant place any more`() async throws {
-        try await gameService.receive(
-            GameCommand.createGameNew.toData()
-        )
         try await placeShips(in: gameService)
         
         let shipCoordinates = [
