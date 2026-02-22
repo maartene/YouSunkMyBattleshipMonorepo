@@ -22,6 +22,7 @@ final class GamePlayer {
         case connecting
         case connected
         case creatingGame
+        case placingShips
         case playing
         case finished
     }
@@ -98,6 +99,8 @@ final class GamePlayer {
             try createGame()
         case .creatingGame:
             checkCreatedGame()
+        case .placingShips:
+            try await placeShips()
         case .playing:
             try tryPlay()
         case .finished:
@@ -111,10 +114,7 @@ final class GamePlayer {
     }
     
     func createGame() throws {
-        let board = Board.makeFilledBoard()
-        let placedShips = board.placedShips.map { $0.toDTO() }
-        
-        let createGameCommand = GameCommand.createGame(placedShips: placedShips, speed: .fast)
+        let createGameCommand = GameCommand.createGameNew(withCPU: true, speed: .fast)
         try websocket.value?.send(
             createGameCommand.toByteBuffer(using: encoder), opcode: .binary, promise: nil)
         state = .creatingGame
@@ -122,7 +122,34 @@ final class GamePlayer {
     
     func checkCreatedGame() {
         if currentGameState.value != nil {
+            state = .placingShips
+        }
+    }
+    
+    func placeShips() async throws {
+        if currentGameState.value?.state == .play {
             state = .playing
+            return
+        }
+        
+        guard currentGameState.value?.state == .placingShips else {
+            return
+        }
+        
+        guard locked.value == false else {
+            return
+        }
+        
+        locked.set(true)
+        
+        let board = Board.makeFilledBoard()
+        
+        for ship in board.placedShips {
+            let placeShipCommand = GameCommand.placeShip(
+                ship: ship.coordinates)
+            try websocket.value?.send(
+                placeShipCommand.toByteBuffer(using: encoder), opcode: .binary, promise: nil)
+            try await Task.sleep(nanoseconds: 100_000_000)
         }
     }
     
