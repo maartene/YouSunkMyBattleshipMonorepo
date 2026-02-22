@@ -22,7 +22,7 @@ func configure(_ app: Application, repository: GameRepository) throws {
         req.logger.info("Connection established.")
         let playerID = req.parameters.get("playerID")!
         let player = Player(id: playerID)
-        let gameService = GameService(repository: app.gameRepository!, owner: player, bot: RandomBot(), ws: ws)
+        let gameService = GameService(repository: app.gameRepository!, owner: player, bot: RandomBot(), ws: ws, logger: req.logger)
         ws.send("Welcome!".data(using: .utf8)!)
 
         ws.onBinary { ws, data in

@@ -52,13 +52,6 @@ final class GamePlayer {
         var client = LCLWebSocket.client()
         
         client.onOpen { ws in
-            let localBoard = Board.makeFilledBoard()
-            let placedShips = localBoard.placedShips.map { $0.toDTO() }
-            let createBoardCommand = GameCommand.createGame(
-                placedShips: placedShips, speed: .fast)
-            try? ws.send(
-                createBoardCommand.toByteBuffer(using: self.encoder), opcode: .binary, promise: nil
-            )
             self.websocket.set(ws)
             Task {
                 await self.setState(.connected)

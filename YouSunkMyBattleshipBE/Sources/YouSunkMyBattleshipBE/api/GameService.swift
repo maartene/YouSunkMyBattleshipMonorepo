@@ -19,12 +19,14 @@ actor GameService {
     private var speed: GameSpeed = .slow
     private(set) var gameID: String = "A game"
     private let owner: Player
+    private let logger: Logger
 
-    init(repository: GameRepository, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
+    init(repository: GameRepository, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil, logger: Logger = Logger(label: "GameService")) {
         self.repository = repository
         self.bot = bot
         self.ws = ws
         self.owner = owner ?? Player(id: UUID().uuidString)
+        self.logger = logger
     }
 
     func receive(_ data: Data) async throws {
@@ -74,7 +76,7 @@ actor GameService {
         let game = Game(player: owner, cpu: withCPU)
         self.speed = speed
         self.gameID = game.gameID
-        
+        logger.info("Created game: \(gameID)")
         await repository.setGame(game)
     }
     
@@ -100,6 +102,8 @@ actor GameService {
 
         let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: owner)
 
+        logger.info("Created game: \(gameID)")
+        
         self.speed = speed
         self.gameID = game.gameID
 
