@@ -59,8 +59,6 @@ actor GameService {
 
     private func processCommand(_ command: GameCommand) async throws {
         switch command {
-        case .createGame(let placedShips, let speed):
-            try await createGame(with: placedShips, speed: speed)
         case .createGameNew(let withCPU, let speed):
             try await createGameNew(withCPU: withCPU, speed: speed)
         case .placeShip(let ship):
@@ -87,26 +85,6 @@ actor GameService {
         
         game.placeShip(coordinates, owner: owner)
         
-        await repository.setGame(game)
-    }
-    
-    private func createGame(with placedShips: [PlacedShipDTO], speed: GameSpeed) async throws {
-        var board = Board()
-        for ship in placedShips {
-            board.placeShip(at: ship.coordinates)
-        }
-
-        guard board.placedShips.count == 5 else {
-            throw GameServiceError.invalidBoard
-        }
-
-        let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: owner)
-
-        logger.info("Created game: \(gameID)")
-        
-        self.speed = speed
-        self.gameID = game.gameID
-
         await repository.setGame(game)
     }
 

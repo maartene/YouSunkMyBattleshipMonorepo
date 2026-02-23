@@ -37,16 +37,6 @@ So that I can prepare for battle
         ✅ When I place the Carrier at position A1 horizontally
         ✅ Then the cells A1 through A5 display 🚢; 
         ✅ And the ship placement is confirmed
-        
-    ✅ Scenario: Player confirms being done with placing ships
-        Given I placed all my ships
-        When I confirm placement
-        Then the game shows my board is done
-    
-    ✅ Scenario: Player wants to replace ships
-        Given I placed all my ships
-        When I cancel placement
-        Then I get a new empty board to place ships
 
 ## Story 3: Take Shots at Enemy ✅
 As a player

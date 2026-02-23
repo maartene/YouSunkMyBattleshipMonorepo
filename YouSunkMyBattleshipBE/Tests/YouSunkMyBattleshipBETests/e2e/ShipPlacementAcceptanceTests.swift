@@ -13,7 +13,6 @@ import YouSunkMyBattleshipCommon
 @Suite struct `Feature: Ship Placement` {
     let repository = InmemoryGameRepository()
     let gameService: GameService
-    var placedShips: [Board.PlacedShip] = []
     let player: Player
     
     let carrierCoordinates = [
@@ -37,8 +36,7 @@ import YouSunkMyBattleshipCommon
     }
 
     @Test mutating func `Scenario: Player confirms being done with placing ships`() async throws {
-        `Given I placed all my ships`()
-        try await `When I confirm placement`()
+        try await `Given I placed all my ships`()
         try await `Then it shows the game board for player 1`()
         try await `And it shows the game is in play`()
         try await `And it shows that there are 5 ships remaining to be destroyed`()
@@ -70,15 +68,8 @@ extension `Feature: Ship Placement` {
         #expect(gameState.shipsToPlace.count == 4)
     }
     
-    private mutating func `Given I placed all my ships`() {
-        let board = Board.makeFilledBoard()
-        placedShips = board.placedShips
-    }
-    
-    private mutating func `When I confirm placement`() async throws {
-        let placedShipsDTO = placedShips.map { $0.toDTO() }
-        let command = GameCommand.createGame(placedShips: placedShipsDTO, speed: .fast)
-        try await gameService.receive(command.toData())
+    private mutating func `Given I placed all my ships`() async throws {
+        try await createGame(player1Board: .makeFilledBoard(), in: gameService)
     }
     
     private func `Then it shows the game board for player 1`() async throws {

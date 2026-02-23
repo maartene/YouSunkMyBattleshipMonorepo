@@ -84,9 +84,15 @@ struct FixedBot: Bot {
 }
 
 func createGame(player1Board: Board, in gameService: GameService) async throws {
-    let createGameCommand = GameCommand.createGame(placedShips: player1Board.placedShips.map { $0.toDTO() }, speed: .fast)
+    try await gameService.receive(GameCommand.createGameNew(withCPU: true, speed: .fast).toData())
     
-    try await gameService.receive(createGameCommand.toData())
+    let placeShipCommands = player1Board.placedShips.map {
+        GameCommand.placeShip(ship: $0.coordinates)
+    }
+    
+    for command in placeShipCommands {
+        try await gameService.receive(command.toData())
+    }
 }
 
 func getOpponent(from gameService: GameService, for player: Player) async throws -> Player {
