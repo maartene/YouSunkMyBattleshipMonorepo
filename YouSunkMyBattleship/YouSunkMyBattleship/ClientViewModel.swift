@@ -14,7 +14,7 @@ final class ClientViewModel: GameViewModel {
     private let dataProvider: DataProvider
     private let owner = player
     private(set) var shipsToPlace: [String] = []
-    private(set) var state: GameViewModelState = .placingShips
+    private(set) var state: GameState.State = .placingShips
     private(set) var lastMessage = ""
     private(set) var cells: [Player: [[String]]] = [:]
     private(set) var numberOfShipsToBeDestroyed: Int = 5
@@ -27,34 +27,26 @@ final class ClientViewModel: GameViewModel {
 
     private var startShip: Coordinate?
     private var endShip: Coordinate?
-    private var boardInProgress = Board()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private(set) var currentPlayer = player
 
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
-        cells[owner] = boardInProgress.toStringsAsPlayerBoard()
-        updateShipsToPlace()
     }
 
     // MARK: Commands
-    func confirmPlacement() async {
+    func createGame() {
+        cells[owner] = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)
+        
+        let command = GameCommand.createGameNew(withCPU: true, speed: .slow)
         do {
-            dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
-            let command = GameCommand.createGame(placedShips: boardInProgress.placedShips.map { $0.toDTO() }, speed: .slow )
             let data = try encoder.encode(command)
-            try await dataProvider.wsSend(data: data)
+            dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
+            dataProvider.wsSyncSend(data: data)
         } catch {
-            NSLog("Error submitting board: \(error)")
+            NSLog("Failed to encode command: \(command): \(error)")
         }
-    }
-
-    func reset() {
-        boardInProgress = Board()
-        state = .placingShips
-        cells[owner] = boardInProgress.toStringsAsPlayerBoard()
-        updateShipsToPlace()
     }
 
     func load(_ gameID: String) {
@@ -71,7 +63,7 @@ final class ClientViewModel: GameViewModel {
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
         switch state {
         case .placingShips:
-            tapToPlaceShip(at: coordinate)
+            await tapToPlaceShip(at: coordinate)
         case .play:
             await tapToFire(at: coordinate, player: boardForPlayer)
         default:
@@ -79,22 +71,22 @@ final class ClientViewModel: GameViewModel {
         }
     }
 
-    private func tapToPlaceShip(at coordinate: Coordinate) {
+    private func tapToPlaceShip(at coordinate: Coordinate) async {
         if let startShip {
             endShip = coordinate
 
             let shipCoordinates = tryCreateShip(from: startShip, to: coordinate)
-            boardInProgress.placeShip(at: shipCoordinates)
-            updateShipsToPlace()
-
-            cells[owner] = cellsForPlayer()
-
-            if shipsToPlace.isEmpty {
-                state = .awaitingConfirmation
-            }
 
             self.startShip = nil
             endShip = nil
+            
+            let placeShipCommand = GameCommand.placeShip(ship: shipCoordinates)
+            do {
+                let data = try encoder.encode(placeShipCommand)
+                try await dataProvider.wsSend(data: data)
+            } catch {
+                NSLog("Error sending place ship command \(placeShipCommand): \(error)")
+            }
         } else {
             startShip = coordinate
             endShip = coordinate
@@ -125,10 +117,11 @@ final class ClientViewModel: GameViewModel {
             let gameState = try decoder.decode(GameState.self, from: data)
             self.cells = gameState.cells
             self.numberOfShipsToBeDestroyed = gameState.shipsToDestroy
-            self.state = GameViewModelState.fromGameState(gameState.state)
+            self.state = gameState.state
             self.lastMessage = gameState.lastMessage
             self.currentPlayer = gameState.currentPlayer
             self.opponent = cells.keys.first(where: { $0 != owner })
+            self.shipsToPlace = gameState.shipsToPlace
         } catch {
             NSLog("Error receiving data: \(error)")
         }
@@ -142,28 +135,13 @@ final class ClientViewModel: GameViewModel {
         return []
     }
 
-    private func updateShipsToPlace() {
-        shipsToPlace = boardInProgress.shipsToPlace.map { $0.description }
-    }
-
     // MARK: Queries
-
     private func cellsForPlayer() -> [[String]] {
-        guard state == .placingShips else {
-            return cells[owner, default: []]
-        }
+        var result = cells[owner, default: []]
 
-        var result = boardInProgress.cells.map { row in
-            row.map { cell in
-                switch cell {
-                case .empty: "🌊"
-                case .ship: "🚢"
-                default: " "
-                }
-            }
+        if state == .placingShips {
+            postProcessDraggingShip(cells: &result)
         }
-
-        postProcessDraggingShip(cells: &result)
         return result
     }
 

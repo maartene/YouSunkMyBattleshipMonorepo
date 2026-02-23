@@ -19,12 +19,14 @@ actor GameService {
     private var speed: GameSpeed = .slow
     private(set) var gameID: String = "A game"
     private let owner: Player
+    private let logger: Logger
 
-    init(repository: GameRepository, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil) {
+    init(repository: GameRepository, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil, logger: Logger = Logger(label: "GameService")) {
         self.repository = repository
         self.bot = bot
         self.ws = ws
         self.owner = owner ?? Player(id: UUID().uuidString)
+        self.logger = logger
     }
 
     func receive(_ data: Data) async throws {
@@ -44,13 +46,14 @@ actor GameService {
                 result[entry.key] = entry.value.toStringsAsTargetBoard()
             }
         }
-
+        
         return GameState(
             cells: cells,
             shipsToDestroy: try game.shipsToDestroy(player: owner),
             state: game.state,
             lastMessage: lastMessage,
-            currentPlayer: game.currentPlayer
+            currentPlayer: game.currentPlayer,
+            shipsToPlace: game.playerBoards[owner]?.shipsToPlace.map { $0.description } ?? []
         )
     }
 
@@ -58,6 +61,10 @@ actor GameService {
         switch command {
         case .createGame(let placedShips, let speed):
             try await createGame(with: placedShips, speed: speed)
+        case .createGameNew(let withCPU, let speed):
+            try await createGameNew(withCPU: withCPU, speed: speed)
+        case .placeShip(let ship):
+            try await placeShip(ship)
         case .load(let gameID):
             try await loadGame(gameID: gameID)
         case .fireAt(let coordinate):
@@ -65,6 +72,24 @@ actor GameService {
         }
     }
 
+    private func createGameNew(withCPU: Bool, speed: GameSpeed) async throws {
+        let game = Game(player: owner, cpu: withCPU)
+        self.speed = speed
+        self.gameID = game.gameID
+        logger.info("Created game: \(gameID)")
+        await repository.setGame(game)
+    }
+    
+    private func placeShip(_ coordinates: [Coordinate]) async throws {
+        guard var game = await repository.getGame(id: gameID) else {
+            throw GameServiceError.gameNotFound
+        }
+        
+        game.placeShip(coordinates, owner: owner)
+        
+        await repository.setGame(game)
+    }
+    
     private func createGame(with placedShips: [PlacedShipDTO], speed: GameSpeed) async throws {
         var board = Board()
         for ship in placedShips {
@@ -77,6 +102,8 @@ actor GameService {
 
         let game = Game(player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: owner)
 
+        logger.info("Created game: \(gameID)")
+        
         self.speed = speed
         self.gameID = game.gameID
 
@@ -179,7 +206,7 @@ enum GameServiceError: Error {
 extension Game {
     func shipsToDestroy(player: Player) throws -> Int {
         guard let opponent = opponentOf(player) else {
-            throw GameServiceError.opponentNotFound
+            return 5
         }
         
         guard let board = playerBoards[opponent] else {
@@ -190,7 +217,17 @@ extension Game {
     }
 
     var state: GameState.State {
-        playerBoards.contains { $0.value.aliveShips.isEmpty } ? .finished : .play
+        let incompleteBoards = playerBoards
+            .map { $0.value }
+            .contains { board in
+                board.shipsToPlace.isEmpty == false
+            }
+        
+        if incompleteBoards {
+            return .placingShips
+        }
+        
+        return playerBoards.contains { $0.value.aliveShips.isEmpty } ? .finished : .play
     }
 }
 

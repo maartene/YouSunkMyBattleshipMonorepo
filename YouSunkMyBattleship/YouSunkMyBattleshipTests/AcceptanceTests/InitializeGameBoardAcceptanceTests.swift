@@ -17,10 +17,17 @@ import WSDataProvider
 /// So that I can visualize the battlefield
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Game Board Initialization` {
-    var view = GameView(viewModel: ClientViewModel(dataProvider: DummyDataProvider()))
+    let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataPlacing)
+    let viewModel: ClientViewModel
+    let view: GameView
+    
+    init() {
+        viewModel = ClientViewModel(dataProvider: dataProvider)
+        view = GameView(viewModel: viewModel, gameID: nil)
+    }
 
     @Test mutating func `Scenario: Player views empty board`() throws {
-        `Given I start a new Battleship game`()
+        try `Given I start a new Battleship game`()
         `When the game initializes`()
 
         try `Then I see a 10x10 grid filled with 🌊 emojis`()
@@ -31,9 +38,11 @@ import WSDataProvider
 
 // MARK: Steps
 extension `Feature: Game Board Initialization` {
-    private func `Given I start a new Battleship game`() {
-        // taken care of during test initialization
+    private func `Given I start a new Battleship game`() throws {
+        let inspectedView = try view.inspect()
+        try inspectedView.vStack().callOnAppear()
     }
+    
     private func `When the game initializes`() {
         // taken care of during test initialization
     }

@@ -19,6 +19,7 @@ import YouSunkMyBattleshipCommon
 
         init() {
             self.view = GameView(viewModel: viewModelSpy)
+            viewModelSpy.createGame()
         }
 
         @Test func `when a player taps the opponents board, the viewmodel is notified`() async throws {
@@ -51,10 +52,9 @@ import YouSunkMyBattleshipCommon
     @MainActor
     @Suite struct ViewModelTests {
         @Test func `the boards for both player are independent of eachother`() async {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacementJSON)
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-
-            await completePlacement(on: viewModel)
+            viewModel.createGame()
 
             #expect(viewModel.cells[player] != viewModel.cells[anOpponent])
         }
@@ -62,14 +62,8 @@ import YouSunkMyBattleshipCommon
         @Test func `when the player taps the opponents board at B5, the game service should receive a message to fire at that coordinate`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
-            await completePlacement(on: viewModel)
-            await viewModel.confirmPlacement()
-
-            spy.triggerOnReceiveWith(gameStateDataAfterCompletingPlacementJSON)
-
-            while viewModel.state != .play {
-                try await Task.sleep(nanoseconds: 1_000_000)
-            }
+            viewModel.createGame()
+            spy.triggerOnReceiveWith(gameStateDataAfterCompletingPlacement)
 
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: anOpponent)
 
@@ -81,6 +75,7 @@ import YouSunkMyBattleshipCommon
         @Test func `when the player taps their own board at B5, then that should not register as an attempt`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
+            viewModel.createGame()
 
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: player)
 
@@ -91,9 +86,9 @@ import YouSunkMyBattleshipCommon
         @Test func `cannot fire shots when its not your turn`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
-            await viewModel.confirmPlacement()
-
-            let gameState = GameState(currentPlayer: anOpponent)
+            viewModel.createGame()
+            
+            let gameState = GameState(state: .play, currentPlayer: anOpponent)
             try spy.triggerOnReceiveWith(JSONEncoder().encode(gameState))
 
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: anOpponent)

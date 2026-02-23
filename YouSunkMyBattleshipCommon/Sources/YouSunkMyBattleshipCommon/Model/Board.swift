@@ -87,6 +87,10 @@ public struct Board: Sendable {
         guard coordinates.count <= largestAvailableShip else {
             return
         }
+        
+        guard isLine(coordinates) else {
+            return
+        }
 
         guard coordinates.allSatisfy(validateShipPlacement) else {
             return
@@ -97,6 +101,18 @@ public struct Board: Sendable {
         }
 
         placedShips.append(PlacedShip(ship: shipToPlace, coordinates: coordinates))
+    }
+    
+    private func isLine(_ coordinates: [Coordinate]) -> Bool {
+        let allXAreTheSame = coordinates
+            .map { $0.x }
+            .allSatisfy { $0 == coordinates[0].x }
+        
+        let allYAreTheSame = coordinates
+            .map { $0.y }
+            .allSatisfy { $0 == coordinates[0].y }
+        
+        return allXAreTheSame || allYAreTheSame
     }
 
     private func validateShipPlacement(at coordinate: Coordinate) -> Bool {

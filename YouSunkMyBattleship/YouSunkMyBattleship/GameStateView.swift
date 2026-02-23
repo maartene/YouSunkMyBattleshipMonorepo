@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import YouSunkMyBattleshipCommon
 
 struct GameStateView: View {
     private let viewModel: any GameViewModel
@@ -19,20 +20,7 @@ struct GameStateView: View {
     }
 
     var body: some View {
-        if viewModel.state == .awaitingConfirmation {
-            VStack {
-                Text("Done placing?")
-                    .font(.headline)
-                HStack {
-                    Button("Done!") {
-                        Task { await viewModel.confirmPlacement() }
-                    }.buttonStyle(.borderedProminent)
-                    Button("Clear board") {
-                        viewModel.reset()
-                    }.buttonStyle(.bordered)
-                }
-            }
-        } else if viewModel.state == .play {
+        if viewModel.state == .play {
             VStack {
                 Text(viewModel.lastMessage)
                     .font(.headline)
@@ -43,9 +31,6 @@ struct GameStateView: View {
             VStack {
                 Text(viewModel.lastMessage)
                     .font(.headline)
-                Button("New Game") {
-                    viewModel.reset()
-                }.buttonStyle(.borderedProminent)
             }
         } else {
             Text("Place ships: \(shipsToPlace)")

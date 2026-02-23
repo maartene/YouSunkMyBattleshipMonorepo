@@ -20,6 +20,13 @@ import YouSunkMyBattleshipCommon
         self.gameID = await gameService.gameID
     }
     
+    @Test func `when a game with a CPU is started, it already has two boards`() async throws {
+        try await gameService.receive(GameCommand.createGameNew(withCPU: true, speed: .fast).toData())
+        
+        let gameState = try await gameService.getGameState()
+        #expect(gameState.cells.count == 2)
+    }
+    
     @Test func `when the CPU wins the game, the game goes in finished state`() async throws {
         let board = createCompletedBoard()
         await repository.setGame(Game(gameID: gameID, player1Board: board, player2Board: .makeAnotherFilledBoard()))

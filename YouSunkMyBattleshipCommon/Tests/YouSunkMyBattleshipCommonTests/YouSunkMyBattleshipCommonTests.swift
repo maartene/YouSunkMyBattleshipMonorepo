@@ -13,6 +13,25 @@ import YouSunkMyBattleshipCommon
             }
         }
     }
+    
+    @Test func `when a new game without a CPU is created, it should only have one board`() {
+        let game = Game(player: Player())
+        #expect(game.playerBoards.count == 1)
+    }
+    
+    @Test func `when a new game with a CPU is created, it should have two boards`() {
+        let game = Game(player: Player(), cpu: true)
+        #expect(game.playerBoards.count == 2)
+    }
+    
+    @Test func `when a game with a CPU is created, the CPU board should be done`() throws {
+        let player = Player()
+        let game = Game(player: player, cpu: true)
+        
+        let cpu = try #require(game.opponentOf(player))
+        let cpuBoard = try #require(game.playerBoards[cpu])
+        #expect(cpuBoard.shipsToPlace.isEmpty)
+    }
 
     @Suite struct `Turn order` {
         let player1 = Player()

@@ -18,7 +18,7 @@ import WSDataProvider
 // So that I don't lose progress
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Game Persistence` {
-    let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHitJSON)
+    let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHit)
     let viewModel: ClientViewModel
     let view: GameView
 

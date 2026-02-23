@@ -32,16 +32,15 @@ final class ViewModelSpy: GameViewModel {
     
     let currentPlayer: Player = player
 
-    let state: GameViewModelState
+    let state: GameState.State
     var startDragLocation: CGPoint?
     var endDragLocation: CGPoint?
     var tapCoordinate: Coordinate?
     var tapPlayer: Player?
-    private(set) var addCellWasCalled = false
-    private(set) var resetWasCalled = false
     private(set) var loadWasCalled = ""
+    private(set) var createGameCalled = false
 
-    init(state: GameViewModelState = .placingShips) {
+    init(state: GameState.State = .placingShips) {
         self.state = state
     }
 
@@ -61,13 +60,13 @@ final class ViewModelSpy: GameViewModel {
     func load(_ gameID: String) {
         loadWasCalled = gameID
     }
-
-    func confirmPlacement() {
-        // no-op
+    
+    func createGameWasCalled() -> Bool {
+        createGameCalled
     }
-
-    func reset() {
-        resetWasCalled = true
+    
+    func createGame() {
+        createGameCalled = true
     }
 
     let cells = [
@@ -104,20 +103,17 @@ final class ViewModelSpy: GameViewModel {
 struct DummyGameViewModel: GameViewModel {
     let opponent: Player? = nil
     
-    func confirmPlacement() async {
-        // no-op
-    }
-    func reset() {
-        // no-op
-    }
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
         // no-op
     }
     func load(_ gameID: String) {
         // no-op
     }
+    func createGame() {
+        // no-op
+    }
     let shipsToPlace = [String]()
-    let state: GameViewModelState = .placingShips
+    let state: GameState.State = .placingShips
     let lastMessage: String = ""
     let numberOfShipsToBeDestroyed = 5
     let cells: [Player: [[String]]] = [:]
@@ -125,11 +121,6 @@ struct DummyGameViewModel: GameViewModel {
 }
 
 // MARK: Helper functions
-func gesture(view: some View) throws -> InspectableView<ViewType.Gesture<DragGesture>> {
-    let inspectedView = try view.inspect().find(GameBoardView.self)
-    return try inspectedView.grid(0).gesture(DragGesture.self)
-}
-
 func completePlacement(on viewModel: any GameViewModel) async {
     await viewModel.tap(Coordinate("A1"), boardForPlayer: player)
     await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
@@ -153,46 +144,6 @@ func getPlayerBoard(from view: GameView) throws -> InspectableView<ViewType.View
 
 func getEnemyBoard(from view: GameView) throws -> InspectableView<ViewType.View<GameBoardView>> {
     try view.inspect().findAll(GameBoardView.self)[1]
-}
-
-func drag(from startDrag: CGPoint, to endDrag: CGPoint, in view: GameView) throws {
-    let startValue = DragGesture.Value(time: Date(), location: startDrag, startLocation: startDrag, velocity: .zero)
-    try gesture(from: view).callOnChanged(value: startValue)
-    view.publisher.send()
-
-    let endValue = DragGesture.Value(time: Date(), location: endDrag, startLocation: endDrag, velocity: .zero)
-    try gesture(from: view).callOnEnded(value: endValue)
-    view.publisher.send()
-}
-
-func gesture(from view: GameView) throws -> InspectableView<ViewType.Gesture<DragGesture>> {
-    let inspectedView = try getPlayerBoard(from: view)
-    return try inspectedView.grid(0).gesture(DragGesture.self)
-}
-
-func almostSinkAllShips(on viewModel: GameViewModel) async {
-    let coordinates = [
-        Coordinate(x: 1, y: 2),
-        Coordinate(x: 1, y: 3),
-        Coordinate(x: 1, y: 4),
-        Coordinate(x: 1, y: 5),
-        Coordinate(x: 2, y: 2),
-        Coordinate(x: 3, y: 2),
-        Coordinate(x: 4, y: 2),
-        Coordinate(x: 5, y: 2),
-        Coordinate(x: 2, y: 3),
-        Coordinate(x: 3, y: 3),
-        Coordinate(x: 4, y: 3),
-        Coordinate(x: 5, y: 5),
-        Coordinate(x: 5, y: 6),
-        Coordinate(x: 5, y: 7),
-        Coordinate(x: 8, y: 8),
-        Coordinate(x: 8, y: 9)
-    ]
-
-    for coordinate in coordinates {
-        await viewModel.tap(coordinate, boardForPlayer: anOpponent)
-    }
 }
 
 // MARK: DataProvider fakes
@@ -253,6 +204,10 @@ final class MockDataProvider: DataProvider {
 
     func wsSyncSend(data: Data) {
         onReceive?(dataToReceiveOnSend)
+    }
+    
+    func triggerOnReceiveWith(_ data: Data) {
+        self.onReceive?(data)
     }
 
     func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
