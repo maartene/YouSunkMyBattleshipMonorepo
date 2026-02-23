@@ -16,28 +16,10 @@ protocol GameViewModel {
     func createGame()
 
     var shipsToPlace: [String] { get }
-    var state: GameViewModelState { get }
+    var state: GameState.State { get }
     var lastMessage: String { get }
     var numberOfShipsToBeDestroyed: Int { get }
     var cells: [Player: [[String]]] { get }
     var currentPlayer: Player { get }
     var opponent: Player? { get }
-
-}
-
-enum GameViewModelState {
-    case placingShips
-    case play
-    case finished
-
-    static func fromGameState(_ gameState: GameState.State) -> GameViewModelState {
-        return switch gameState {
-        case .placingShips:
-                .placingShips
-        case .play:
-                .play
-        case .finished:
-                .finished
-        }
-    }
 }

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import YouSunkMyBattleshipCommon
 
 struct GameStateView: View {
     private let viewModel: any GameViewModel

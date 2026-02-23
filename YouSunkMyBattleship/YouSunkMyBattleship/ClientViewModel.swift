@@ -14,7 +14,7 @@ final class ClientViewModel: GameViewModel {
     private let dataProvider: DataProvider
     private let owner = player
     private(set) var shipsToPlace: [String] = []
-    private(set) var state: GameViewModelState = .placingShips
+    private(set) var state: GameState.State = .placingShips
     private(set) var lastMessage = ""
     private(set) var cells: [Player: [[String]]] = [:]
     private(set) var numberOfShipsToBeDestroyed: Int = 5
@@ -117,7 +117,7 @@ final class ClientViewModel: GameViewModel {
             let gameState = try decoder.decode(GameState.self, from: data)
             self.cells = gameState.cells
             self.numberOfShipsToBeDestroyed = gameState.shipsToDestroy
-            self.state = GameViewModelState.fromGameState(gameState.state)
+            self.state = gameState.state
             self.lastMessage = gameState.lastMessage
             self.currentPlayer = gameState.currentPlayer
             self.opponent = cells.keys.first(where: { $0 != owner })
