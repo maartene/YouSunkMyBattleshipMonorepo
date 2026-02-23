@@ -41,7 +41,7 @@ struct GameView: View {
             if let gameID {
                 viewModel.load(gameID)
             } else {
-                viewModel.reset()
+                viewModel.createGame()
             }
         }
     }

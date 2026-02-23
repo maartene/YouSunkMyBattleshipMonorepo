@@ -11,6 +11,10 @@ import WSDataProvider
 
 @Observable
 final class ClientViewModel: GameViewModel {
+    func confirmPlacement() async {
+        //
+    }
+    
     private let dataProvider: DataProvider
     private let owner = player
     private(set) var shipsToPlace: [String] = []
@@ -39,17 +43,6 @@ final class ClientViewModel: GameViewModel {
     }
 
     // MARK: Commands
-    func confirmPlacement() async {
-        do {
-            dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
-            let command = GameCommand.createGame(placedShips: boardInProgress.placedShips.map { $0.toDTO() }, speed: .slow )
-            let data = try encoder.encode(command)
-            try await dataProvider.wsSend(data: data)
-        } catch {
-            NSLog("Error submitting board: \(error)")
-        }
-    }
-
     func reset() {
         boardInProgress = Board()
         state = .placingShips

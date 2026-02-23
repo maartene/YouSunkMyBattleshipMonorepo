@@ -40,6 +40,7 @@ final class ViewModelSpy: GameViewModel {
     private(set) var addCellWasCalled = false
     private(set) var resetWasCalled = false
     private(set) var loadWasCalled = ""
+    private(set) var createGameCalled = false
 
     init(state: GameViewModelState = .placingShips) {
         self.state = state
@@ -60,6 +61,14 @@ final class ViewModelSpy: GameViewModel {
 
     func load(_ gameID: String) {
         loadWasCalled = gameID
+    }
+    
+    func createGameWasCalled() -> Bool {
+        createGameCalled
+    }
+    
+    func createGame() {
+        createGameCalled = true
     }
 
     func confirmPlacement() {
@@ -114,6 +123,9 @@ struct DummyGameViewModel: GameViewModel {
         // no-op
     }
     func load(_ gameID: String) {
+        // no-op
+    }
+    func createGame() {
         // no-op
     }
     let shipsToPlace = [String]()
