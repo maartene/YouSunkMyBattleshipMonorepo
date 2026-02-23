@@ -27,26 +27,18 @@ final class ClientViewModel: GameViewModel {
 
     private var startShip: Coordinate?
     private var endShip: Coordinate?
-    private var boardInProgress = Board()
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
     private(set) var currentPlayer = player
 
     init(dataProvider: DataProvider) {
         self.dataProvider = dataProvider
-        cells[owner] = boardInProgress.toStringsAsPlayerBoard()
-        updateShipsToPlace()
     }
 
     // MARK: Commands
-    func reset() {
-        boardInProgress = Board()
-        state = .placingShips
-        cells[owner] = boardInProgress.toStringsAsPlayerBoard()
-        updateShipsToPlace()
-    }
-    
     func createGame() {
+        cells[owner] = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)
+        
         let command = GameCommand.createGameNew(withCPU: true, speed: .slow)
         do {
             let data = try encoder.encode(command)
@@ -84,10 +76,6 @@ final class ClientViewModel: GameViewModel {
             endShip = coordinate
 
             let shipCoordinates = tryCreateShip(from: startShip, to: coordinate)
-            boardInProgress.placeShip(at: shipCoordinates)
-            updateShipsToPlace()
-
-            cells[owner] = cellsForPlayer()
 
             self.startShip = nil
             endShip = nil
@@ -133,6 +121,7 @@ final class ClientViewModel: GameViewModel {
             self.lastMessage = gameState.lastMessage
             self.currentPlayer = gameState.currentPlayer
             self.opponent = cells.keys.first(where: { $0 != owner })
+            self.shipsToPlace = gameState.shipsToPlace
         } catch {
             NSLog("Error receiving data: \(error)")
         }
@@ -146,28 +135,13 @@ final class ClientViewModel: GameViewModel {
         return []
     }
 
-    private func updateShipsToPlace() {
-        shipsToPlace = boardInProgress.shipsToPlace.map { $0.description }
-    }
-
     // MARK: Queries
-
     private func cellsForPlayer() -> [[String]] {
-        guard state == .placingShips else {
-            return cells[owner, default: []]
-        }
+        var result = cells[owner, default: []]
 
-        var result = boardInProgress.cells.map { row in
-            row.map { cell in
-                switch cell {
-                case .empty: "🌊"
-                case .ship: "🚢"
-                default: " "
-                }
-            }
+        if state == .placingShips {
+            postProcessDraggingShip(cells: &result)
         }
-
-        postProcessDraggingShip(cells: &result)
         return result
     }
 

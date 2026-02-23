@@ -19,7 +19,31 @@ let gameStateDataPlacing = GameState(
     shipsToDestroy: 5,
     state: .placingShips,
     lastMessage: "",
-    currentPlayer: player).toData()
+    currentPlayer: player,
+    shipsToPlace: [
+        "Destroyer(2)",
+        "Submarine(3)",
+        "Cruiser(3)",
+        "Battleship(4)",
+        "Carrier(5)"
+    ]).toData()
+
+let gameStateDataAfterPlacing = GameState(
+    cells: [
+        player: [
+            ["🚢","🚢","🚢","🚢","🚢","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"],["🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊","🌊"]
+        ]
+    ],
+    shipsToDestroy: 5,
+    state: .placingShips,
+    lastMessage: "Play!",
+    currentPlayer: player,
+    shipsToPlace: [
+        "Destroyer(2)",
+        "Submarine(3)",
+        "Cruiser(3)",
+        "Battleship(4)",
+    ]).toData()
 
 let gameStateDataAfterCompletingPlacement = GameState(
     cells: [

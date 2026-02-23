@@ -75,6 +75,7 @@ import YouSunkMyBattleshipCommon
         @Test func `when the player taps their own board at B5, then that should not register as an attempt`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
+            viewModel.createGame()
 
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: player)
 
@@ -85,8 +86,9 @@ import YouSunkMyBattleshipCommon
         @Test func `cannot fire shots when its not your turn`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
+            viewModel.createGame()
             
-            let gameState = GameState(currentPlayer: anOpponent)
+            let gameState = GameState(state: .play, currentPlayer: anOpponent)
             try spy.triggerOnReceiveWith(JSONEncoder().encode(gameState))
 
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: anOpponent)

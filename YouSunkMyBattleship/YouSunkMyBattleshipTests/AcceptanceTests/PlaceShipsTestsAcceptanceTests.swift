@@ -21,8 +21,9 @@ import YouSunkMyBattleshipCommon
     let view: GameView
 
     init() {
-        self.viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement))
+        self.viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataAfterPlacing))
         self.view = GameView(viewModel: viewModel)
+        viewModel.createGame()
     }
 
     @Test func `Scenario: Player places a ship successfully`() async throws {

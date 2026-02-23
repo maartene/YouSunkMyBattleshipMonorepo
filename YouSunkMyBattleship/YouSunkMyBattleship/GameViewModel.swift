@@ -11,7 +11,6 @@ import YouSunkMyBattleshipCommon
 
 // MARK: ViewModel protocol (PORT)
 protocol GameViewModel {
-    func reset()
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async
     func load(_ gameID: String)
     func createGame()

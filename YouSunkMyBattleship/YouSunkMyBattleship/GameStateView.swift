@@ -30,9 +30,6 @@ struct GameStateView: View {
             VStack {
                 Text(viewModel.lastMessage)
                     .font(.headline)
-                Button("New Game") {
-                    viewModel.reset()
-                }.buttonStyle(.borderedProminent)
             }
         } else {
             Text("Place ships: \(shipsToPlace)")

@@ -18,10 +18,12 @@ import WSDataProvider
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Game Board Initialization` {
     let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataPlacing)
+    let viewModel: ClientViewModel
     let view: GameView
     
     init() {
-        view = GameView(viewModel: ClientViewModel(dataProvider: dataProvider, ), gameID: nil)
+        viewModel = ClientViewModel(dataProvider: dataProvider)
+        view = GameView(viewModel: viewModel, gameID: nil)
     }
 
     @Test mutating func `Scenario: Player views empty board`() throws {
