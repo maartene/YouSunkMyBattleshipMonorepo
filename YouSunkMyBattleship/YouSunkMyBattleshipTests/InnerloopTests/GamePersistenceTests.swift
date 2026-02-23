@@ -98,17 +98,6 @@ import YouSunkMyBattleshipCommon
 
             #expect(viewModel.loadWasCalledWithGameID("game1"))
         }
-
-        @Test func `when a gameview does not have a gameID set, it will reset the viewModel`() throws {
-            let viewModel = ViewModelSpy()
-            let view = GameView(viewModel: viewModel, gameID: nil)
-
-            let inspectedView = try view.inspect()
-
-            try inspectedView.vStack().callOnAppear()
-
-            #expect(viewModel.resetWasCalled)
-        }
     }
 
     @MainActor

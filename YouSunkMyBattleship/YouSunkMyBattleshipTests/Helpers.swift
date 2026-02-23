@@ -266,6 +266,10 @@ final class MockDataProvider: DataProvider {
     func wsSyncSend(data: Data) {
         onReceive?(dataToReceiveOnSend)
     }
+    
+    func triggerOnReceiveWith(_ data: Data) {
+        self.onReceive?(data)
+    }
 
     func connectToWebsocket(to url: URL, onReceive: @escaping (Data) -> Void) {
         self.onReceive = onReceive

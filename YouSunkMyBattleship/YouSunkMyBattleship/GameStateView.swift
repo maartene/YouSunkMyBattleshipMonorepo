@@ -19,20 +19,7 @@ struct GameStateView: View {
     }
 
     var body: some View {
-        if viewModel.state == .awaitingConfirmation {
-            VStack {
-                Text("Done placing?")
-                    .font(.headline)
-                HStack {
-                    Button("Done!") {
-                        Task { await viewModel.confirmPlacement() }
-                    }.buttonStyle(.borderedProminent)
-                    Button("Clear board") {
-                        viewModel.reset()
-                    }.buttonStyle(.bordered)
-                }
-            }
-        } else if viewModel.state == .play {
+        if viewModel.state == .play {
             VStack {
                 Text(viewModel.lastMessage)
                     .font(.headline)

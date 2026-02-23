@@ -17,12 +17,14 @@ import YouSunkMyBattleshipCommon
 /// So that I can track my progress
 @MainActor
 @Suite(.tags(.`E2E tests`)) struct `Feature: Ship Sinking Detection` {
+    let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataDestroying)
     let viewModel: ClientViewModel
     let view: GameView
 
     init() {
-        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroying))
+        viewModel = ClientViewModel(dataProvider: dataProvider)
         view = GameView(viewModel: viewModel)
+        viewModel.createGame()
     }
 
     @Test func `Scenario: Player sinks enemy destroyer`() async throws {
@@ -37,12 +39,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Ship Sinking Detection` {
     func `Given the enemy has a Destroyer at I9-J9`() async throws {
-        await completePlacement(on: viewModel)
-        await viewModel.confirmPlacement()
-
-        while viewModel.state != .play {
-            try await Task.sleep(nanoseconds: 1000)
-        }
+        dataProvider.triggerOnReceiveWith(gameStateDataAfterFiringHit)
     }
 
     func `And I have hit I9`() async throws {

@@ -11,10 +11,6 @@ import WSDataProvider
 
 @Observable
 final class ClientViewModel: GameViewModel {
-    func confirmPlacement() async {
-        //
-    }
-    
     private let dataProvider: DataProvider
     private let owner = player
     private(set) var shipsToPlace: [String] = []
@@ -92,10 +88,6 @@ final class ClientViewModel: GameViewModel {
             updateShipsToPlace()
 
             cells[owner] = cellsForPlayer()
-
-            if shipsToPlace.isEmpty {
-                state = .awaitingConfirmation
-            }
 
             self.startShip = nil
             endShip = nil

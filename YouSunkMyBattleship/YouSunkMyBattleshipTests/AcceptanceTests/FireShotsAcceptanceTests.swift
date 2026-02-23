@@ -45,13 +45,7 @@ extension `Feature: Firing Shots` {
     mutating func `Given a game has started with all ships placed`(_ dataProvider: DataProvider) async throws {
         viewModel = ClientViewModel(dataProvider: dataProvider)
         view = GameView(viewModel: viewModel)
-
-        await completePlacement(on: viewModel)
-        await viewModel.confirmPlacement()
-
-        while viewModel.state != .play {
-            try await Task.sleep(nanoseconds: 1000)
-        }
+        viewModel.createGame()
     }
 
     func `When I fire at coordinate B5`() async throws {

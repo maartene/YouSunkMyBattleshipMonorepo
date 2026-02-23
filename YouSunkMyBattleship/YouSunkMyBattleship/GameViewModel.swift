@@ -11,7 +11,6 @@ import YouSunkMyBattleshipCommon
 
 // MARK: ViewModel protocol (PORT)
 protocol GameViewModel {
-    func confirmPlacement() async
     func reset()
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async
     func load(_ gameID: String)
@@ -29,7 +28,6 @@ protocol GameViewModel {
 
 enum GameViewModelState {
     case placingShips
-    case awaitingConfirmation
     case play
     case finished
 

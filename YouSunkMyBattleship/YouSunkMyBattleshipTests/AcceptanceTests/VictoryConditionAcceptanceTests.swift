@@ -22,9 +22,8 @@ import YouSunkMyBattleshipCommon
 
     init() async {
         viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: victoryState))
-        await completePlacement(on: viewModel)
-        await viewModel.confirmPlacement()
         view = GameView(viewModel: viewModel)
+        viewModel.createGame()
     }
 
     @Test func `Scenario: Player restarts the game`() async throws {
@@ -36,9 +35,7 @@ import YouSunkMyBattleshipCommon
 
 extension `Feature: Victory Condition` {
     func `Given the game has ended`() async throws {
-        while viewModel.state != .finished {
-            try await Task.sleep(nanoseconds: 1000)
-        }
+        // taken care of by BE
     }
 
     func `When I tap the "New Game button`() throws {

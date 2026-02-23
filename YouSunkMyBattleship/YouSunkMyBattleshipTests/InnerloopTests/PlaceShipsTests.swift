@@ -100,13 +100,6 @@ import WSDataProvider
         }
 
         @Test
-        func `when all ships have been placed, the viewmodel should signal to confirm placement`() async {
-            await completePlacement(on: viewModel)
-
-            #expect(viewModel.state == .awaitingConfirmation)
-        }
-
-        @Test
         func `when all ships have been placed, the viewmodel should show them all`() async {
             await viewModel.tap(Coordinate("A1"), boardForPlayer: player)
             await viewModel.tap(Coordinate("A5"), boardForPlayer: player)
@@ -136,43 +129,6 @@ import WSDataProvider
         }
 
         @Test
-        func `given all ships have been placed, when the player confirms placement, the viewmodels state should move to play`()
-            async throws {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
-            let viewModel = ClientViewModel(dataProvider: dataProvider)
-            await completePlacement(on: viewModel)
-
-            await viewModel.confirmPlacement()
-
-            #expect(viewModel.state == .play)
-        }
-
-        @Test
-        func `given all ships have been placed, when the player confirms placement, the game should receive a board with the placed ships`()
-            async {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
-            let viewModel = ClientViewModel(dataProvider: dataProvider)
-            await completePlacement(on: viewModel)
-
-            await viewModel.confirmPlacement()
-
-            #expect(viewModel.cells[player] ==
-                [
-                    ["🚢", "🚢", "🚢", "🚢", "🚢", "🌊", "🚢", "🌊", "🚢", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊", "🚢", "🌊"],
-                    ["🚢", "🚢", "🚢", "🌊", "🌊", "🌊", "🚢", "🌊", "🚢", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊", "🌊", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊"],
-                    ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊"]
-                ]
-            )
-        }
-
-        @Test
         func `given all ships have been placed, when the player cancels placement, the board is reset`() async {
             await completePlacement(on: viewModel)
 
@@ -180,17 +136,6 @@ import WSDataProvider
 
             #expect(viewModel.shipsToPlace.isEmpty == false)
             #expect(viewModel.state == .placingShips)
-        }
-
-        @Test
-        func `given all ships have been placed, when the player confirms placement and an error is occurred, the state does not change`()
-            async throws {
-            let viewModel = ClientViewModel(dataProvider: DummyDataProvider())
-            await completePlacement(on: viewModel)
-
-            await viewModel.confirmPlacement()
-
-            #expect(viewModel.state == .awaitingConfirmation)
         }
     }
 
