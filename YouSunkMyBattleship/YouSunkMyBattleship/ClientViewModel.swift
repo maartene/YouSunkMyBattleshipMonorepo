@@ -56,6 +56,17 @@ final class ClientViewModel: GameViewModel {
         cells[owner] = boardInProgress.toStringsAsPlayerBoard()
         updateShipsToPlace()
     }
+    
+    func createGame() {
+        let command = GameCommand.createGameNew(withCPU: true, speed: .slow)
+        do {
+            let data = try encoder.encode(command)
+            dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
+            dataProvider.wsSyncSend(data: data)
+        } catch {
+            NSLog("Failed to encode command: \(command): \(error)")
+        }
+    }
 
     func load(_ gameID: String) {
         let command = GameCommand.load(gameID: gameID)

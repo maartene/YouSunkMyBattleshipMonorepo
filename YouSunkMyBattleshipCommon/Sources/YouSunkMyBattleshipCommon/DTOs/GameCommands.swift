@@ -16,8 +16,9 @@ extension GameCommand: Equatable {
             return lhsGameID == rhsGameID
         } else if case .placeShip(let lhsCoordinates) = lhs, case .placeShip(let rhsCoordinates) = rhs {
             return lhsCoordinates == rhsCoordinates
-        }
-        else {
+        } else if case .createGameNew(let lhsWithCPU, let lhsSpeed) = lhs, case .createGameNew(let rhsWithCPU, let rhsSpeed) = rhs {
+            return lhsWithCPU == rhsWithCPU && lhsSpeed == rhsSpeed
+        } else {
             return false
         }
     }
