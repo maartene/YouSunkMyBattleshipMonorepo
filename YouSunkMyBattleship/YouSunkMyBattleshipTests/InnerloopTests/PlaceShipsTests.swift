@@ -30,12 +30,11 @@ import WSDataProvider
             let randomCell = try #require(cells.randomElement())
 
             try randomCell.text().callOnTapGesture()
-
-            while viewModelSpy.tapWasCalledWithCoordinate(
+            await Task.yield()
+            
+            #expect(viewModelSpy.tapWasCalledWithCoordinate(
                 try randomCell.actualView().coordinate,
-                for: try randomCell.actualView().owner) == false {
-                try await Task.sleep(nanoseconds: 1000)
-            }
+                for: try randomCell.actualView().owner))
         }
     }
 
