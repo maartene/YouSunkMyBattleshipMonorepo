@@ -51,7 +51,7 @@ import YouSunkMyBattleshipCommon
     @MainActor
     @Suite struct ViewModelTests {
         @Test func `the boards for both player are independent of eachother`() async {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacementJSON)
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
 
             await completePlacement(on: viewModel)
@@ -65,7 +65,7 @@ import YouSunkMyBattleshipCommon
             await completePlacement(on: viewModel)
             await viewModel.confirmPlacement()
 
-            spy.triggerOnReceiveWith(gameStateDataAfterCompletingPlacementJSON)
+            spy.triggerOnReceiveWith(gameStateDataAfterCompletingPlacement)
 
             while viewModel.state != .play {
                 try await Task.sleep(nanoseconds: 1_000_000)

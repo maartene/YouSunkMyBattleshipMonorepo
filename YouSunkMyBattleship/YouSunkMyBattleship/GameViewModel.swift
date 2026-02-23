@@ -34,10 +34,12 @@ enum GameViewModelState {
 
     static func fromGameState(_ gameState: GameState.State) -> GameViewModelState {
         return switch gameState {
+        case .placingShips:
+                .placingShips
         case .play:
-            .play
+                .play
         case .finished:
-            .finished
+                .finished
         }
     }
 }

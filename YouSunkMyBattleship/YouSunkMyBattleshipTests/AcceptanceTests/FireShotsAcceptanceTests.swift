@@ -21,8 +21,8 @@ import WSDataProvider
     var viewModel: ClientViewModel!
     var view: GameView!
 
-    let dataProvider1 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringMissJSON)
-    let dataProvider2 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHitJSON)
+    let dataProvider1 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringMiss)
+    let dataProvider2 = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterFiringHit)
 
     @Test mutating func `Scenario: Player fires and misses`() async throws {
         try await `Given a game has started with all ships placed`(dataProvider1)

@@ -122,7 +122,7 @@ import WSDataProvider
         @Test
         func `given all ships have been placed, when the player confirms placement, the viewmodels state should move to play`()
             async throws {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacementJSON)
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
             await completePlacement(on: viewModel)
 
@@ -134,7 +134,7 @@ import WSDataProvider
         @Test
         func `given all ships have been placed, when the player confirms placement, the game should receive a board with the placed ships`()
             async {
-            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacementJSON)
+            let dataProvider = MockDataProvider(dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
             await completePlacement(on: viewModel)
 

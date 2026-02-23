@@ -21,7 +21,7 @@ import YouSunkMyBattleshipCommon
     let view: GameView
 
     init() {
-        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroyingJSON))
+        viewModel = ClientViewModel(dataProvider: MockDataProvider(dataToReceiveOnSend: gameStateDataDestroying))
         view = GameView(viewModel: viewModel)
     }
 
