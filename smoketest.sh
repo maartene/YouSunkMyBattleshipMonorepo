@@ -23,7 +23,7 @@ echo "Enabling BuildKit for better performance"
 DOCKER_BUILDKIT=1
 echo "Starting containers"
 eval "$COMPOSE_CMD up -d --build"
-sleep 1s
+sleep 5s
 cd ./api/contract/ContractTest
 swift build --configuration release
 ./.build/release/ContractTest
