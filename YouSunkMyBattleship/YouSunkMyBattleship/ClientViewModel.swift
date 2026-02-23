@@ -71,7 +71,7 @@ final class ClientViewModel: GameViewModel {
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
         switch state {
         case .placingShips:
-            tapToPlaceShip(at: coordinate)
+            await tapToPlaceShip(at: coordinate)
         case .play:
             await tapToFire(at: coordinate, player: boardForPlayer)
         default:
@@ -79,7 +79,7 @@ final class ClientViewModel: GameViewModel {
         }
     }
 
-    private func tapToPlaceShip(at coordinate: Coordinate) {
+    private func tapToPlaceShip(at coordinate: Coordinate) async {
         if let startShip {
             endShip = coordinate
 
@@ -95,6 +95,14 @@ final class ClientViewModel: GameViewModel {
 
             self.startShip = nil
             endShip = nil
+            
+            let placeShipCommand = GameCommand.placeShip(ship: shipCoordinates)
+            do {
+                let data = try encoder.encode(placeShipCommand)
+                try await dataProvider.wsSend(data: data)
+            } catch {
+                NSLog("Error sending place ship command \(placeShipCommand): \(error)")
+            }
         } else {
             startShip = coordinate
             endShip = coordinate

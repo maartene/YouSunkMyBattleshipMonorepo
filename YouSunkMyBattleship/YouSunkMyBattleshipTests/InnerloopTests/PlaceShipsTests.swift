@@ -63,6 +63,22 @@ import WSDataProvider
             #expect(viewModel.cells[player]![1][4] == "🚢")
             #expect(viewModel.cells[player]![2][4] == "🚢")
         }
+        
+        @Test func `given a ship placement has ended, the viewmodel sends a place ship command to the backend`() async throws {
+            let dataProvider = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
+            dataProvider.triggerOnReceiveWith(gameStateDataPlacing)
+            
+            await viewModel.tap(Coordinate("A5"), boardForPlayer: player)            
+            await viewModel.tap(Coordinate("C5"), boardForPlayer: player)
+            
+            let expectedCommand = GameCommand.placeShip(ship: [
+                Coordinate("A5"),
+                Coordinate("B5"),
+                Coordinate("C5"),
+            ])
+            #expect(dataProvider.sendWasCalledWith(expectedCommand))
+        }
 
         @Test func `given a ship placement has ended, a new one can be started`() async {
             await viewModel.tap(Coordinate("A5"), boardForPlayer: player)

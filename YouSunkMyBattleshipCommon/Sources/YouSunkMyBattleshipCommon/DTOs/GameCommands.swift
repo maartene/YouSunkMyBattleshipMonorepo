@@ -14,7 +14,10 @@ extension GameCommand: Equatable {
             return lhsCoordinate == rhsCoordinate
         } else if case .load(let lhsGameID) = lhs, case .load(let rhsGameID) = rhs {
             return lhsGameID == rhsGameID
-        } else {
+        } else if case .placeShip(let lhsCoordinates) = lhs, case .placeShip(let rhsCoordinates) = rhs {
+            return lhsCoordinates == rhsCoordinates
+        }
+        else {
             return false
         }
     }
