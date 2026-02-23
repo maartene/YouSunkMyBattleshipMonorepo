@@ -23,7 +23,7 @@ import YouSunkMyBattleshipCommon
         
         let gameStateBeforeNewGame = try await gameService.getGameState()
         
-        let command = GameCommand.createGameNew(withCPU: true, speed: .fast)
+        let command = GameCommand.createGame(withCPU: true, speed: .fast)
         try await gameService.receive(command.toData())
         
         let gameStateAfterNewGame = try await gameService.getGameState()

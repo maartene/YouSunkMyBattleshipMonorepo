@@ -107,7 +107,7 @@ final class GamePlayer {
     }
     
     func createGame() throws {
-        let createGameCommand = GameCommand.createGameNew(withCPU: true, speed: .fast)
+        let createGameCommand = GameCommand.createGame(withCPU: true, speed: .fast)
         try websocket.value?.send(
             createGameCommand.toByteBuffer(using: encoder), opcode: .binary, promise: nil)
         state = .creatingGame

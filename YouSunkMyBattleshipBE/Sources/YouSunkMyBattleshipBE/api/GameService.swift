@@ -59,7 +59,7 @@ actor GameService {
 
     private func processCommand(_ command: GameCommand) async throws {
         switch command {
-        case .createGameNew(let withCPU, let speed):
+        case .createGame(let withCPU, let speed):
             try await createGameNew(withCPU: withCPU, speed: speed)
         case .placeShip(let ship):
             try await placeShip(ship)

@@ -1,5 +1,5 @@
 public enum GameCommand: Codable {
-    case createGameNew(withCPU: Bool, speed: GameSpeed)
+    case createGame(withCPU: Bool, speed: GameSpeed)
     case placeShip(ship: [Coordinate])
     case fireAt(coordinate: Coordinate)
     case load(gameID: String)
@@ -13,27 +13,11 @@ extension GameCommand: Equatable {
             return lhsGameID == rhsGameID
         } else if case .placeShip(let lhsCoordinates) = lhs, case .placeShip(let rhsCoordinates) = rhs {
             return lhsCoordinates == rhsCoordinates
-        } else if case .createGameNew(let lhsWithCPU, let lhsSpeed) = lhs, case .createGameNew(let rhsWithCPU, let rhsSpeed) = rhs {
+        } else if case .createGame(let lhsWithCPU, let lhsSpeed) = lhs, case .createGame(let rhsWithCPU, let rhsSpeed) = rhs {
             return lhsWithCPU == rhsWithCPU && lhsSpeed == rhsSpeed
         } else {
             return false
         }
-    }
-}
-
-public struct PlacedShipDTO: Codable, Sendable, Equatable {
-    public let name: String
-    public let coordinates: [Coordinate]
-
-    public init(name: String, coordinates: [Coordinate]) {
-        self.name = name
-        self.coordinates = coordinates
-    }
-}
-
-extension Board.PlacedShip {
-    public func toDTO() -> PlacedShipDTO {
-        PlacedShipDTO(name: ship.name, coordinates: coordinates)
     }
 }
 

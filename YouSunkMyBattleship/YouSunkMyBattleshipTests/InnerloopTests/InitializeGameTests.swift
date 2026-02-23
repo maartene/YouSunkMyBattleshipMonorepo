@@ -31,7 +31,7 @@ import ViewInspector
             
             viewModel.createGame()
             
-            let createGameCommand = GameCommand.createGameNew(withCPU: true, speed: .slow)
+            let createGameCommand = GameCommand.createGame(withCPU: true, speed: .slow)
             #expect(dataProvider.sendWasCalledWith(createGameCommand))
         }
     }

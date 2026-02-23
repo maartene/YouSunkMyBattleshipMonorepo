@@ -21,7 +21,7 @@ import YouSunkMyBattleshipCommon
     }
     
     @Test func `when a game with a CPU is started, it already has two boards`() async throws {
-        try await gameService.receive(GameCommand.createGameNew(withCPU: true, speed: .fast).toData())
+        try await gameService.receive(GameCommand.createGame(withCPU: true, speed: .fast).toData())
         
         let gameState = try await gameService.getGameState()
         #expect(gameState.cells.count == 2)

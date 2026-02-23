@@ -84,7 +84,7 @@ struct FixedBot: Bot {
 }
 
 func createGame(player1Board: Board, in gameService: GameService) async throws {
-    try await gameService.receive(GameCommand.createGameNew(withCPU: true, speed: .fast).toData())
+    try await gameService.receive(GameCommand.createGame(withCPU: true, speed: .fast).toData())
     
     let placeShipCommands = player1Board.placedShips.map {
         GameCommand.placeShip(ship: $0.coordinates)

@@ -22,7 +22,7 @@ import Foundation
         gameService = GameService(repository: InmemoryGameRepository(), owner: player)
         
         try await gameService.receive(
-            GameCommand.createGameNew(withCPU: true, speed: .slow).toData()
+            GameCommand.createGame(withCPU: true, speed: .slow).toData()
         )
     }
     
