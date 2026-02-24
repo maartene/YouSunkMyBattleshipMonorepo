@@ -99,3 +99,16 @@ func getOpponent(from gameService: GameService, for player: Player) async throws
     let gameState = try await gameService.getGameState()
     return try #require(gameState.cells.keys.first { $0 != player })
 }
+
+// MARK: SendGameStateContainer doubles
+actor DummySendGameStateContainer: SendGameStateContainer {
+    func register(sendFunction: @escaping (Data) -> Void, for player: YouSunkMyBattleshipCommon.Player) {
+        
+    }
+    
+    func sendGameState(to player: YouSunkMyBattleshipCommon.Player, _ event: YouSunkMyBattleshipCommon.GameState) {
+        
+    }
+    
+    
+}

@@ -14,7 +14,7 @@ import YouSunkMyBattleshipCommon
         let repository = InmemoryGameRepository()
         let player = Player()
         let opponent = Player()
-        let gameService = GameService(repository: repository, owner: player)
+        let gameService = GameService(repository: repository, sendContainer: DummySendGameStateContainer(), owner: player)
         let gameID = await gameService.gameID
         
         let (player2Board, _) = createNearlyCompletedBoard()

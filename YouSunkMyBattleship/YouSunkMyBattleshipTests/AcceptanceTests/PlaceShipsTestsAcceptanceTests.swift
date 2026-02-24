@@ -61,6 +61,6 @@ extension `Feature: Ship Placement` {
 
     private func `And the ship placement is confirmed`() throws {
         let inspectedView = try view.inspect().find(GameStateView.self)
-        #expect(try inspectedView.text().string().contains("Carrier(5)") == false)
+        #expect(try inspectedView.vStack().text(1).string().contains("Carrier(5)") == false)
     }
 }

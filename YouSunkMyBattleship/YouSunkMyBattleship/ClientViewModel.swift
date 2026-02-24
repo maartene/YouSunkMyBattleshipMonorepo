@@ -39,7 +39,7 @@ final class ClientViewModel: GameViewModel {
     func createGame() {
         cells[owner] = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)
         
-        let command = GameCommand.createGame(withCPU: false, speed: .slow)
+        let command = GameCommand.createGame(withCPU: true, speed: .slow)
         do {
             let data = try encoder.encode(command)
             dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)

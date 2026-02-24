@@ -13,7 +13,8 @@ try await app.execute()
 func configure(_ app: Application, repository: GameRepository) throws {
     app.gameRepository = repository
     app.http.server.configuration.hostname = "0.0.0.0"
-
+    let sendContainer = WebSocketSendGameStateContainer()
+    
     app.get { req in
         return "Health check OK"
     }
@@ -22,7 +23,10 @@ func configure(_ app: Application, repository: GameRepository) throws {
         req.logger.info("Connection established.")
         let playerID = req.parameters.get("playerID")!
         let player = Player(id: playerID)
-        let gameService = GameService(repository: app.gameRepository!, owner: player, bot: RandomBot(), ws: ws, logger: req.logger)
+        await sendContainer.register(sendFunction: { data in
+            ws.send(data, promise: nil)
+        }, for: player)
+        let gameService = GameService(repository: app.gameRepository!, sendContainer: sendContainer, owner: player, bot: RandomBot(), ws: ws, logger: req.logger)
         ws.send("Welcome!".data(using: .utf8)!)
 
         ws.onBinary { ws, data in

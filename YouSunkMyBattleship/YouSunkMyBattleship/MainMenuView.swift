@@ -29,6 +29,7 @@ struct MainMenuView: View {
     
     var body: some View {
         VStack {
+            Text(player.id)
             if mainMenuViewModel.shouldShowRefreshMessage {
                 Button("Could not retrieve games. Try again") {
                     mainMenuViewModel.refreshGames()

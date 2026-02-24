@@ -8,6 +8,8 @@
 import Testing
 @testable import YouSunkMyBattleshipBE
 import YouSunkMyBattleshipCommon
+import Foundation
+import NIOCore
 
 @Suite(.tags(.`Unit tests`)) struct TwoPlayerGameUnitTests {
     let repository = InmemoryGameRepository()
@@ -16,10 +18,11 @@ import YouSunkMyBattleshipCommon
     let player1 = Player()
     let player2 = Player()
     var gameID: String!
+    let spyContainer = SpyContainer()
     
     init() async throws {
-        gameService1 = GameService(repository: repository, owner: player1)
-        gameService2 = GameService(repository: repository, owner: player2)
+        gameService1 = GameService(repository: repository, sendContainer: spyContainer, owner: player1)
+        gameService2 = GameService(repository: repository, sendContainer: spyContainer, owner: player2)
     }
     
     @Test func `in a two player game, the CPU does not take turns`() async throws {
@@ -38,6 +41,25 @@ import YouSunkMyBattleshipCommon
     }
     
     @Test func `in a two player game, both players are notified of important events`() async throws {
-        //notImplemented()
+        
+        let game = Game(gameID: "2playergame", player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard(), player1: player1, player2: player2)
+        await repository.setGame(game)
+        
+        try await gameService1.receive(GameCommand.load(gameID: game.gameID).toData())
+        try await gameService2.receive(GameCommand.load(gameID: game.gameID).toData())
+        
+        #expect(await spyContainer.sendCalls.contains(where: { $0.lastMessage == "\(player1.id) joined the game."}))
     }
+}
+
+actor SpyContainer: SendGameStateContainer {
+    func register(sendFunction: @escaping (Data) -> Void, for player: YouSunkMyBattleshipCommon.Player) {
+        
+    }
+    
+    func sendGameState(to player: YouSunkMyBattleshipCommon.Player, _ event: YouSunkMyBattleshipCommon.GameState) {
+        sendCalls.append(event)
+    }
+    
+    private(set) var sendCalls = [GameState]()
 }

@@ -33,8 +33,12 @@ struct GameStateView: View {
                     .font(.headline)
             }
         } else {
-            Text("Place ships: \(shipsToPlace)")
-                .padding()
+            VStack {
+                Text(viewModel.lastMessage)
+                    .font(.headline)
+                Text("Place ships: \(shipsToPlace)")
+                    .padding()
+            }
         }
     }
 }

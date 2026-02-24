@@ -25,7 +25,7 @@ import YouSunkMyBattleshipCommon
     
     init() {
         self.player = Player(id: UUID().uuidString)
-        self.gameService = GameService(repository: repository, owner: player)
+        self.gameService = GameService(repository: repository, sendContainer: DummySendGameStateContainer(), owner: player)
     }
     
     @Test mutating func `Scenario: Player places a ship successfully`() async throws {

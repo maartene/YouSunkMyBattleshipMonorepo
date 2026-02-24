@@ -18,7 +18,7 @@ import YouSunkMyBattleshipCommon
     let player = Player()
     
     init() async throws {
-        self.gameService = GameService(repository: repository, owner: player, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
+        self.gameService = GameService(repository: repository, sendContainer: DummySendGameStateContainer(), owner: player, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
         try await createGame(player1Board: .makeFilledBoard(), in: gameService)
         gameID = await gameService.gameID
     }

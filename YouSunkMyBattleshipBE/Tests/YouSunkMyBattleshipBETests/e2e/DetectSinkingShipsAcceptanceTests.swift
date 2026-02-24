@@ -22,7 +22,7 @@ import YouSunkMyBattleshipCommon
     init() async throws {
         let player = Player()
         self.player = player
-        self.gameService = GameService(repository: repository, owner: player)
+        self.gameService = GameService(repository: repository, sendContainer: DummySendGameStateContainer(), owner: player)
         gameID = await gameService.gameID
     }
     

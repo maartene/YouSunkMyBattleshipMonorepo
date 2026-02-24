@@ -19,7 +19,7 @@ import Foundation
     init() async throws {
         let player = Player()
         self.player = player
-        gameService = GameService(repository: InmemoryGameRepository(), owner: player)
+        gameService = GameService(repository: InmemoryGameRepository(), sendContainer: DummySendGameStateContainer(), owner: player)
         
         try await gameService.receive(
             GameCommand.createGame(withCPU: true, speed: .slow).toData()

@@ -24,8 +24,8 @@ import VaporTesting
     }
     
     @Test func `two games are seperate`() async throws {
-        let gameService1 = GameService(repository: repository)
-        let gameService2 = GameService(repository: repository)
+        let gameService1 = GameService(repository: repository, sendContainer: DummySendGameStateContainer())
+        let gameService2 = GameService(repository: repository, sendContainer: DummySendGameStateContainer())
         
         try await createGame(player1Board: .makeFilledBoard(), in: gameService1)
         try await createGame(player1Board: .makeAnotherFilledBoard(), in: gameService2)

@@ -99,10 +99,10 @@ extension `Feature: Game Board Initialization` {
     private func `And all five ships to be placed are shown`() throws {
         let inspectedView = try view.inspect().find(GameStateView.self)
 
-        #expect(try inspectedView.text().string().contains("Carrier(5)"))
-        #expect(try inspectedView.text().string().contains("Battleship(4)"))
-        #expect(try inspectedView.text().string().contains("Cruiser(3)"))
-        #expect(try inspectedView.text().string().contains("Submarine(3)"))
-        #expect(try inspectedView.text().string().contains("Destroyer(2)"))
+        #expect(try inspectedView.vStack().text(1).string().contains("Carrier(5)"))
+        #expect(try inspectedView.vStack().text(1).string().contains("Battleship(4)"))
+        #expect(try inspectedView.vStack().text(1).string().contains("Cruiser(3)"))
+        #expect(try inspectedView.vStack().text(1).string().contains("Submarine(3)"))
+        #expect(try inspectedView.vStack().text(1).string().contains("Destroyer(2)"))
     }
 }

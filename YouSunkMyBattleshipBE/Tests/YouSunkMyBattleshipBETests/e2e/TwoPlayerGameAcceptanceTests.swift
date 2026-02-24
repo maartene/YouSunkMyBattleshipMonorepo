@@ -19,8 +19,8 @@ import YouSunkMyBattleshipCommon
     var gameID: String!
     
     init() async throws {
-        gameService1 = GameService(repository: repository, owner: player1)
-        gameService2 = GameService(repository: repository, owner: player2)
+        gameService1 = GameService(repository: repository, sendContainer: DummySendGameStateContainer(), owner: player1)
+        gameService2 = GameService(repository: repository, sendContainer: DummySendGameStateContainer(), owner: player2)
     }
     
     @Test mutating func `Scenario: Second player joins game`() async throws {
