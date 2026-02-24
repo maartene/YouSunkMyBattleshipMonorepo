@@ -78,8 +78,13 @@ final class ClientMainMenuViewModel: MainMenuViewModel {
     func refreshGames() {
         do {
             let data = try dataProvider.syncGet(url: httpURL)
-            self.games = (try? JSONDecoder().decode([SavedGame].self, from: data ?? Data())) ?? []
+            let games = (try? JSONDecoder().decode([SavedGame].self, from: data ?? Data())) ?? []
             shouldShowRefreshMessage = false
+            
+            self.games = games.filter { game in
+                game.players.contains(player.id) || game.canJoin
+            }
+            
         } catch {
             shouldShowRefreshMessage = true
         }

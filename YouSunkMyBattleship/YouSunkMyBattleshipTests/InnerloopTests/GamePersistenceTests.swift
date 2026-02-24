@@ -30,6 +30,12 @@ import YouSunkMyBattleshipCommon
             _ = try inspectedView.find(text: "game2 (joinable)")
             _ = try inspectedView.find(text: "game3")
         }
+        
+        @Test func `the view does not show games that cannot be joined nor continued by this player`() async throws {
+            let inspectedView = try view.inspect()
+            
+            #expect((try? inspectedView.find(text: "game4")) == nil)
+        }
 
         @Test func `the view tries to load a list of games that are in progress`() throws {
             let dataProvider = DataProviderSpy()
@@ -123,6 +129,17 @@ import YouSunkMyBattleshipCommon
             viewModel.load("game3")
 
             let expectedCommand = GameCommand.load(gameID: "game3")
+
+            #expect(dataProvider.sendWasCalledWith(expectedCommand))
+        }
+        
+        @Test func `when viewModel tries to join a game, the join command is send to the dataprovider`() throws {
+            let dataProvider = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
+
+            viewModel.join("game2")
+
+            let expectedCommand = GameCommand.join(gameID: "game2")
 
             #expect(dataProvider.sendWasCalledWith(expectedCommand))
         }

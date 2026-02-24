@@ -227,10 +227,16 @@ final class MockDataProvider: DataProvider {
     }
 
     func syncGet(url: URL) throws -> Data? {
+        var game3 = Game(gameID: "game3", player: player, cpu: false)
+        game3.join(Player())
+        var game4 = Game(gameID: "game4", player: Player(), cpu: false)
+        game4.join(Player())
+        
         let savedGames = [
-            Game(gameID: "game1", player: Player(), cpu: true),
+            Game(gameID: "game1", player: player, cpu: true),
             Game(gameID: "game2", player: Player(), cpu: false),
-            Game(gameID: "game3", player: Player(), cpu: true),
+            game3,
+            game4
         ].map { SavedGame(from: $0) }
 
         return try JSONEncoder().encode(savedGames)
@@ -269,4 +275,26 @@ final class MainMenuViewModelSpy: MainMenuViewModel {
     func refreshGames() {
         refreshWasCalled = true
     }
+}
+
+final class MockMainMenuViewModel: MainMenuViewModel {
+    let games: [SavedGame]
+    
+    init() {
+        let otherPlayer = Player()
+        let joinableGame = Game(gameID: "joinableGame", player: Player())
+        var continueableGame = Game(gameID: "continueableGame", player: Player())
+        continueableGame.join(player)
+        var neitherGame = Game(gameID: "neither", player: Player())
+        neitherGame.join(Player())
+        games = [joinableGame, continueableGame, neitherGame].map { SavedGame(from: $0) }
+    }
+    
+    let shouldShowRefreshMessage = false
+    
+    func refreshGames() {
+        
+    }
+    
+    
 }
