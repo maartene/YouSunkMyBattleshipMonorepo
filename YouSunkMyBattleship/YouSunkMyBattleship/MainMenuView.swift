@@ -37,11 +37,11 @@ struct MainMenuView: View {
                 NavigationStack {
                     List(mainMenuViewModel.games) { game in
                         NavigationLink(stringValueFor(game)) {
-                            GameView(viewModel: gameViewModel, gameID: game.gameID)
+                            GameView(viewModel: gameViewModel, savedGame: game)
                         }
                     }
                     NavigationLink("New game") {
-                        GameView(viewModel: gameViewModel, gameID: nil)
+                        GameView(viewModel: gameViewModel, savedGame: nil)
                     }
                     .navigationTitle("Main Menu")
                 }

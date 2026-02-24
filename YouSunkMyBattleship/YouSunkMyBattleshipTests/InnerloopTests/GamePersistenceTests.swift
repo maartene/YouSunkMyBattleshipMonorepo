@@ -41,14 +41,14 @@ import YouSunkMyBattleshipCommon
             #expect(dataProvider.getWasCalled(with: URL(string: "http://localhost:8080/games")!))
         }
 
-        @Test func `when clicking on a game, the game to load is passed in`() async throws {
+        @Test func `when clicking on a game that can be continued or joined, the game to continue is passed in`() async throws {
             let inspectedView = try view.inspect()
 
             let link = try inspectedView.find(navigationLink: "game3")
 
             let nextView = try link.view(GameView.self).actualView()
 
-            #expect(nextView.gameID == "game3")
+            #expect(nextView.savedGame?.gameID == "game3")
         }
 
         @Test func `when clicking on a new game, no game to load is passed in`() async throws {
@@ -57,7 +57,7 @@ import YouSunkMyBattleshipCommon
 
             let nextView = try link.view(GameView.self).actualView()
 
-            #expect(nextView.gameID == nil)
+            #expect(nextView.savedGame == nil)
         }
 
         @Test func `when no games can be loaded, display message to try again`() async throws {
@@ -88,15 +88,29 @@ import YouSunkMyBattleshipCommon
 
     @MainActor
     @Suite struct `Interaction between GameView and ViewModel` {
-        @Test func `when a gameview has a gameID set, then the viewmodel tries to load that game`() async throws {
+        @Test func `when a gameview gets a loadable game passed in, then the viewmodel tries to load that game`() async throws {
             let viewModel = ViewModelSpy()
-            let view = GameView(viewModel: viewModel, gameID: "game1")
+            var game = Game(player: Player())
+            game.join(Player())
+            let view = GameView(viewModel: viewModel, savedGame: SavedGame(from: game))
 
             let inspectedView = try view.inspect()
 
             try inspectedView.vStack().callOnAppear()
 
-            #expect(viewModel.loadWasCalledWithGameID("game1"))
+            #expect(viewModel.loadWasCalledWithGameID(game.gameID))
+        }
+        
+        @Test func `when a gameview gets a joinable game passed in, then the viewmodel tries to load that game`() async throws {
+            let viewModel = ViewModelSpy()
+            let game = Game(player: Player())
+            let view = GameView(viewModel: viewModel, savedGame: SavedGame(from: game))
+
+            let inspectedView = try view.inspect()
+
+            try inspectedView.vStack().callOnAppear()
+
+            #expect(viewModel.joinWasCalledWithGameID(game.gameID))
         }
     }
 

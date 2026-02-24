@@ -13,6 +13,7 @@ import YouSunkMyBattleshipCommon
 protocol GameViewModel {
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async
     func load(_ gameID: String)
+    func join(_ gameID: String)
     func createGame()
 
     var shipsToPlace: [String] { get }

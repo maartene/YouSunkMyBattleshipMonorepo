@@ -59,6 +59,17 @@ final class ClientViewModel: GameViewModel {
             NSLog("Failed to encode command \(command): \(error)")
         }
     }
+    
+    func join(_ gameID: String) {
+        let command = GameCommand.join(gameID: gameID)
+        do {
+            let data = try encoder.encode(command)
+            dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)
+            dataProvider.wsSyncSend(data: data)
+        } catch {
+            NSLog("Failed to encode command \(command): \(error)")
+        }
+    }
 
     func tap(_ coordinate: Coordinate, boardForPlayer: Player) async {
         switch state {

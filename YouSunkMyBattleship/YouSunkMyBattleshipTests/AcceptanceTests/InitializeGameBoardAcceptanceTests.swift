@@ -23,7 +23,7 @@ import WSDataProvider
     
     init() {
         viewModel = ClientViewModel(dataProvider: dataProvider)
-        view = GameView(viewModel: viewModel, gameID: nil)
+        view = GameView(viewModel: viewModel, savedGame: nil)
     }
 
     @Test mutating func `Scenario: Player views empty board`() throws {

@@ -17,7 +17,7 @@ import ViewInspector
     @Suite struct `Creation of a new game` {
         @Test func `when the GameView is shown, the ViewModels 'createGame' function is called`() async throws {
             let viewModel = ViewModelSpy(state: .placingShips)
-            let view = GameView(viewModel: viewModel, gameID: nil)
+            let view = GameView(viewModel: viewModel, savedGame: nil)
             let inspectedView = try view.inspect()
             
             try inspectedView.vStack().callOnAppear()

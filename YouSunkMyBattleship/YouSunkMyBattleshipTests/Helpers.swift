@@ -38,6 +38,7 @@ final class ViewModelSpy: GameViewModel {
     var tapCoordinate: Coordinate?
     var tapPlayer: Player?
     private(set) var loadWasCalled = ""
+    private(set) var joinWasCalled = ""
     private(set) var createGameCalled = false
 
     init(state: GameState.State = .placingShips) {
@@ -59,6 +60,14 @@ final class ViewModelSpy: GameViewModel {
 
     func load(_ gameID: String) {
         loadWasCalled = gameID
+    }
+    
+    func joinWasCalledWithGameID(_ gameID: String) -> Bool {
+        joinWasCalled == gameID
+    }
+
+    func join(_ gameID: String) {
+        joinWasCalled = gameID
     }
     
     func createGameWasCalled() -> Bool {
@@ -107,6 +116,9 @@ struct DummyGameViewModel: GameViewModel {
         // no-op
     }
     func load(_ gameID: String) {
+        // no-op
+    }
+    func join(_ gameID: String) {
         // no-op
     }
     func createGame() {

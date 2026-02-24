@@ -12,12 +12,12 @@ import YouSunkMyBattleshipCommon
 
 struct GameView: View {
     let viewModel: any GameViewModel
-    let gameID: String?
+    let savedGame: SavedGame?
     internal let publisher = PassthroughSubject<Void, Never>()
 
-    init(viewModel: any GameViewModel, gameID: String? = nil) {
+    init(viewModel: any GameViewModel, savedGame: SavedGame? = nil) {
         self.viewModel = viewModel
-        self.gameID = gameID
+        self.savedGame = savedGame
     }
 
     var body: some View {
@@ -38,8 +38,12 @@ struct GameView: View {
         }
         .animation(.easeInOut(duration: 0.35), value: viewModel.state)
         .onAppear {
-            if let gameID {
-                viewModel.load(gameID)
+            if let savedGame {
+                if savedGame.canJoin {
+                    viewModel.join(savedGame.gameID)
+                } else {
+                    viewModel.load(savedGame.gameID)
+                }
             } else {
                 viewModel.createGame()
             }
