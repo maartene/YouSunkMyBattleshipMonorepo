@@ -27,7 +27,7 @@ import YouSunkMyBattleshipCommon
             let inspectedView = try view.inspect()
 
             _ = try inspectedView.find(text: "game1")
-            _ = try inspectedView.find(text: "game2")
+            _ = try inspectedView.find(text: "game2 (joinable)")
             _ = try inspectedView.find(text: "game3")
         }
 
@@ -44,11 +44,11 @@ import YouSunkMyBattleshipCommon
         @Test func `when clicking on a game, the game to load is passed in`() async throws {
             let inspectedView = try view.inspect()
 
-            let link = try inspectedView.find(navigationLink: "game2")
+            let link = try inspectedView.find(navigationLink: "game3")
 
             let nextView = try link.view(GameView.self).actualView()
 
-            #expect(nextView.gameID == "game2")
+            #expect(nextView.gameID == "game3")
         }
 
         @Test func `when clicking on a new game, no game to load is passed in`() async throws {

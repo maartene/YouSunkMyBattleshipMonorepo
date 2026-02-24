@@ -19,6 +19,14 @@ struct MainMenuView: View {
         self.mainMenuViewModel = mainMenuViewModel
     }
 
+    func stringValueFor(_ game: SavedGame) -> String {
+        var result = game.gameID
+        if game.canJoin {
+            result += " (joinable)"
+        }
+        return result
+    }
+    
     var body: some View {
         VStack {
             if mainMenuViewModel.shouldShowRefreshMessage {
@@ -28,7 +36,7 @@ struct MainMenuView: View {
             } else {
                 NavigationStack {
                     List(mainMenuViewModel.games) { game in
-                        NavigationLink(game.gameID) {
+                        NavigationLink(stringValueFor(game)) {
                             GameView(viewModel: gameViewModel, gameID: game.gameID)
                         }
                     }
