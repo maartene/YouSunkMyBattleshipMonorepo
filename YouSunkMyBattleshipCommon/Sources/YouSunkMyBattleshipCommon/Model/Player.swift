@@ -13,4 +13,8 @@ public struct Player: Codable, Sendable, Identifiable, Equatable, Hashable {
     public init(id: String = UUID().uuidString) {
         self.id = id
     }
+    
+    public static var cpu: Player {
+        Player(id: "CPU")
+    }
 }

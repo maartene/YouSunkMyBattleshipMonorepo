@@ -60,7 +60,7 @@ actor GameService {
     private func processCommand(_ command: GameCommand) async throws {
         switch command {
         case .createGame(let withCPU, let speed):
-            try await createGameNew(withCPU: withCPU, speed: speed)
+            try await createGame(withCPU: withCPU, speed: speed)
         case .join(let gameID):
             try await joinGame(gameID)
         case .placeShip(let ship):
@@ -72,7 +72,7 @@ actor GameService {
         }
     }
 
-    private func createGameNew(withCPU: Bool, speed: GameSpeed) async throws {
+    private func createGame(withCPU: Bool, speed: GameSpeed) async throws {
         let game = Game(player: owner, cpu: withCPU)
         self.speed = speed
         self.gameID = game.gameID
@@ -140,7 +140,7 @@ actor GameService {
     }
 
     private func processBotTurn(_ game: inout Game) async throws {
-        guard game.currentPlayer == game.opponentOf(owner) else {
+        guard game.currentPlayer == Player.cpu else {
             return
         }
 

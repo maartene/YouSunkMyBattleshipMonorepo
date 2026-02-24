@@ -38,7 +38,7 @@ import YouSunkMyBattleshipCommon
     
     @Test func `when the CPU wins the game, it notifies the player`() async throws {
         let board = createCompletedBoard()
-        await repository.setGame(Game(gameID: gameID,player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: player))
+        await repository.setGame(Game(gameID: gameID,player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: player, player2: Player.cpu))
         
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A1")).toData())
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A2")).toData())

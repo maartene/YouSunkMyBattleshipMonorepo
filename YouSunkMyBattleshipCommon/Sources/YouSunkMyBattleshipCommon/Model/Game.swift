@@ -19,8 +19,7 @@ public struct Game {
         self.currentPlayer = player
         
         if cpu {
-            let cpuPlayer = Player(id: UUID().uuidString)
-            self.playerBoards[cpuPlayer] = .makeAnotherFilledBoard()
+            self.playerBoards[Player.cpu] = .makeAnotherFilledBoard()
         }
     }
     
