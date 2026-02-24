@@ -12,6 +12,16 @@ import VaporTesting
 
 @Suite(.tags(.`Unit tests`)) struct GamePersistenceUnitTests {
     let repository = InmemoryGameRepository()
+    let player1 = Player()
+    let game1: Game
+    let game2: Game
+    
+    init() async {
+        game1 = Game(player: player1, cpu: false)
+        game2 = Game(player: player1, cpu: true)
+        await repository.setGame(game1)
+        await repository.setGame(game2)
+    }
     
     @Test func `two games are seperate`() async throws {
         let gameService1 = GameService(repository: repository)
@@ -27,15 +37,27 @@ import VaporTesting
     }
     
     @Test func `can get a list of in progress games`() async throws {
-        let repository = InmemoryGameRepository()
-        await repository.setGame(Game(gameID: "game1", player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard()))
-        await repository.setGame(Game(gameID: "game2", player1Board: .makeAnotherFilledBoard(), player2Board: .makeFilledBoard()))
+        let expectedSavedGames = [game1, game2].map { SavedGame(from: $0) }
         
         try await withApp(configure: { app in try configure(app, repository: repository) }) { app in
             try await app.testing().test(.GET, "games") { res in
-                let gameIDs = try JSONDecoder().decode([String].self, from: res.body)
+                let savedGames = try JSONDecoder().decode([SavedGame].self, from: res.body)
                 #expect(res.status == .ok)
-                #expect(gameIDs == ["game1", "game2"])
+                #expect(savedGames.count == 2)
+                for expectedSavedGame in expectedSavedGames {
+                    #expect(savedGames.contains(expectedSavedGame))
+                }
+            }
+        }
+    }
+    
+    @Test func `a game with only one player can be joined`() async throws {
+        try await withApp(configure: { app in try configure(app, repository: repository) }) { app in
+            try await app.testing().test(.GET, "games") { res in
+                let savedGames = try JSONDecoder().decode([SavedGame].self, from: res.body)
+                #expect(res.status == .ok)
+                let joinableGame = try #require(savedGames.first { $0.canJoin })
+                #expect(joinableGame == SavedGame(from: game1))
             }
         }
     }

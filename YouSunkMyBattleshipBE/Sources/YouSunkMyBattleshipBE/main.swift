@@ -50,12 +50,13 @@ func configure(_ app: Application, repository: GameRepository) throws {
         let games = await app.gameRepository?.all() ?? []
         return
             games
-            .map { $0.gameID }
-            .sorted()
+            .map { SavedGame(from: $0) }
+            .sorted { $0.gameID < $1.gameID }
     }
 }
 
 extension GameState: @retroactive Content {}
+extension SavedGame: @retroactive Content {}
 
 struct GameRepositoryKey: StorageKey {
     typealias Value = GameRepository
