@@ -76,12 +76,13 @@ actor GameService {
         let game = Game(player: owner, cpu: withCPU)
         self.speed = speed
         self.gameID = game.gameID
-        logger.info("Created game: \(gameID)")
+        logger.info("Created game: \(gameID) for player :\(owner.id)")
         await repository.setGame(game)
     }
     
     private func joinGame(_ gameID: String) async throws {
         guard var game = await repository.getGame(id: gameID) else {
+            logger.warning("Could not find game: \(gameID)")
             throw GameServiceError.gameNotFound
         }
 
@@ -89,6 +90,8 @@ actor GameService {
         self.gameID = game.gameID
         
         await repository.setGame(game)
+        
+        logger.info("Player \(owner.id) joined game: \(game.gameID)")
         
         if let opponent = game.opponentOf(owner) {
             let gameState = GameState(lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
@@ -98,20 +101,26 @@ actor GameService {
     
     private func placeShip(_ coordinates: [Coordinate]) async throws {
         guard var game = await repository.getGame(id: gameID) else {
+            logger.warning("Could not find game: \(gameID)")
             throw GameServiceError.gameNotFound
         }
         
         game.placeShip(coordinates, owner: owner)
+        
+        logger.info("Player \(owner.id) placed a ship \(coordinates) in game: \(game.gameID)")
         
         await repository.setGame(game)
     }
 
     private func loadGame(gameID: String) async throws {
         guard let game = await repository.getGame(id: gameID) else {
+            logger.warning("Could not find game: \(gameID)")
             throw GameServiceError.gameNotFound
         }
         
         self.gameID = gameID
+        
+        logger.info("Player \(owner.id) loaded game: \(game.gameID)")
         
         if let opponent = game.opponentOf(owner) {
             let gameState = GameState(lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
@@ -121,15 +130,18 @@ actor GameService {
 
     private func fireAt(_ coordinate: Coordinate) async throws {
         guard var game = await repository.getGame(id: gameID) else {
+            logger.warning("Could not find game: \(gameID)")
             throw GameServiceError.gameNotFound
         }
         
         guard let opponent = game.opponentOf(owner) else {
+            logger.warning("Could not find opponent for player \(owner.id) in game: \(game.gameID)")
             throw GameServiceError.opponentNotFound
         }
 
         game.fireAt(coordinate, target: opponent)
-
+        logger.info("Player \(owner.id) fired at \(coordinate) in game: \(game.gameID)")
+        
         guard let opponentBoard = game.playerBoards[opponent] else {
             return
         }
@@ -196,6 +208,7 @@ actor GameService {
 
     private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
         try await Task.sleep(nanoseconds: speed.nanoSecondDelay)
+        logger.info("CPU fired at \(coordinate) player: \(owner.id) in game: \(game.gameID)")
         game.fireAt(coordinate, target: owner)
         try await saveAndSendGameState(game)
     }

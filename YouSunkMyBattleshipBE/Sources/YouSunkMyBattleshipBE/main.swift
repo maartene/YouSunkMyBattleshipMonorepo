@@ -26,7 +26,7 @@ func configure(_ app: Application, repository: GameRepository) throws {
         await sendContainer.register(sendFunction: { data in
             ws.send(data, promise: nil)
         }, for: player)
-        let gameService = GameService(repository: app.gameRepository!, sendContainer: sendContainer, owner: player, bot: RandomBot(), ws: ws, logger: req.logger)
+        let gameService = GameService(repository: app.gameRepository!, sendContainer: sendContainer, owner: player, bot: RandomBot(), logger: req.logger)
         ws.send("Welcome!".data(using: .utf8)!)
 
         ws.onBinary { ws, data in
