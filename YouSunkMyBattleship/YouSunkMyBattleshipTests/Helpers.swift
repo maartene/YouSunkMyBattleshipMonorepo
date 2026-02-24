@@ -215,13 +215,13 @@ final class MockDataProvider: DataProvider {
     }
 
     func syncGet(url: URL) throws -> Data? {
-        let games = [
-            "game1",
-            "game2",
-            "game3"
-        ]
+        let savedGames = [
+            Game(gameID: "game1", player: Player(), cpu: true),
+            Game(gameID: "game2", player: Player(), cpu: false),
+            Game(gameID: "game3", player: Player(), cpu: true),
+        ].map { SavedGame(from: $0) }
 
-        return try JSONEncoder().encode(games)
+        return try JSONEncoder().encode(savedGames)
     }
 }
 

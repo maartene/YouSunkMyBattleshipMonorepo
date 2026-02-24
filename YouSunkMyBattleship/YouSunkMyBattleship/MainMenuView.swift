@@ -7,6 +7,7 @@
 
 import SwiftUI
 import WSDataProvider
+import YouSunkMyBattleshipCommon
 
 struct MainMenuView: View {
     let gameViewModel: GameViewModel
@@ -27,8 +28,8 @@ struct MainMenuView: View {
             } else {
                 NavigationStack {
                     List(mainMenuViewModel.games) { game in
-                        NavigationLink(game.id) {
-                            GameView(viewModel: gameViewModel, gameID: game.id)
+                        NavigationLink(game.gameID) {
+                            GameView(viewModel: gameViewModel, gameID: game.gameID)
                         }
                     }
                     NavigationLink("New game") {
@@ -69,8 +70,7 @@ final class ClientMainMenuViewModel: MainMenuViewModel {
     func refreshGames() {
         do {
             let data = try dataProvider.syncGet(url: httpURL)
-            let gameNames = (try? JSONDecoder().decode([String].self, from: data ?? Data())) ?? []
-            self.games = gameNames.map { SavedGame(id: $0) }
+            self.games = (try? JSONDecoder().decode([SavedGame].self, from: data ?? Data())) ?? []
             shouldShowRefreshMessage = false
         } catch {
             shouldShowRefreshMessage = true
@@ -78,6 +78,6 @@ final class ClientMainMenuViewModel: MainMenuViewModel {
     }
 }
 
-struct SavedGame: Identifiable {
-    let id: String
+extension SavedGame: @retroactive Identifiable {
+    public var id: String { gameID }
 }
