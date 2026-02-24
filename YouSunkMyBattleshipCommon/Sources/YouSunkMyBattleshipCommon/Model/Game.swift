@@ -34,6 +34,10 @@ public struct Game {
         playerBoards[player2] = player2Board
     }
     
+    public mutating func join(_ player: Player) {
+        playerBoards[player] = Board()
+    }
+    
     public mutating func placeShip(_ coordinates: [Coordinate], owner: Player) {
         playerBoards[owner]?.placeShip(at: coordinates)
     }

@@ -3,6 +3,7 @@ public enum GameCommand: Codable {
     case placeShip(ship: [Coordinate])
     case fireAt(coordinate: Coordinate)
     case load(gameID: String)
+    case join(gameID: String)
 }
 
 extension GameCommand: Equatable { }

@@ -61,6 +61,8 @@ actor GameService {
         switch command {
         case .createGame(let withCPU, let speed):
             try await createGameNew(withCPU: withCPU, speed: speed)
+        case .join(let gameID):
+            try await joinGame(gameID)
         case .placeShip(let ship):
             try await placeShip(ship)
         case .load(let gameID):
@@ -75,6 +77,17 @@ actor GameService {
         self.speed = speed
         self.gameID = game.gameID
         logger.info("Created game: \(gameID)")
+        await repository.setGame(game)
+    }
+    
+    private func joinGame(_ gameID: String) async throws {
+        guard var game = await repository.getGame(id: gameID) else {
+            throw GameServiceError.gameNotFound
+        }
+
+        game.join(owner)
+        self.gameID = game.gameID
+        
         await repository.setGame(game)
     }
     
