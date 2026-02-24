@@ -15,18 +15,16 @@ actor GameService {
     private let decoder = JSONDecoder()
     private var lastMessage = "Play!"
     private let bot: Bot
-    private let ws: WebSocket?
     private var speed: GameSpeed = .slow
     private(set) var gameID: String = "A game"
     private let owner: Player
     private let logger: Logger
     private let sendContainer: SendGameStateContainer
 
-    init(repository: GameRepository, sendContainer: SendGameStateContainer, owner: Player? = nil, bot: Bot = RandomBot(), ws: WebSocket? = nil, logger: Logger = Logger(label: "GameService")) {
+    init(repository: GameRepository, sendContainer: SendGameStateContainer, owner: Player? = nil, bot: Bot = RandomBot(), logger: Logger = Logger(label: "GameService")) {
         self.repository = repository
         self.sendContainer = sendContainer
         self.bot = bot
-        self.ws = ws
         self.owner = owner ?? Player(id: UUID().uuidString)
         self.logger = logger
     }
@@ -183,7 +181,7 @@ actor GameService {
     private func saveAndSendGameState(_ game: Game) async throws {
         await self.repository.setGame(game)
         let data = try await getGameState()
-        try ws?.send(encoder.encode(data))
+        await sendContainer.sendGameState(to: owner, data)
     }
 
     private func getCPUFiresMessage(botCoordinates: [Coordinate]) -> String {
