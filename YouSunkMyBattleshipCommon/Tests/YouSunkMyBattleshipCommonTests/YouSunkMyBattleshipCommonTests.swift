@@ -101,6 +101,44 @@ import YouSunkMyBattleshipCommon
             #expect(game.currentPlayer == player2)
         }
     }
+    
+    @Suite struct JoiningGamesTests {
+        let player1 = Player()
+        let player2 = Player()
+        @Test func `given a game with one player, another player can join the game`() {
+            let game = Game(player: player1, cpu: false)
+            
+            #expect(game.canJoin)
+        }
+        
+        @Test func `given a game with one player, when another player joins, it has a board for both players`() {
+            var game = Game(player: player1, cpu: false)
+            
+            game.join(player2)
+            
+            #expect(game.playerBoards.keys.contains(player1))
+            #expect(game.playerBoards.keys.contains(player2))
+        }
+        
+        @Test func `given a game with one player, when another player joins, it can no longer be joined`() {
+            var game = Game(player: player1, cpu: false)
+            
+            game.join(player2)
+            
+            #expect(game.canJoin == false)
+        }
+        
+        @Test func `given a game that already has two players, a third cannot joing`() {
+            var game = Game(player: player1, cpu: false)
+            game.join(player2)
+            
+            let player3 = Player()
+            game.join(player3)
+            
+            #expect(game.playerBoards.count == 2)
+            #expect(game.playerBoards.keys.contains(player3) == false)
+        }
+    }
 }
 
 @Suite struct BotTests {

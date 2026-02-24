@@ -35,6 +35,11 @@ public struct Game {
     }
     
     public mutating func join(_ player: Player) {
+        guard canJoin else {
+            print("Game is already full")
+            return
+        }
+        
         playerBoards[player] = Board()
     }
     
@@ -59,6 +64,10 @@ public struct Game {
         playerBoards
             .map { $0.key }
             .first { $0 != player }
+    }
+    
+    public var canJoin: Bool {
+        playerBoards.count == 1
     }
 }
 

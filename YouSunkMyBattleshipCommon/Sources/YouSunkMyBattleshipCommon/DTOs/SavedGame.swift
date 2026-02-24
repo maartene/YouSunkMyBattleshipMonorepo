@@ -10,16 +10,14 @@ import Foundation
 public struct SavedGame: Codable {
     public let gameID: String
     public let players: [String]
+    public let canJoin: Bool
     
     public init(from game: Game) {
         self.gameID = game.gameID
         self.players = game.playerBoards
             .map { $0.key }
             .map { $0.id }
-    }
-    
-    public var canJoin: Bool {
-        players.count == 1
+        self.canJoin = game.canJoin
     }
 }
 
