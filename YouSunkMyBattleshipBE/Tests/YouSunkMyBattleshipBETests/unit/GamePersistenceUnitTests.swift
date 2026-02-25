@@ -12,7 +12,8 @@ import VaporTesting
 
 @Suite(.tags(.`Unit tests`)) struct GamePersistenceUnitTests {
     let repository = InmemoryGameRepository()
-    let spy = SpyContainer()
+    let spy1 = SpyContainer()
+    let spy2 = SpyContainer()
     let player1 = Player()
     let game1: Game
     let game2: Game
@@ -25,14 +26,14 @@ import VaporTesting
     }
     
     @Test func `two games are seperate`() async throws {
-        let gameService1 = GameService(repository: repository, sessionContainer: spy)
-        let gameService2 = GameService(repository: repository, sessionContainer: spy)
+        let gameService1 = GameService(repository: repository, sessionContainer: spy1, owner: player1)
+        let gameService2 = GameService(repository: repository, sessionContainer: spy2, owner: player1)
         
         try await createGame(player1Board: .makeFilledBoard(), in: gameService1)
         try await createGame(player1Board: .makeAnotherFilledBoard(), in: gameService2)
         
-        let gameState1 = try await gameService1.getGameState()
-        let gameState2 = try await gameService2.getGameState()
+        let gameState1 = try #require(await spy1.lastSendCallFor(player1))
+        let gameState2 = try #require(await spy2.lastSendCallFor(player1))
         
         #expect(gameState1.cells != gameState2.cells)
     }
