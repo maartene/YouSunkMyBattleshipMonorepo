@@ -10,7 +10,8 @@
                 - [X] Requires a container to hold senders
             - [X] Send ship placement updates
             - [X] Send fire updates
-            - [ ] Create game updates
+            - [X] Create game updates
+            - [X] Load game updates
         - [ ] Use spy in tests
             - [X] ShipPlacementAcceptanceTests
             - [X] ShipPlacementUnitTests
@@ -19,8 +20,10 @@
             - [X] DetectSinkingShipAcceptanceTests
             - [X] VictoryConditionAcceptanceTests
             - [X] VictoryConditionUnitTests
-            - [ ] CPUOpponentAcceptanceTests
-            - [ ] CPUOpponentUnitTests
+            - [X] CPUOpponentAcceptanceTests
+            - [X] CPUOpponentUnitTests
+            - [ ] GamePersistenceAcceptanceTests
+            - [ ] GamePersistenceUnitTests
             
 
 ## ✅ DONE

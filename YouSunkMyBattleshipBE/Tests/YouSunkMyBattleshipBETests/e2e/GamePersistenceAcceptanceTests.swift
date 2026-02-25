@@ -12,13 +12,14 @@ import YouSunkMyBattleshipCommon
 
 @Suite(.tags(.`E2E tests`)) struct `Feature: Game Persistence` {
     let repository = InmemoryGameRepository()
+    let spy = SpyContainer()
     var gameService: GameService
     var activeGameGameState: GameState?
     var gameID = ""
     let player = Player()
 
     init() async throws {
-        gameService = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player)
+        gameService = GameService(repository: repository, sessionContainer: spy, owner: player)
     }
     
     @Test mutating func `Scenario: Player saves and resumes game`() async throws {
@@ -40,7 +41,7 @@ extension `Feature: Game Persistence` {
             try await gameService.receive(fireCommand.toData())
         }
         
-        activeGameGameState = try await gameService.getGameState()
+        activeGameGameState = await spy.sendCalls.last
     }
     
     private func `When I save the game as "game1"`() async throws {
@@ -57,7 +58,7 @@ extension `Feature: Game Persistence` {
     }
     
     private func `Then the board state is exactly as I left it`() async throws {
-        let loadedGameState = try await gameService.getGameState()
+        let loadedGameState = try #require(await spy.sendCalls.last)
         
         #expect(loadedGameState.cells == activeGameGameState?.cells)
         #expect(loadedGameState.currentPlayer == activeGameGameState?.currentPlayer)
