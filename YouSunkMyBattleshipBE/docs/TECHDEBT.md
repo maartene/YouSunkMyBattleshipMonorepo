@@ -22,8 +22,10 @@
             - [X] VictoryConditionUnitTests
             - [X] CPUOpponentAcceptanceTests
             - [X] CPUOpponentUnitTests
-            - [ ] GamePersistenceAcceptanceTests
-            - [ ] GamePersistenceUnitTests
+            - [X] GamePersistenceAcceptanceTests
+            - [X] GamePersistenceUnitTests
+            - [ ] TwoPlayerGameAcceptanceTests
+            - [ ] TwoPlayerGameUnitTests
             
 
 ## ✅ DONE

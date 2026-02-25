@@ -36,7 +36,7 @@ import NIOCore
         try await gameService1.receive(GameCommand.fireAt(coordinate: Coordinate("A2")).toData())
         try await gameService1.receive(GameCommand.fireAt(coordinate: Coordinate("A3")).toData())
         
-        let state = try await gameService2.getGameState()
+        let state = try #require(await spyContainer.lastSendCallFor(player1))
         #expect(state.currentPlayer == player2)
     }
     
@@ -48,6 +48,7 @@ import NIOCore
         try await gameService1.receive(GameCommand.load(gameID: game.gameID).toData())
         try await gameService2.receive(GameCommand.load(gameID: game.gameID).toData())
         
-        #expect(await spyContainer.sendCalls.contains(where: { $0.lastMessage == "\(player1.id) joined the game."}))
+        let gameState = try #require(await spyContainer.lastSendCallFor(player2))
+        #expect(gameState.lastMessage == "\(player2.id) joined the game.")
     }
 }

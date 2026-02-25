@@ -93,10 +93,8 @@ actor GameService {
         
         logger.info("Player \(owner.id) joined game: \(game.gameID)")
         
-        if let opponent = game.opponentOf(owner) {
-            let gameState = GameState(lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
-            await sessionContainer.sendGameState(to: opponent, gameState)
-        }
+        lastMessage = "\(owner.id) joined the game."
+        try await saveAndSendGameState(game)
     }
     
     private func placeShip(_ coordinates: [Coordinate]) async throws {
@@ -122,12 +120,8 @@ actor GameService {
         
         logger.info("Player \(owner.id) loaded game: \(game.gameID)")
         
+        lastMessage = "\(owner.id) joined the game."
         try await saveAndSendGameState(game)
-        
-        if let opponent = game.opponentOf(owner) {
-            let gameState = GameState(state: game.state, lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
-            await sessionContainer.sendGameState(to: opponent, gameState)
-        }
     }
 
     private func fireAt(_ coordinate: Coordinate) async throws {
@@ -195,7 +189,9 @@ actor GameService {
     private func saveAndSendGameState(_ game: Game) async throws {
         await self.repository.setGame(game)
         let data = try await getGameState()
-        await sessionContainer.sendGameState(to: owner, data)
+        for player in game.playerBoards.keys {
+            await sessionContainer.sendGameState(to: player, data)
+        }
     }
 
     private func getCPUFiresMessage(botCoordinates: [Coordinate]) -> String {
