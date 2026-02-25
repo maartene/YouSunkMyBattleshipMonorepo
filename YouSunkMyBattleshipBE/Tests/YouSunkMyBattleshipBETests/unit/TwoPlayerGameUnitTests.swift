@@ -21,8 +21,8 @@ import NIOCore
     let spyContainer = SpyContainer()
     
     init() async throws {
-        gameService1 = GameService(repository: repository, sendContainer: spyContainer, owner: player1)
-        gameService2 = GameService(repository: repository, sendContainer: spyContainer, owner: player2)
+        gameService1 = GameService(repository: repository, sessionContainer: spyContainer, owner: player1)
+        gameService2 = GameService(repository: repository, sessionContainer: spyContainer, owner: player2)
     }
     
     @Test func `in a two player game, the CPU does not take turns`() async throws {
@@ -52,7 +52,7 @@ import NIOCore
     }
 }
 
-actor SpyContainer: SendGameStateContainer {
+actor SpyContainer: SessionContainer {
     func register(sendFunction: @escaping (Data) -> Void, for player: YouSunkMyBattleshipCommon.Player) {
         
     }

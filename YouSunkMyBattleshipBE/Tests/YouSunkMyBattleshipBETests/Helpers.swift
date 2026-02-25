@@ -101,7 +101,7 @@ func getOpponent(from gameService: GameService, for player: Player) async throws
 }
 
 // MARK: SendGameStateContainer doubles
-actor DummySendGameStateContainer: SendGameStateContainer {
+actor DummySendGameStateContainer: SessionContainer {
     func register(sendFunction: @escaping (Data) -> Void, for player: YouSunkMyBattleshipCommon.Player) {
         
     }

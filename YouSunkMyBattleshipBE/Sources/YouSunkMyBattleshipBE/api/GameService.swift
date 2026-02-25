@@ -19,11 +19,11 @@ actor GameService {
     private(set) var gameID: String = "A game"
     private let owner: Player
     private let logger: Logger
-    private let sendContainer: SendGameStateContainer
+    private let sessionContainer: SessionContainer
 
-    init(repository: GameRepository, sendContainer: SendGameStateContainer, owner: Player? = nil, bot: Bot = RandomBot(), logger: Logger = Logger(label: "GameService")) {
+    init(repository: GameRepository, sessionContainer: SessionContainer, owner: Player? = nil, bot: Bot = RandomBot(), logger: Logger = Logger(label: "GameService")) {
         self.repository = repository
-        self.sendContainer = sendContainer
+        self.sessionContainer = sessionContainer
         self.bot = bot
         self.owner = owner ?? Player(id: UUID().uuidString)
         self.logger = logger
@@ -95,7 +95,7 @@ actor GameService {
         
         if let opponent = game.opponentOf(owner) {
             let gameState = GameState(lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
-            await sendContainer.sendGameState(to: opponent, gameState)
+            await sessionContainer.sendGameState(to: opponent, gameState)
         }
     }
     
@@ -124,7 +124,7 @@ actor GameService {
         
         if let opponent = game.opponentOf(owner) {
             let gameState = GameState(lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
-            await sendContainer.sendGameState(to: opponent, gameState)
+            await sessionContainer.sendGameState(to: opponent, gameState)
         }
     }
 
@@ -193,7 +193,7 @@ actor GameService {
     private func saveAndSendGameState(_ game: Game) async throws {
         await self.repository.setGame(game)
         let data = try await getGameState()
-        await sendContainer.sendGameState(to: owner, data)
+        await sessionContainer.sendGameState(to: owner, data)
     }
 
     private func getCPUFiresMessage(botCoordinates: [Coordinate]) -> String {
@@ -253,22 +253,5 @@ extension GameSpeed {
     var nanoSecondDelay: UInt64 {
         let delay = self == .fast ? 0.1 : 0.75
         return UInt64(1_000_000_000.0 * delay)
-    }
-}
-
-protocol SendGameStateContainer: Actor {
-    func register(sendFunction: @escaping (Data) -> Void, for player: Player)
-    func sendGameState(to player: Player, _ event: GameState)
-}
-
-actor WebSocketSendGameStateContainer: SendGameStateContainer {
-    private var senders: [Player: (Data) -> Void] = [:]
-    
-    func register(sendFunction: @escaping (Data) -> Void, for player: Player) {
-        senders[player] = sendFunction
-    }
-    
-    func sendGameState(to player: Player, _ event: GameState) {
-        
     }
 }
