@@ -14,6 +14,8 @@ protocol SessionContainer: Actor {
 }
 
 actor InmemorySessionContainer: SessionContainer {
+    let encoder = JSONEncoder()
+    
     private var senders: [Player: (Data) -> Void] = [:]
     
     func register(sendFunction: @escaping (Data) -> Void, for player: Player) {
@@ -21,6 +23,10 @@ actor InmemorySessionContainer: SessionContainer {
     }
     
     func sendGameState(to player: Player, _ event: GameState) {
-        
+        do {
+            senders[player]?(try encoder.encode(event))
+        } catch {
+            print("Failed to encode state: \(error)")
+        }
     }
 }
