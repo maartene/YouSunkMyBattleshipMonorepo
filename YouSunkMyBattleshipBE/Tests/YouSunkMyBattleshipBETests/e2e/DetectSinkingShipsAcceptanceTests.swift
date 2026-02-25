@@ -15,6 +15,7 @@ import YouSunkMyBattleshipCommon
 /// So that I can track my progress
 @Suite(.tags(.`E2E tests`)) struct `Feature: Ship Sinking Detection` {
     let repository = InmemoryGameRepository()
+    let spy = SpyContainer()
     let gameService: GameService
     let gameID: String
     let player: Player
@@ -22,7 +23,7 @@ import YouSunkMyBattleshipCommon
     init() async throws {
         let player = Player()
         self.player = player
-        self.gameService = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player)
+        self.gameService = GameService(repository: repository, sessionContainer: spy, owner: player)
         gameID = await gameService.gameID
     }
     
@@ -52,7 +53,7 @@ extension `Feature: Ship Sinking Detection` {
     }
 
     func `Then both I9 and J9 show 🔥`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let opponent = try await getOpponent(from: gameService, for: player)
         let cells = try #require(gameState.cells[opponent])
         #expect(cells[8][8] == "🔥")
@@ -60,12 +61,12 @@ extension `Feature: Ship Sinking Detection` {
     }
 
     func `And I see "You sank the enemy Destroyer!"`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.lastMessage == "You sank the enemy Destroyer!")
     }
 
     func `And I see one less remaining ship to destroy`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.shipsToDestroy == 4)
     }
 }
