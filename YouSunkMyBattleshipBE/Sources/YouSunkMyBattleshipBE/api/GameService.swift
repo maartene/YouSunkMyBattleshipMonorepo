@@ -34,13 +34,13 @@ actor GameService {
         try await processCommand(command)
     }
 
-    private func getGameState() async throws -> GameState {
+    private func getGameState(_ player: Player) async throws -> GameState {
         guard let game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }
         
         let cells = game.playerBoards.reduce(into: [Player:[[String]]]())  { result, entry in
-            if entry.key == owner {
+            if entry.key == player {
                 result[entry.key] = entry.value.toStringsAsPlayerBoard()
             } else {
                 result[entry.key] = entry.value.toStringsAsTargetBoard()
@@ -49,11 +49,11 @@ actor GameService {
         
         return GameState(
             cells: cells,
-            shipsToDestroy: try game.shipsToDestroy(player: owner),
+            shipsToDestroy: try game.shipsToDestroy(player: player),
             state: game.state,
             lastMessage: lastMessage,
             currentPlayer: game.currentPlayer,
-            shipsToPlace: game.playerBoards[owner]?.shipsToPlace.map { $0.description } ?? [],
+            shipsToPlace: game.playerBoards[player]?.shipsToPlace.map { $0.description } ?? [],
             gameID: game.gameID
         )
     }
@@ -189,8 +189,9 @@ actor GameService {
 
     private func saveAndSendGameState(_ game: Game) async throws {
         await self.repository.setGame(game)
-        let data = try await getGameState()
+        
         for player in game.playerBoards.keys {
+            let data = try await getGameState(player)
             await sessionContainer.sendGameState(to: player, data)
         }
     }

@@ -66,7 +66,7 @@ extension `Feature: Ship Sinking Detection` {
     }
 
     func `And I see one less remaining ship to destroy`() async throws {
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         #expect(gameState.shipsToDestroy == 4)
     }
 }

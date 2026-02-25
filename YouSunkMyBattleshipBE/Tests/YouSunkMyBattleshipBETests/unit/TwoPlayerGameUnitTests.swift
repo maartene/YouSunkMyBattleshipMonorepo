@@ -41,7 +41,6 @@ import NIOCore
     }
     
     @Test func `in a two player game, both players are notified of important events`() async throws {
-        
         let game = Game(gameID: "2playergame", player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard(), player1: player1, player2: player2)
         await repository.setGame(game)
         
@@ -50,5 +49,17 @@ import NIOCore
         
         let gameState = try #require(await spyContainer.lastSendCallFor(player2))
         #expect(gameState.lastMessage == "\(player2.id) joined the game.")
+    }
+    
+    @Test func `in a two player game, players cannot see eachothers placed ships()`() async throws {
+        let game = Game(gameID: "2playergame", player1Board: .makeFilledBoard(), player2Board: .makeAnotherFilledBoard(), player1: player1, player2: player2)
+        await repository.setGame(game)
+        
+        try await gameService1.receive(GameCommand.load(gameID: game.gameID).toData())
+        try await gameService2.receive(GameCommand.load(gameID: game.gameID).toData())
+        
+        let gameStateForPlayer1 = try #require(await spyContainer.lastSendCallFor(player1))
+        let gameStateForPlayer2 = try #require(await spyContainer.lastSendCallFor(player2))
+        #expect(gameStateForPlayer1.cells != gameStateForPlayer2.cells)
     }
 }
