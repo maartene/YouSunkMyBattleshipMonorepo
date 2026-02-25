@@ -162,7 +162,7 @@ actor GameService {
             lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
         }
 
-        await repository.setGame(game)
+        try await saveAndSendGameState(game)
     }
 
     private func processBotTurn(_ game: inout Game) async throws {

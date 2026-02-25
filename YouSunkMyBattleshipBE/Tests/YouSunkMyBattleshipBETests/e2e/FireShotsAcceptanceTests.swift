@@ -11,6 +11,7 @@ import YouSunkMyBattleshipCommon
 
 @Suite struct `Feature: Firing Shots` {
     let repository = InmemoryGameRepository()
+    let spy = SpyContainer()
     let gameService: GameService
     let gameID = "A game"
     let player: Player
@@ -18,7 +19,7 @@ import YouSunkMyBattleshipCommon
     init() async throws {
         let player = Player()
         self.player = player
-        gameService = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player)
+        gameService = GameService(repository: repository, sessionContainer: spy, owner: player)
     }
     
     @Test func `Scenario: Player fires and misses`() async throws {
@@ -48,13 +49,13 @@ extension `Feature: Firing Shots` {
     }
     
     private func `Then the tracking board shows ❌ at B5`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let opponent = try await getOpponent(from: gameService, for: player)
         #expect(gameState.cells[opponent]![1][4] == "❌")
     }
     
     private func `And I receive feedback "Miss!"`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.lastMessage == "Miss!")
     }
     
@@ -73,13 +74,13 @@ extension `Feature: Firing Shots` {
     }
     
     private func `Then the tracking board shows 💥 at H3`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let opponent = try await getOpponent(from: gameService, for: player)
         #expect(gameState.cells[opponent]![7][2] == "💥")
     }
     
     private func `And I receive feedback "Hit!"`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.lastMessage == "Hit!")
     }
 }

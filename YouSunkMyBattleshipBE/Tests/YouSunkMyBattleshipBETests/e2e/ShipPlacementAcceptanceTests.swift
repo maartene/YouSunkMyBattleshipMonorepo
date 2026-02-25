@@ -65,7 +65,7 @@ extension `Feature: Ship Placement` {
     }
     
     private func `And the ship placement is confirmed`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.shipsToPlace.count == 4)
     }
     
@@ -93,13 +93,13 @@ extension `Feature: Ship Placement` {
     }
         
     private func `And it shows the game is in play`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.state == .play)
         #expect(gameState.lastMessage == "Play!")
     }
     
     private func `And it shows that there are 5 ships remaining to be destroyed`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.shipsToDestroy == 5)
     }
 }

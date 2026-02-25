@@ -10,6 +10,9 @@
                 - [X] Requires a container to hold senders
             - [X] Send ship placement updates
             - [ ] Send fire updates
+        - [ ] Use spy in tests
+            - [X] ShipPlacementAcceptanceTests
+            - [ ] FireShotsAcceptanceTests
             
 
 ## ✅ DONE
