@@ -109,7 +109,7 @@ actor GameService {
         
         logger.info("Player \(owner.id) placed a ship \(coordinates) in game: \(game.gameID)")
         
-        await repository.setGame(game)
+        try await saveAndSendGameState(game)
     }
 
     private func loadGame(gameID: String) async throws {

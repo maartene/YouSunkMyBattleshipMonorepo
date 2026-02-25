@@ -6,8 +6,10 @@
 - [ ] getGameState should become private
     - [ ] main.swift can no longer call into getGameState
         - [ ] GameService should become responsible for sending updates
-            - [ ] Create a storage for senders
-                - [ ] Requires a container to hold senders
+            - [X] Create a storage for senders
+                - [X] Requires a container to hold senders
+            - [X] Send ship placement updates
+            - [ ] Send fire updates
             
 
 ## ✅ DONE

@@ -12,6 +12,7 @@ import YouSunkMyBattleshipCommon
 
 @Suite struct `Feature: Ship Placement` {
     let repository = InmemoryGameRepository()
+    let spy = SpyContainer()
     let gameService: GameService
     let player: Player
     
@@ -25,7 +26,7 @@ import YouSunkMyBattleshipCommon
     
     init() {
         self.player = Player(id: UUID().uuidString)
-        self.gameService = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player)
+        self.gameService = GameService(repository: repository, sessionContainer: spy, owner: player)
     }
     
     @Test mutating func `Scenario: Player places a ship successfully`() async throws {
@@ -56,7 +57,7 @@ extension `Feature: Ship Placement` {
     }
     
     private func `Then the cells A1 through A5 display 🚢`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let cells = try #require(gameState.cells[player])
         for coordinate in carrierCoordinates {
             #expect(cells[coordinate.y][coordinate.x] == "🚢")
