@@ -77,7 +77,7 @@ actor GameService {
         self.speed = speed
         self.gameID = game.gameID
         logger.info("Created game: \(gameID) for player :\(owner.id)")
-        await repository.setGame(game)
+        try await saveAndSendGameState(game)
     }
     
     private func joinGame(_ gameID: String) async throws {

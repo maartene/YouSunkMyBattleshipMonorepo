@@ -9,10 +9,11 @@
             - [X] Create a storage for senders
                 - [X] Requires a container to hold senders
             - [X] Send ship placement updates
-            - [ ] Send fire updates
+            - [X] Send fire updates
+            - [ ] Create game updates
         - [ ] Use spy in tests
             - [X] ShipPlacementAcceptanceTests
-            - [ ] ShipPlacementUnitTests
+            - [X] ShipPlacementUnitTests
             - [X] FireShotsAcceptanceTests
             - [X] FireShotsUnitTests
             

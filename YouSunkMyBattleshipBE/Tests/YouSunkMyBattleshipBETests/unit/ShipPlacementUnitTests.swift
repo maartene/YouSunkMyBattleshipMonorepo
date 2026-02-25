@@ -13,13 +13,14 @@ import Foundation
 
 @Suite struct `Ship Placement tests` {
     let gameService: GameService
+    let spy = SpyContainer()
     let board = Board.makeFilledBoard()
     let player: Player
     
     init() async throws {
         let player = Player()
         self.player = player
-        gameService = GameService(repository: InmemoryGameRepository(), sessionContainer: DummySendGameStateContainer(), owner: player)
+        gameService = GameService(repository: InmemoryGameRepository(), sessionContainer: spy, owner: player)
         
         try await gameService.receive(
             GameCommand.createGame(withCPU: true, speed: .slow).toData()
@@ -27,7 +28,7 @@ import Foundation
     }
     
     @Test func `when a new game is created, the board is empty`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let allCells = try #require(gameState.cells[player])
             .flatMap { $0 }
         
@@ -36,13 +37,13 @@ import Foundation
     }
     
     @Test func `when a new game is created, it is in the placing ships state`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         
         #expect(gameState.state == .placingShips)
     }
     
     @Test func `when a new game is created, all ships need to be placed`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         
         #expect(gameState.shipsToPlace.contains("Carrier(5)"))
         #expect(gameState.shipsToPlace.contains("Battleship(4)"))
@@ -64,7 +65,7 @@ import Foundation
             GameCommand.placeShip(ship: carrierCoordinates).toData()
         )
         
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let cells = try #require(gameState.cells[player])
         for coordinate in carrierCoordinates {
             #expect(cells[coordinate.y][coordinate.x] == "🚢")
@@ -74,14 +75,14 @@ import Foundation
     @Test func `when a carrier is place from A1 to A5, it is no longer part of the ships to place list`() async throws {
         try await placeCarrier(in: gameService)
         
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.shipsToPlace.contains("Carrier(5)") == false)
     }
     
     @Test func `when all ships have been placed, the game goes into the play state`() async throws {
         try await placeShips(in: gameService)
         
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.state == .play)
     }
     
@@ -95,7 +96,7 @@ import Foundation
             GameCommand.placeShip(ship: shipCoordinates).toData()
         )
         
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let cells = try #require(gameState.cells[player])
         for coordinate in shipCoordinates {
             #expect(cells[coordinate.y][coordinate.x] == "🌊")
@@ -120,7 +121,7 @@ import Foundation
             GameCommand.placeShip(ship: anotherShipCoordinates).toData()
         )
         
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let cells = try #require(gameState.cells[player])
         #expect(cells[2][0] == "🌊")
     }
@@ -136,7 +137,7 @@ import Foundation
             GameCommand.placeShip(ship: shipCoordinates).toData()
         )
         
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let cells = try #require(gameState.cells[player])
         #expect(cells[8][8] == "🌊")
     }
