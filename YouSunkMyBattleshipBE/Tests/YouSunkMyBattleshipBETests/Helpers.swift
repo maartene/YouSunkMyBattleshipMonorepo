@@ -112,3 +112,27 @@ actor DummySendGameStateContainer: SessionContainer {
     
     
 }
+
+actor SpyContainer: SessionContainer {
+    func register(sendFunction: @escaping (Data) -> Void, for player: Player) {
+        
+    }
+    
+    func sendGameState(to player: Player, _ event: GameState) {
+        if var calls = playerSendCalls[player] {
+            calls.append(event)
+            playerSendCalls[player] = calls
+        } else {
+            playerSendCalls[player] = [event]
+        }
+    }
+    
+    func lastSendCallFor(_ player: Player) -> GameState? {
+        playerSendCalls[player]?.last
+    }
+    
+    private var playerSendCalls = [Player: [GameState]]()
+    var sendCalls: [GameState] {
+        playerSendCalls.values.flatMap { $0 }
+    }
+}

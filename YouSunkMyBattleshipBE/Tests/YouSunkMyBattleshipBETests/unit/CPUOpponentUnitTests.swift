@@ -33,7 +33,7 @@ import YouSunkMyBattleshipCommon
         await repository.setGame(Game(gameID: gameID, player1Board: board, player2Board: .makeAnotherFilledBoard(), player1: player, player2: Player.cpu))
         try await gameService.receive(GameCommand.load(gameID: gameID).toData())
         
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         
         #expect(gameState.state == .finished)
     }
@@ -46,7 +46,7 @@ import YouSunkMyBattleshipCommon
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A2")).toData())
         try await gameService.receive(GameCommand.fireAt(coordinate: Coordinate("A3")).toData())
         
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         
         #expect(gameState.lastMessage == "💥 DEFEAT! The CPU sank your fleet! 💥")
     }

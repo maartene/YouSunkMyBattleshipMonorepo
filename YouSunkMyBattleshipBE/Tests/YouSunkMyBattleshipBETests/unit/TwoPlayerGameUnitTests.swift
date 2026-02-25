@@ -51,15 +51,3 @@ import NIOCore
         #expect(await spyContainer.sendCalls.contains(where: { $0.lastMessage == "\(player1.id) joined the game."}))
     }
 }
-
-actor SpyContainer: SessionContainer {
-    func register(sendFunction: @escaping (Data) -> Void, for player: YouSunkMyBattleshipCommon.Player) {
-        
-    }
-    
-    func sendGameState(to player: YouSunkMyBattleshipCommon.Player, _ event: YouSunkMyBattleshipCommon.GameState) {
-        sendCalls.append(event)
-    }
-    
-    private(set) var sendCalls = [GameState]()
-}
