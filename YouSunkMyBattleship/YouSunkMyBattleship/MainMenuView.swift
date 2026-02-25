@@ -44,6 +44,9 @@ struct MainMenuView: View {
                     NavigationLink("New game (vs CPU)") {
                         GameView(viewModel: gameViewModel, withCPU: true, savedGame: nil)
                     }
+                    NavigationLink("New game (2 player)") {
+                        GameView(viewModel: gameViewModel, withCPU: false, savedGame: nil)
+                    }
                     .navigationTitle("Main Menu")
                 }
             }

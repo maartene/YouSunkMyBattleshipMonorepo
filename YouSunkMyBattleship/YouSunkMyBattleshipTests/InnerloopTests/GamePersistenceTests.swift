@@ -74,6 +74,24 @@ import YouSunkMyBattleshipCommon
 
             #expect(nextView.withCPU)
         }
+        
+        @Test func `when clicking on a new game versus player, no game to load is passed in`() async throws {
+            let inspectedView = try view.inspect()
+            let link = try inspectedView.find(navigationLink: "New game (2 player)")
+
+            let nextView = try link.view(GameView.self).actualView()
+
+            #expect(nextView.savedGame == nil)
+        }
+        
+        @Test func `when clicking on a new game versus player, the withCPU property is false`() async throws {
+            let inspectedView = try view.inspect()
+            let link = try inspectedView.find(navigationLink: "New game (2 player)")
+
+            let nextView = try link.view(GameView.self).actualView()
+
+            #expect(nextView.withCPU == false)
+        }
 
         @Test func `when no games can be loaded, display message to try again`() async throws {
             let dataProvider = ThrowingDataProvider()
