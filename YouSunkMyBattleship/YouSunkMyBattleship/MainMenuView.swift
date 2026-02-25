@@ -38,11 +38,11 @@ struct MainMenuView: View {
                 NavigationStack {
                     List(mainMenuViewModel.games) { game in
                         NavigationLink(stringValueFor(game)) {
-                            GameView(viewModel: gameViewModel, savedGame: game)
+                            GameView(viewModel: gameViewModel, withCPU: false, savedGame: game)
                         }
                     }
-                    NavigationLink("New game") {
-                        GameView(viewModel: gameViewModel, savedGame: nil)
+                    NavigationLink("New game (vs CPU)") {
+                        GameView(viewModel: gameViewModel, withCPU: true, savedGame: nil)
                     }
                     .navigationTitle("Main Menu")
                 }

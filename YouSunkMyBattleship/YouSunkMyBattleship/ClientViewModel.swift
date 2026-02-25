@@ -36,10 +36,10 @@ final class ClientViewModel: GameViewModel {
     }
 
     // MARK: Commands
-    func createGame() {
+    func createGame(withCPU: Bool) {
         cells[owner] = Array(repeating: Array(repeating: "🌊", count: 10), count: 10)
         
-        let command = GameCommand.createGame(withCPU: true, speed: .slow)
+        let command = GameCommand.createGame(withCPU: withCPU, speed: .slow)
         do {
             let data = try encoder.encode(command)
             dataProvider.connectToWebsocket(to: wsURL, onReceive: receiveData)

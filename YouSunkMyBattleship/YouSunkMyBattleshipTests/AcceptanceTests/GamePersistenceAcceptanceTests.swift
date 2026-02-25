@@ -24,7 +24,7 @@ import WSDataProvider
 
     init() {
         viewModel = ClientViewModel(dataProvider: dataProvider)
-        view = GameView(viewModel: viewModel)
+        view = GameView(viewModel: viewModel, withCPU: true)
     }
 
     @Test func `Scenario: Player saves and resumes game`() async throws {

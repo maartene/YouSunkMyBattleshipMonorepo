@@ -57,13 +57,22 @@ import YouSunkMyBattleshipCommon
             #expect(nextView.savedGame?.gameID == "game3")
         }
 
-        @Test func `when clicking on a new game, no game to load is passed in`() async throws {
+        @Test func `when clicking on a new game versus CPU, no game to load is passed in`() async throws {
             let inspectedView = try view.inspect()
-            let link = try inspectedView.find(navigationLink: "New game")
+            let link = try inspectedView.find(navigationLink: "New game (vs CPU)")
 
             let nextView = try link.view(GameView.self).actualView()
 
             #expect(nextView.savedGame == nil)
+        }
+        
+        @Test func `when clicking on a new game versus CPU, the withCPU property is true`() async throws {
+            let inspectedView = try view.inspect()
+            let link = try inspectedView.find(navigationLink: "New game (vs CPU)")
+
+            let nextView = try link.view(GameView.self).actualView()
+
+            #expect(nextView.withCPU)
         }
 
         @Test func `when no games can be loaded, display message to try again`() async throws {
@@ -98,7 +107,7 @@ import YouSunkMyBattleshipCommon
             let viewModel = ViewModelSpy()
             var game = Game(player: Player())
             game.join(Player())
-            let view = GameView(viewModel: viewModel, savedGame: SavedGame(from: game))
+            let view = GameView(viewModel: viewModel, withCPU: true, savedGame: SavedGame(from: game))
 
             let inspectedView = try view.inspect()
 
@@ -110,7 +119,7 @@ import YouSunkMyBattleshipCommon
         @Test func `when a gameview gets a joinable game passed in, then the viewmodel tries to load that game`() async throws {
             let viewModel = ViewModelSpy()
             let game = Game(player: Player())
-            let view = GameView(viewModel: viewModel, savedGame: SavedGame(from: game))
+            let view = GameView(viewModel: viewModel, withCPU: true, savedGame: SavedGame(from: game))
 
             let inspectedView = try view.inspect()
 
@@ -143,5 +152,7 @@ import YouSunkMyBattleshipCommon
 
             #expect(dataProvider.sendWasCalledWith(expectedCommand))
         }
+        
+        
     }
 }

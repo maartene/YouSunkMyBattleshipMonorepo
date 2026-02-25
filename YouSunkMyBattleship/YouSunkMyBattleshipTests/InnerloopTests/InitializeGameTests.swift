@@ -17,7 +17,7 @@ import ViewInspector
     @Suite struct `Creation of a new game` {
         @Test func `when the GameView is shown, the ViewModels 'createGame' function is called`() async throws {
             let viewModel = ViewModelSpy(state: .placingShips)
-            let view = GameView(viewModel: viewModel, savedGame: nil)
+            let view = GameView(viewModel: viewModel, withCPU: true, savedGame: nil)
             let inspectedView = try view.inspect()
             
             try inspectedView.vStack().callOnAppear()
@@ -29,9 +29,19 @@ import ViewInspector
             let dataProvider = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: dataProvider)
             
-            viewModel.createGame()
+            viewModel.createGame(withCPU: true)
             
             let createGameCommand = GameCommand.createGame(withCPU: true, speed: .slow)
+            #expect(dataProvider.sendWasCalledWith(createGameCommand))
+        }
+        
+        @Test func `when a new game is created without a CPU, the ViewModel sends a createCommand without cpu`() async throws {
+            let dataProvider = DataProviderSpy()
+            let viewModel = ClientViewModel(dataProvider: dataProvider)
+            
+            viewModel.createGame(withCPU: false)
+            
+            let createGameCommand = GameCommand.createGame(withCPU: false, speed: .slow)
             #expect(dataProvider.sendWasCalledWith(createGameCommand))
         }
     }

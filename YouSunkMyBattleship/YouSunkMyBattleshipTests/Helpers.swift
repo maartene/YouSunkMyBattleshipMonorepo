@@ -74,7 +74,7 @@ final class ViewModelSpy: GameViewModel {
         createGameCalled
     }
     
-    func createGame() {
+    func createGame(withCPU: Bool) {
         createGameCalled = true
     }
 
@@ -121,7 +121,7 @@ struct DummyGameViewModel: GameViewModel {
     func join(_ gameID: String) {
         // no-op
     }
-    func createGame() {
+    func createGame(withCPU: Bool) {
         // no-op
     }
     let shipsToPlace = [String]()

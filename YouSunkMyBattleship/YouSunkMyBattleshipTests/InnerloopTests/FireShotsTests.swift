@@ -19,8 +19,8 @@ import YouSunkMyBattleshipCommon
         let view: GameView
 
         init() {
-            self.view = GameView(viewModel: viewModelSpy)
-            viewModelSpy.createGame()
+            self.view = GameView(viewModel: viewModelSpy, withCPU: true)
+            viewModelSpy.createGame(withCPU: true)
         }
 
         @Test func `when a player taps the opponents board, the viewmodel is notified`()
@@ -59,7 +59,7 @@ import YouSunkMyBattleshipCommon
             let dataProvider = MockDataProvider(
                 dataToReceiveOnSend: gameStateDataAfterCompletingPlacement)
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            viewModel.createGame()
+            viewModel.createGame(withCPU: true)
 
             #expect(viewModel.cells[player] != viewModel.cells[anOpponent])
         }
@@ -71,7 +71,7 @@ import YouSunkMyBattleshipCommon
         {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
-            viewModel.createGame()
+            viewModel.createGame(withCPU: true)
             spy.triggerOnReceiveWith(gameStateDataAfterCompletingPlacement)
 
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: anOpponent)
@@ -88,7 +88,7 @@ import YouSunkMyBattleshipCommon
         {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
-            viewModel.createGame()
+            viewModel.createGame(withCPU: true)
 
             await viewModel.tap(Coordinate(x: 4, y: 1), boardForPlayer: player)
 
@@ -99,7 +99,7 @@ import YouSunkMyBattleshipCommon
         @Test func `cannot fire shots when its not your turn`() async throws {
             let spy = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: spy)
-            viewModel.createGame()
+            viewModel.createGame(withCPU: true)
 
             let gameState = GameState(state: .play, currentPlayer: anOpponent)
             try spy.triggerOnReceiveWith(JSONEncoder().encode(gameState))

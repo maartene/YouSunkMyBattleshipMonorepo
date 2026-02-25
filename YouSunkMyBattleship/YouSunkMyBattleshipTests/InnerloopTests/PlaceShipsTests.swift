@@ -21,7 +21,7 @@ import WSDataProvider
         let view: GameView
 
         init() {
-            self.view = GameView(viewModel: viewModelSpy)
+            self.view = GameView(viewModel: viewModelSpy, withCPU: true)
         }
 
         @Test func `when a cell is tapped, the viewmodel is notified`() async throws {
@@ -44,7 +44,7 @@ import WSDataProvider
 
         init() {
             viewModel = ClientViewModel(dataProvider: DummyDataProvider())
-            viewModel.createGame()
+            viewModel.createGame(withCPU: true)
         }
 
         @Test func `when a player taps cell at A5, it becomes a ship`() async {
@@ -56,7 +56,7 @@ import WSDataProvider
         @Test func `given a ship placement has ended, the viewmodel sends a place ship command to the backend`() async throws {
             let dataProvider = DataProviderSpy()
             let viewModel = ClientViewModel(dataProvider: dataProvider)
-            viewModel.createGame()
+            viewModel.createGame(withCPU: true)
             dataProvider.triggerOnReceiveWith(gameStateDataPlacing)
             
             await viewModel.tap(Coordinate("A5"), boardForPlayer: player)            

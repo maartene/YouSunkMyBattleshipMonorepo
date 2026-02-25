@@ -13,10 +13,12 @@ import YouSunkMyBattleshipCommon
 struct GameView: View {
     let viewModel: any GameViewModel
     let savedGame: SavedGame?
+    let withCPU: Bool
     internal let publisher = PassthroughSubject<Void, Never>()
 
-    init(viewModel: any GameViewModel, savedGame: SavedGame? = nil) {
+    init(viewModel: any GameViewModel, withCPU: Bool, savedGame: SavedGame? = nil) {
         self.viewModel = viewModel
+        self.withCPU = withCPU
         self.savedGame = savedGame
     }
 
@@ -45,12 +47,12 @@ struct GameView: View {
                     viewModel.load(savedGame.gameID)
                 }
             } else {
-                viewModel.createGame()
+                viewModel.createGame(withCPU: true)
             }
         }
     }
 }
 
 #Preview {
-    GameView(viewModel: ClientViewModel(dataProvider: DummyDataProvider()))
+    GameView(viewModel: ClientViewModel(dataProvider: DummyDataProvider()), withCPU: true)
 }

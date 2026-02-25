@@ -44,8 +44,8 @@ import WSDataProvider
 extension `Feature: Firing Shots` {
     mutating func `Given a game has started with all ships placed`(_ dataProvider: DataProvider) async throws {
         viewModel = ClientViewModel(dataProvider: dataProvider)
-        view = GameView(viewModel: viewModel)
-        viewModel.createGame()
+        view = GameView(viewModel: viewModel, withCPU: true)
+        viewModel.createGame(withCPU: true)
     }
 
     func `When I fire at coordinate B5`() async throws {

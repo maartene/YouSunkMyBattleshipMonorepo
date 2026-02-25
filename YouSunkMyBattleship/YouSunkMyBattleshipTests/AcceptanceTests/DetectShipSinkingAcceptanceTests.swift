@@ -23,8 +23,8 @@ import YouSunkMyBattleshipCommon
 
     init() {
         viewModel = ClientViewModel(dataProvider: dataProvider)
-        view = GameView(viewModel: viewModel)
-        viewModel.createGame()
+        view = GameView(viewModel: viewModel, withCPU: true)
+        viewModel.createGame(withCPU: true)
     }
 
     @Test func `Scenario: Player sinks enemy destroyer`() async throws {
