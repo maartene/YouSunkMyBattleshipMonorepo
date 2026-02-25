@@ -12,7 +12,9 @@
             - [ ] Send fire updates
         - [ ] Use spy in tests
             - [X] ShipPlacementAcceptanceTests
-            - [ ] FireShotsAcceptanceTests
+            - [ ] ShipPlacementUnitTests
+            - [X] FireShotsAcceptanceTests
+            - [X] FireShotsUnitTests
             
 
 ## ✅ DONE
