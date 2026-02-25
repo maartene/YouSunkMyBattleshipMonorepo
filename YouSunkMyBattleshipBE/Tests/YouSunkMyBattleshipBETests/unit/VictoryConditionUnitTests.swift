@@ -12,9 +12,10 @@ import YouSunkMyBattleshipCommon
 @Suite(.tags(.`Unit tests`)) struct VictoryConditionTests {
     @Test func `when a new game is started, the player2 board is reset`() async throws {
         let repository = InmemoryGameRepository()
+        let spy = SpyContainer()
         let player = Player()
         let opponent = Player()
-        let gameService = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player)
+        let gameService = GameService(repository: repository, sessionContainer: spy, owner: player)
         let gameID = await gameService.gameID
         
         let (player2Board, _) = createNearlyCompletedBoard()
@@ -26,7 +27,7 @@ import YouSunkMyBattleshipCommon
         let command = GameCommand.createGame(withCPU: true, speed: .fast)
         try await gameService.receive(command.toData())
         
-        let gameStateAfterNewGame = try await gameService.getGameState()
+        let gameStateAfterNewGame = try #require(await spy.sendCalls.last)
         
         #expect(gameStateBeforeNewGame.cells[opponent] != gameStateAfterNewGame.cells[opponent])
     }

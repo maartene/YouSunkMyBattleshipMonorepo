@@ -17,8 +17,8 @@
             - [X] FireShotsAcceptanceTests
             - [X] FireShotsUnitTests
             - [X] DetectSinkingShipAcceptanceTests
-            - [ ] VictoryConditionAcceptanceTests
-            - [ ] VictoryConditionUnitTests
+            - [X] VictoryConditionAcceptanceTests
+            - [X] VictoryConditionUnitTests
             
 
 ## ✅ DONE
