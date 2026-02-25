@@ -122,8 +122,10 @@ actor GameService {
         
         logger.info("Player \(owner.id) loaded game: \(game.gameID)")
         
+        try await saveAndSendGameState(game)
+        
         if let opponent = game.opponentOf(owner) {
-            let gameState = GameState(lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
+            let gameState = GameState(state: game.state, lastMessage: "\(owner.id) joined the game.", currentPlayer: game.currentPlayer)
             await sessionContainer.sendGameState(to: opponent, gameState)
         }
     }
