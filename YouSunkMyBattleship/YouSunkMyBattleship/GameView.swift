@@ -47,7 +47,7 @@ struct GameView: View {
                     viewModel.load(savedGame.gameID)
                 }
             } else {
-                viewModel.createGame(withCPU: true)
+                viewModel.createGame(withCPU: withCPU)
             }
         }
     }

@@ -40,6 +40,7 @@ final class ViewModelSpy: GameViewModel {
     private(set) var loadWasCalled = ""
     private(set) var joinWasCalled = ""
     private(set) var createGameCalled = false
+    private(set) var createGameCalledWithCPU = false
 
     init(state: GameState.State = .placingShips) {
         self.state = state
@@ -70,12 +71,13 @@ final class ViewModelSpy: GameViewModel {
         joinWasCalled = gameID
     }
     
-    func createGameWasCalled() -> Bool {
-        createGameCalled
+    func createGameWasCalled(withCPU: Bool) -> Bool {
+        createGameCalled && createGameCalledWithCPU == withCPU
     }
     
     func createGame(withCPU: Bool) {
         createGameCalled = true
+        createGameCalledWithCPU = withCPU
     }
 
     let cells = [

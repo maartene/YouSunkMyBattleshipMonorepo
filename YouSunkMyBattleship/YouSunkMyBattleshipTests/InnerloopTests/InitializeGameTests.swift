@@ -15,14 +15,24 @@ import ViewInspector
 @Suite(.tags(.`Unit tests`)) struct InitializeGameTests {
     @MainActor
     @Suite struct `Creation of a new game` {
-        @Test func `when the GameView is shown, the ViewModels 'createGame' function is called`() async throws {
+        @Test func `when the GameView is shown with cpu, the ViewModels 'createGame' function is called with cpu`() async throws {
             let viewModel = ViewModelSpy(state: .placingShips)
             let view = GameView(viewModel: viewModel, withCPU: true, savedGame: nil)
             let inspectedView = try view.inspect()
             
             try inspectedView.vStack().callOnAppear()
             
-            #expect(viewModel.createGameWasCalled())
+            #expect(viewModel.createGameWasCalled(withCPU: true))
+        }
+        
+        @Test func `when the GameView is shown without cpu, the ViewModels 'createGame' function is called without cpu`() async throws {
+            let viewModel = ViewModelSpy(state: .placingShips)
+            let view = GameView(viewModel: viewModel, withCPU: false, savedGame: nil)
+            let inspectedView = try view.inspect()
+            
+            try inspectedView.vStack().callOnAppear()
+            
+            #expect(viewModel.createGameWasCalled(withCPU: false))
         }
         
         @Test func `when a new game is created, the ViewModel sends a createGame command`() async throws {
