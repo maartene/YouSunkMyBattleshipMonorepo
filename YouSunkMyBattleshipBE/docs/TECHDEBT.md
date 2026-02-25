@@ -16,8 +16,9 @@
             - [X] ShipPlacementUnitTests
             - [X] FireShotsAcceptanceTests
             - [X] FireShotsUnitTests
-            - [ ] DetectSinkingShipAcceptanceTests
-            - [ ] DetectSinkingShipUnitTests
+            - [X] DetectSinkingShipAcceptanceTests
+            - [ ] VictoryConditionAcceptanceTests
+            - [ ] VictoryConditionUnitTests
             
 
 ## ✅ DONE

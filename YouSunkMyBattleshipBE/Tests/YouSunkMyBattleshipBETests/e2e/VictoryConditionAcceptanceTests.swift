@@ -15,12 +15,13 @@ import YouSunkMyBattleshipCommon
 
 @Suite(.tags(.`E2E tests`)) class `Feature: Victory Condition` {
     let repository = InmemoryGameRepository()
+    let spy = SpyContainer()
     let gameService: GameService
     let gameID: String
     let player = Player()
     
     init() async {
-        gameService = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player)
+        gameService = GameService(repository: repository, sessionContainer: spy, owner: player)
         gameID = await gameService.gameID
     }
     
@@ -49,12 +50,12 @@ extension `Feature: Victory Condition` {
     }
     
     func `Then I see "🎉 VICTORY! You sank the enemy fleet! 🎉"`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.lastMessage == "🎉 VICTORY! You sank the enemy fleet! 🎉")
     }
     
     func `And the game ends`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.state == .finished)
     }
 }
