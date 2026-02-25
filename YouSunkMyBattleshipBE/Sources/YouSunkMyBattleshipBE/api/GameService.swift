@@ -53,7 +53,8 @@ actor GameService {
             state: game.state,
             lastMessage: lastMessage,
             currentPlayer: game.currentPlayer,
-            shipsToPlace: game.playerBoards[owner]?.shipsToPlace.map { $0.description } ?? []
+            shipsToPlace: game.playerBoards[owner]?.shipsToPlace.map { $0.description } ?? [],
+            gameID: game.gameID
         )
     }
 

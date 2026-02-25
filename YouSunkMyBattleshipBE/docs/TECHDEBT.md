@@ -3,7 +3,18 @@
 ## ⚠️ TODO
 
 ## 🚧 DOING
-- [ ] getGameState should become private
+
+            
+
+## ✅ DONE
+- [X] GameService assumes in many places that two players already exist. This requires more robust error handling.
+- [X] Player should have arbitrary IDs instead of being enum cases.
+- [X] Use backend for placing ships
+    - [X] Change `createGame` command such that it creates a game with a single empty board
+        - [X] Parallel change: use a new CreateGame command
+        - [X] Place ships using a new PlaceShip command
+        - [X] Delete old CreateGame command
+- [X] getGameState should become private
     - [X] main.swift can no longer call into getGameState
         - [X] GameService should become responsible for sending updates
             - [X] Create a storage for senders
@@ -26,15 +37,5 @@
             - [X] GamePersistenceUnitTests
             - [X] TwoPlayerGameAcceptanceTests
             - [X] TwoPlayerGameUnitTests
-    - [ ] getOpponent helper needs to go
-        - [ ] refactor callers
-            
-
-## ✅ DONE
-- [X] GameService assumes in many places that two players already exist. This requires more robust error handling.
-- [X] Player should have arbitrary IDs instead of being enum cases.
-- [X] Use backend for placing ships
-    - [X] Change `createGame` command such that it creates a game with a single empty board
-        - [X] Parallel change: use a new CreateGame command
-        - [X] Place ships using a new PlaceShip command
-        - [X] Delete old CreateGame command
+    - [X] getOpponent helper needs to go
+        - [X] refactor callers

@@ -1,5 +1,5 @@
 {
-  "originHash" : "53fe09c7c997873473d86c099474335af4dc90468939b6b2e335e5e5170c17d4",
+  "originHash" : "e519e9c5213be2daa5b7201c2b48fead820103fca282b1463e1424aecd94b0f7",
   "pins" : [
     {
       "identity" : "lcl-websocket",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "844bba7d76147f0cc901271edae57764bdc4ac3b",
         "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "c5d11a805e765f52ba34ec7284bd4fcd6ba68615",
+        "version" : "1.7.0"
       }
     },
     {
