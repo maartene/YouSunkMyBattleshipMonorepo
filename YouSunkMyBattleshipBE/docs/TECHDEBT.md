@@ -19,6 +19,8 @@
             - [X] DetectSinkingShipAcceptanceTests
             - [X] VictoryConditionAcceptanceTests
             - [X] VictoryConditionUnitTests
+            - [ ] CPUOpponentAcceptanceTests
+            - [ ] CPUOpponentUnitTests
             
 
 ## ✅ DONE

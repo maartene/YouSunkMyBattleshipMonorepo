@@ -13,12 +13,13 @@ import YouSunkMyBattleshipCommon
 
 @Suite(.tags(.`E2E tests`)) struct `Feature: CPU Opponent` {
     let repository = InmemoryGameRepository()
+    let spy = SpyContainer()
     let gameService: GameService
     let gameID: String
     let player = Player()
     
     init() async throws {
-        self.gameService = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
+        self.gameService = GameService(repository: repository, sessionContainer: spy, owner: player, bot: FixedBot(fixedMoves: [Coordinate("B2"), Coordinate("C2"), Coordinate("A1")]))
         try await createGame(player1Board: .makeFilledBoard(), in: gameService)
         gameID = await gameService.gameID
     }
@@ -49,12 +50,12 @@ extension `Feature: CPU Opponent` {
     }
     
     private func `Then I see "CPU fires at [coordinate]"`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         #expect(gameState.lastMessage == "CPU fires at B2, C2 and A1")
     }
     
     private func `And my board updates with hit 💥 or miss ❌`() async throws {
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         let cells = try #require(gameState.cells[player])
         #expect(cells[1][1] == "💥")
         #expect(cells[2][1] == "💥")
