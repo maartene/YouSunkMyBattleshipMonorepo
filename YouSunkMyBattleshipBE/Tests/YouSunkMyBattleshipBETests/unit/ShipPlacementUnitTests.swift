@@ -43,7 +43,7 @@ import Foundation
     }
     
     @Test func `when a new game is created, all ships need to be placed`() async throws {
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         
         #expect(gameState.shipsToPlace.contains("Carrier(5)"))
         #expect(gameState.shipsToPlace.contains("Battleship(4)"))
@@ -65,7 +65,7 @@ import Foundation
             GameCommand.placeShip(ship: carrierCoordinates).toData()
         )
         
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         let cells = try #require(gameState.cells[player])
         for coordinate in carrierCoordinates {
             #expect(cells[coordinate.y][coordinate.x] == "🚢")
