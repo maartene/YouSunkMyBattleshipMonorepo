@@ -176,9 +176,9 @@ So that I can play against another human
 1. ✅ Create game returns game ID and player token
 2. ✅ Second player joins with game ID
 3. ✅ Each player connects from separate container
-4. Turn enforcement between players
-5. Player needs to be able to differentiate between making PvP games and PvCPU games
-6. CPU does not take turns in PvP games (currently is the case)
+4. ✅ Turn enforcement between players
+5. ✅ Player needs to be able to differentiate between making PvP games and PvCPU games
+6. ✅ CPU does not take turns in PvP games (currently is the case)
 
 ### Scenario
 Feature: Two Player Setup
