@@ -4,15 +4,15 @@
 
 ## 🚧 DOING
 - [ ] getGameState should become private
-    - [ ] main.swift can no longer call into getGameState
-        - [ ] GameService should become responsible for sending updates
+    - [X] main.swift can no longer call into getGameState
+        - [X] GameService should become responsible for sending updates
             - [X] Create a storage for senders
                 - [X] Requires a container to hold senders
             - [X] Send ship placement updates
             - [X] Send fire updates
             - [X] Create game updates
             - [X] Load game updates
-        - [ ] Use spy in tests
+        - [X] Use spy in tests
             - [X] ShipPlacementAcceptanceTests
             - [X] ShipPlacementUnitTests
             - [X] FireShotsAcceptanceTests
@@ -24,8 +24,10 @@
             - [X] CPUOpponentUnitTests
             - [X] GamePersistenceAcceptanceTests
             - [X] GamePersistenceUnitTests
-            - [ ] TwoPlayerGameAcceptanceTests
-            - [ ] TwoPlayerGameUnitTests
+            - [X] TwoPlayerGameAcceptanceTests
+            - [X] TwoPlayerGameUnitTests
+    - [ ] getOpponent helper needs to go
+        - [ ] refactor callers
             
 
 ## ✅ DONE

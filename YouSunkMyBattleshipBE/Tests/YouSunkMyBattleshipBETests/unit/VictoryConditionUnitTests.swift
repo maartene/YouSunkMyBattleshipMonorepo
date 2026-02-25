@@ -21,13 +21,14 @@ import YouSunkMyBattleshipCommon
         let (player2Board, _) = createNearlyCompletedBoard()
         let game = Game(gameID: gameID, player1Board: .makeFilledBoard(), player2Board: player2Board, player1: player, player2: opponent)
         await repository.setGame(game)
+        try await gameService.receive(GameCommand.load(gameID: gameID).toData())
         
-        let gameStateBeforeNewGame = try await gameService.getGameState()
+        let gameStateBeforeNewGame = try #require(await spy.lastSendCallFor(player))
         
         let command = GameCommand.createGame(withCPU: true, speed: .fast)
         try await gameService.receive(command.toData())
         
-        let gameStateAfterNewGame = try #require(await spy.sendCalls.last)
+        let gameStateAfterNewGame = try #require(await spy.lastSendCallFor(player))
         
         #expect(gameStateBeforeNewGame.cells[opponent] != gameStateAfterNewGame.cells[opponent])
     }

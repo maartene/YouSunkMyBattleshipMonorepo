@@ -50,7 +50,7 @@ extension `Feature: Firing Shots` {
     
     private func `Then the tracking board shows ❌ at B5`() async throws {
         let gameState = try #require(await spy.sendCalls.last)
-        let opponent = try await getOpponent(from: gameService, for: player)
+        let opponent = try #require(gameState.opponentFor(player))
         #expect(gameState.cells[opponent]![1][4] == "❌")
     }
     
@@ -61,7 +61,7 @@ extension `Feature: Firing Shots` {
     
     private func `And one of the ship has a piece place on H3`() async throws {
         let game = await repository.getGame(id: gameID)!
-        let opponent = try await getOpponent(from: gameService, for: player)
+        let opponent = try #require(game.opponentOf(player))
         let board = try #require(game.playerBoards[opponent])
         #expect(board.placedShips.contains(where: { ship in
             ship.coordinates.contains(Coordinate("H3"))
@@ -75,7 +75,7 @@ extension `Feature: Firing Shots` {
     
     private func `Then the tracking board shows 💥 at H3`() async throws {
         let gameState = try #require(await spy.sendCalls.last)
-        let opponent = try await getOpponent(from: gameService, for: player)
+        let opponent = try #require(gameState.opponentFor(player))
         #expect(gameState.cells[opponent]![7][2] == "💥")
     }
     

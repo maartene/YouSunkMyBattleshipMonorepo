@@ -87,7 +87,7 @@ extension `Feature: Ship Placement` {
             ["🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🌊", "🚢", "🌊"]
         ]
         
-        let gameState = try await gameService.getGameState()
+        let gameState = try #require(await spy.sendCalls.last)
         
         #expect(gameState.cells[player] == expectedCells)
     }

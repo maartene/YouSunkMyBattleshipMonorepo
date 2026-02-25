@@ -54,7 +54,7 @@ extension `Feature: Ship Sinking Detection` {
 
     func `Then both I9 and J9 show 🔥`() async throws {
         let gameState = try #require(await spy.sendCalls.last)
-        let opponent = try await getOpponent(from: gameService, for: player)
+        let opponent = try #require(gameState.opponentFor(player))
         let cells = try #require(gameState.cells[opponent])
         #expect(cells[8][8] == "🔥")
         #expect(cells[9][8] == "🔥")

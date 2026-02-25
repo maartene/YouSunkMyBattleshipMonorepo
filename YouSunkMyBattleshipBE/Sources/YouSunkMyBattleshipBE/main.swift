@@ -43,8 +43,6 @@ func configure(_ app: Application, repository: GameRepository) throws {
         {
             do {
                 try await gameService.receive(data)
-                let gameState = try await gameService.getGameState()
-                try webSocket.send(JSONEncoder().encode(gameState))
             } catch {
                 req.logger.warning("Error while receiving data: \(error)")
             }

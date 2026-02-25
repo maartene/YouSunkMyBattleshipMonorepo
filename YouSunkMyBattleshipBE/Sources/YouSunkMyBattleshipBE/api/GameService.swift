@@ -34,7 +34,7 @@ actor GameService {
         try await processCommand(command)
     }
 
-    func getGameState() async throws -> GameState {
+    private func getGameState() async throws -> GameState {
         guard let game = await repository.getGame(id: gameID) else {
             throw GameServiceError.gameNotFound
         }

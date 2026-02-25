@@ -95,9 +95,10 @@ func createGame(player1Board: Board, in gameService: GameService) async throws {
     }
 }
 
-func getOpponent(from gameService: GameService, for player: Player) async throws -> Player {
-    let gameState = try await gameService.getGameState()
-    return try #require(gameState.cells.keys.first { $0 != player })
+extension GameState {
+    func opponentFor(_ player: Player) -> Player? {
+        cells.keys.first { $0 != player }
+    }
 }
 
 // MARK: SendGameStateContainer doubles
