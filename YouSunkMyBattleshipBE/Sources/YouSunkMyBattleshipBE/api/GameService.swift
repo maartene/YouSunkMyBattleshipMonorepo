@@ -168,12 +168,12 @@ actor GameService {
 
         if opponentBoard.aliveShips.isEmpty == false {
             try await processBotTurn(&game)
+            try await saveAndSendGameState(game)
         } else {
             lastMessage[owner] = "🎉 VICTORY! You sank the enemy fleet! 🎉"
             setOpponentLastMessage("💥 DEFEAT! Your opponent sank your fleet! 💥", in: game)
+            try await saveAndSendGameState(game)
         }
-
-        try await saveAndSendGameState(game)
     }
 
     private func processBotTurn(_ game: inout Game) async throws {
@@ -198,7 +198,7 @@ actor GameService {
             lastMessage[owner] = "💥 DEFEAT! The CPU sank your fleet! 💥"
         }
 
-        await self.repository.setGame(game)
+        try await saveAndSendGameState(game)
     }
 
     private func saveAndSendGameState(_ game: Game) async throws {

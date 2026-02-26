@@ -27,10 +27,19 @@ final class ContractTest: Sendable {
 
     func run() async throws {
         if useCPUOpponent {
-            print("Running with CPU opponent")
+            try await runWithCPUPlayer()
         } else {
             try await run2Players()
         }
+    }
+    
+    func runWithCPUPlayer() async throws {
+        while player1.state != .finished {
+            try await player1.act()
+            print(gameStateToString(owner: player1))
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        print("Game finished")
     }
     
     func run2Players() async throws {
