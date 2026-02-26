@@ -42,19 +42,19 @@ func setupWebSocketHandler(_ ws: WebSocket, playerID: String, sessionContainer: 
     ws.send("Welcome!".data(using: .utf8)!)
 
     ws.onBinary { ws, data in
-        await receiveData(Data(buffer: data), on: ws, gameService: gameService)
+        await receiveData(Data(buffer: data), gameService: gameService)
     }
 
     ws.onText { ws, text in
         guard let data = text.data(using: .utf8) else { return }
-        await receiveData(data, on: ws, gameService: gameService)
+        await receiveData(data, gameService: gameService)
     }
 
     ws.onClose.whenComplete { _ in
         logger.info("Connection to player \(playerID) closed.")
     }
 
-    @Sendable func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService)
+    @Sendable func receiveData(_ data: Data, gameService: GameService)
         async
     {
         do {
