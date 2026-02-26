@@ -25,12 +25,12 @@ echo "Starting containers"
 eval "$COMPOSE_CMD up -d --build"
 sleep 5s
 echo "Building contract tests"
-cd ./api/contract/ContractTest
+cd ContractTest
 swift build --configuration release
 echo "Running contract tests in versus CPU mode"
 ./.build/release/ContractTest --mode cpu
 echo "Running contract tests in 2 player mode"
 ./.build/release/ContractTest --mode two-player
-cd ../../..
+cd ..
 echo "Cleanup"
 eval "$COMPOSE_CMD down"
