@@ -177,13 +177,15 @@ actor GameService {
             }
         }
         
+        let shipsToPlace = game.playerBoards[player]?.shipsToPlace.map { $0.description } ?? []
+        
         return GameState(
             cells: cells,
             shipsToDestroy: try game.shipsToDestroy(player: player),
             state: game.state,
             lastMessage: lastMessage[player, default: ""],
             currentPlayer: game.currentPlayer,
-            shipsToPlace: game.playerBoards[player]?.shipsToPlace.map { $0.description } ?? [],
+            shipsToPlace: shipsToPlace,
             gameID: game.gameID
         )
     }
@@ -215,7 +217,7 @@ actor GameService {
             try await cpuFire(at: botCoordinate, in: &game)
         }
 
-        if game.playerBoards[owner]?.aliveShips.isEmpty ?? false {
+        if game.hasWonGame(Player.cpu) ?? false {
             lastMessage[owner] = "💥 DEFEAT! The CPU sank your fleet! 💥"
         }
 

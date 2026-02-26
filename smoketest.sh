@@ -24,8 +24,12 @@ DOCKER_BUILDKIT=1
 echo "Starting containers"
 eval "$COMPOSE_CMD up -d --build"
 sleep 5s
+echo "Building contract tests"
 cd ./api/contract/ContractTest
 swift build --configuration release
+echo "Running contract tests in versus CPU mode"
+./.build/release/ContractTest --cpu
+echo "Running contract tests in 2 player mode"
 ./.build/release/ContractTest
 cd ../../..
 echo "Cleanup"
