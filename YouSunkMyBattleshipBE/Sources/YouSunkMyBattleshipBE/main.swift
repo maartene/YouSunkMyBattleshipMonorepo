@@ -22,31 +22,7 @@ func configure(_ app: Application, repository: GameRepository) throws {
     app.webSocket("game", ":playerID") { req, ws in
         req.logger.info("Connection established.")
         let playerID = req.parameters.get("playerID")!
-        let player = Player(id: playerID)
-        await sendContainer.register(sendFunction: { data in
-            ws.send(data, promise: nil)
-        }, for: player)
-        let gameService = GameService(repository: app.gameRepository!, sessionContainer: sendContainer, owner: player, bot: RandomBot(), logger: req.logger)
-        ws.send("Welcome!".data(using: .utf8)!)
-
-        ws.onBinary { ws, data in
-            await receiveData(Data(buffer: data), on: ws, gameService: gameService)
-        }
-
-        ws.onText { ws, text in
-            guard let data = text.data(using: .utf8) else { return }
-            await receiveData(data, on: ws, gameService: gameService)
-        }
-
-        @Sendable func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService)
-            async
-        {
-            do {
-                try await gameService.receive(data)
-            } catch {
-                req.logger.warning("Error while receiving data: \(error)")
-            }
-        }
+        await setupWebSocketHandler(ws, playerID: playerID, sessionContainer: sendContainer, logger: req.logger)
     }
     app.get("games") { req in
         let games = await app.gameRepository?.all() ?? []
@@ -54,6 +30,38 @@ func configure(_ app: Application, repository: GameRepository) throws {
             games
             .map { SavedGame(from: $0) }
             .sorted { $0.gameID < $1.gameID }
+    }
+}
+
+func setupWebSocketHandler(_ ws: WebSocket, playerID: String, sessionContainer: SessionContainer, logger: Logger) async {
+    let player = Player(id: playerID)
+    await sessionContainer.register(sendFunction: { data in
+        ws.send(data, promise: nil)
+    }, for: player)
+    let gameService = GameService(repository: app.gameRepository!, sessionContainer: sessionContainer, owner: player, bot: RandomBot(), logger: logger)
+    ws.send("Welcome!".data(using: .utf8)!)
+
+    ws.onBinary { ws, data in
+        await receiveData(Data(buffer: data), on: ws, gameService: gameService)
+    }
+
+    ws.onText { ws, text in
+        guard let data = text.data(using: .utf8) else { return }
+        await receiveData(data, on: ws, gameService: gameService)
+    }
+
+    ws.onClose.whenComplete { _ in
+        logger.info("Connection to player \(playerID) closed.")
+    }
+
+    @Sendable func receiveData(_ data: Data, on webSocket: WebSocket, gameService: GameService)
+        async
+    {
+        do {
+            try await gameService.receive(data)
+        } catch {
+            logger.warning("Error while receiving data: \(error)")
+        }
     }
 }
 

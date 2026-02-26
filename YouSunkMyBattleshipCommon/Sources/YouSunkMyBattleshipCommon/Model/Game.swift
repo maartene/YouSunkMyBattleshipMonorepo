@@ -33,6 +33,7 @@ public struct Game {
         playerBoards[player2] = player2Board
     }
     
+    // MARK: Commands
     public mutating func join(_ player: Player) {
         guard canJoin else {
             print("Game is already full")
@@ -59,10 +60,23 @@ public struct Game {
         }
     }
     
+    // MARK: Queries
     public func opponentOf(_ player: Player) -> Player? {
         playerBoards
             .map { $0.key }
             .first { $0 != player }
+    }
+    
+    public func isDonePlacingShips(_ player: Player) -> Bool? {
+        playerBoards[player]?.shipsToPlace.isEmpty
+    }
+    
+    public func hasWonGame(_ player: Player) -> Bool? {
+        guard let opponent = opponentOf(player) else {
+            return nil
+        }
+        
+        return playerBoards[opponent]?.aliveShips.isEmpty
     }
     
     public var canJoin: Bool {

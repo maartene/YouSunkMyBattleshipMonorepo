@@ -60,7 +60,7 @@ actor GameService {
     }
     
     private func joinGame(_ gameID: String) async throws {
-        var game = try await tryGetGame(gameID)
+        var game = try await getGame(gameID)
 
         game.join(owner)
         self.gameID = game.gameID
@@ -74,7 +74,7 @@ actor GameService {
         try await saveAndSendGameState(game)
     }
     
-    private func tryGetGame(_ gameID: String) async throws -> Game {
+    private func getGame(_ gameID: String) async throws -> Game {
         guard let game = await repository.getGame(id: gameID) else {
             logger.warning("Could not find game: \(gameID)")
             throw GameServiceError.gameNotFound
@@ -84,7 +84,7 @@ actor GameService {
     }
     
     private func loadGame(gameID: String) async throws {
-        let game = try await tryGetGame(gameID)
+        let game = try await getGame(gameID)
         
         self.gameID = gameID
         
@@ -96,13 +96,13 @@ actor GameService {
     }
     
     private func placeShip(_ coordinates: [Coordinate]) async throws {
-        var game = try await tryGetGame(gameID)
+        var game = try await getGame(gameID)
         
         game.placeShip(coordinates, owner: owner)
         
         logger.info("Player \(owner.id) placed a ship \(coordinates) in game: \(game.gameID)")
 
-        if game.playerBoards[owner]?.shipsToPlace.isEmpty ?? false {
+        if game.isDonePlacingShips(owner) ?? false {
             lastMessage[owner] = "Play!"
         }
         setOpponentLastMessage("Opponent placed a ship", in: game)
@@ -111,12 +111,8 @@ actor GameService {
     }
 
     private func fireAt(_ coordinate: Coordinate) async throws {
-        var game = try await tryGetGame(gameID)
-        
-        guard let opponent = game.opponentOf(owner) else {
-            logger.warning("Could not find opponent for player \(owner.id) in game: \(game.gameID)")
-            throw GameServiceError.opponentNotFound
-        }
+        var game = try await getGame(gameID)
+        let opponent = try getOpponent(in: game)
 
         game.fireAt(coordinate, target: opponent)
         logger.info("Player \(owner.id) fired at \(coordinate) in game: \(game.gameID)")
@@ -140,7 +136,7 @@ actor GameService {
             setOpponentLastMessage("Miss!", in: game)
         }
 
-        if opponentBoard.aliveShips.isEmpty == false {
+        if game.hasWonGame(owner) == false {
             try await processBotTurn(&game)
             try await saveAndSendGameState(game)
         } else {
@@ -148,6 +144,14 @@ actor GameService {
             setOpponentLastMessage("💥 DEFEAT! Your opponent sank your fleet! 💥", in: game)
             try await saveAndSendGameState(game)
         }
+    }
+    
+    func getOpponent(in game: Game) throws -> Player {
+        guard let opponent = game.opponentOf(owner) else {
+            logger.warning("Could not find opponent for player \(owner.id) in game: \(game.gameID)")
+            throw GameServiceError.opponentNotFound
+        }
+        return opponent
     }
     
     // MARK: GameState creation and sending
