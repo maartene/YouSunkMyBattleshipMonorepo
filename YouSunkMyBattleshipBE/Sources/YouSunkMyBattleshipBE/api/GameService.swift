@@ -29,33 +29,10 @@ actor GameService {
         self.logger = logger
     }
 
+    // MARK: Commands
     func receive(_ data: Data) async throws {
         let command = try decoder.decode(GameCommand.self, from: data)
         try await processCommand(command)
-    }
-
-    private func getGameState(_ player: Player) async throws -> GameState {
-        guard let game = await repository.getGame(id: gameID) else {
-            throw GameServiceError.gameNotFound
-        }
-        
-        let cells = game.playerBoards.reduce(into: [Player:[[String]]]())  { result, entry in
-            if entry.key == player {
-                result[entry.key] = entry.value.toStringsAsPlayerBoard()
-            } else {
-                result[entry.key] = entry.value.toStringsAsTargetBoard()
-            }
-        }
-        
-        return GameState(
-            cells: cells,
-            shipsToDestroy: try game.shipsToDestroy(player: player),
-            state: game.state,
-            lastMessage: lastMessage[player, default: ""],
-            currentPlayer: game.currentPlayer,
-            shipsToPlace: game.playerBoards[player]?.shipsToPlace.map { $0.description } ?? [],
-            gameID: game.gameID
-        )
     }
 
     private func processCommand(_ command: GameCommand) async throws {
@@ -64,10 +41,10 @@ actor GameService {
             try await createGame(withCPU: withCPU, speed: speed)
         case .join(let gameID):
             try await joinGame(gameID)
-        case .placeShip(let ship):
-            try await placeShip(ship)
         case .load(let gameID):
             try await loadGame(gameID: gameID)
+        case .placeShip(let ship):
+            try await placeShip(ship)
         case .fireAt(let coordinate):
             try await fireAt(coordinate)
         }
@@ -83,10 +60,7 @@ actor GameService {
     }
     
     private func joinGame(_ gameID: String) async throws {
-        guard var game = await repository.getGame(id: gameID) else {
-            logger.warning("Could not find game: \(gameID)")
-            throw GameServiceError.gameNotFound
-        }
+        var game = try await tryGetGame(gameID)
 
         game.join(owner)
         self.gameID = game.gameID
@@ -100,11 +74,29 @@ actor GameService {
         try await saveAndSendGameState(game)
     }
     
-    private func placeShip(_ coordinates: [Coordinate]) async throws {
-        guard var game = await repository.getGame(id: gameID) else {
+    private func tryGetGame(_ gameID: String) async throws -> Game {
+        guard let game = await repository.getGame(id: gameID) else {
             logger.warning("Could not find game: \(gameID)")
             throw GameServiceError.gameNotFound
         }
+        
+        return game
+    }
+    
+    private func loadGame(gameID: String) async throws {
+        let game = try await tryGetGame(gameID)
+        
+        self.gameID = gameID
+        
+        logger.info("Player \(owner.id) loaded game: \(game.gameID)")
+        
+        lastMessage[owner] = "Game loaded successfully"
+        setOpponentLastMessage("\(owner) loaded the game successfully", in: game)
+        try await saveAndSendGameState(game)
+    }
+    
+    private func placeShip(_ coordinates: [Coordinate]) async throws {
+        var game = try await tryGetGame(gameID)
         
         game.placeShip(coordinates, owner: owner)
         
@@ -118,26 +110,8 @@ actor GameService {
         try await saveAndSendGameState(game)
     }
 
-    private func loadGame(gameID: String) async throws {
-        guard let game = await repository.getGame(id: gameID) else {
-            logger.warning("Could not find game: \(gameID)")
-            throw GameServiceError.gameNotFound
-        }
-        
-        self.gameID = gameID
-        
-        logger.info("Player \(owner.id) loaded game: \(game.gameID)")
-        
-        lastMessage[owner] = "Game loaded successfully"
-        setOpponentLastMessage("\(owner) loaded the game successfully", in: game)
-        try await saveAndSendGameState(game)
-    }
-
     private func fireAt(_ coordinate: Coordinate) async throws {
-        guard var game = await repository.getGame(id: gameID) else {
-            logger.warning("Could not find game: \(gameID)")
-            throw GameServiceError.gameNotFound
-        }
+        var game = try await tryGetGame(gameID)
         
         guard let opponent = game.opponentOf(owner) else {
             logger.warning("Could not find opponent for player \(owner.id) in game: \(game.gameID)")
@@ -175,7 +149,50 @@ actor GameService {
             try await saveAndSendGameState(game)
         }
     }
+    
+    // MARK: GameState creation and sending
+    private func saveAndSendGameState(_ game: Game) async throws {
+        await self.repository.setGame(game)
+        
+        for player in game.playerBoards.keys {
+            let data = try await getGameState(player)
+            await sessionContainer.sendGameState(to: player, data)
+        }
+    }
+    
+    private func getGameState(_ player: Player) async throws -> GameState {
+        guard let game = await repository.getGame(id: gameID) else {
+            throw GameServiceError.gameNotFound
+        }
+        
+        let cells = game.playerBoards.reduce(into: [Player:[[String]]]())  { result, entry in
+            if entry.key == player {
+                result[entry.key] = entry.value.toStringsAsPlayerBoard()
+            } else {
+                result[entry.key] = entry.value.toStringsAsTargetBoard()
+            }
+        }
+        
+        return GameState(
+            cells: cells,
+            shipsToDestroy: try game.shipsToDestroy(player: player),
+            state: game.state,
+            lastMessage: lastMessage[player, default: ""],
+            currentPlayer: game.currentPlayer,
+            shipsToPlace: game.playerBoards[player]?.shipsToPlace.map { $0.description } ?? [],
+            gameID: game.gameID
+        )
+    }
+    
+    private func setOpponentLastMessage(_ message: String, in game: Game) {
+        guard let opponent = game.opponentOf(owner) else {
+            return
+        }
+        
+        lastMessage[opponent] = message
+    }
 
+    // MARK: CPU performs actions
     private func processBotTurn(_ game: inout Game) async throws {
         guard game.currentPlayer == Player.cpu else {
             return
@@ -201,15 +218,13 @@ actor GameService {
         try await saveAndSendGameState(game)
     }
 
-    private func saveAndSendGameState(_ game: Game) async throws {
-        await self.repository.setGame(game)
-        
-        for player in game.playerBoards.keys {
-            let data = try await getGameState(player)
-            await sessionContainer.sendGameState(to: player, data)
-        }
+    private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
+        try await Task.sleep(nanoseconds: speed.nanoSecondDelay)
+        logger.info("CPU fired at \(coordinate) player: \(owner.id) in game: \(game.gameID)")
+        game.fireAt(coordinate, target: owner)
+        try await saveAndSendGameState(game)
     }
-
+    
     private func getCPUFiresMessage(botCoordinates: [Coordinate]) -> String {
         return switch botCoordinates.count {
         case 1: "CPU fires at \(botCoordinates[0])"
@@ -218,21 +233,6 @@ actor GameService {
             "CPU fires at \(botCoordinates[0]), \(botCoordinates[1]) and \(botCoordinates[2])"
         default: ""
         }
-    }
-
-    private func cpuFire(at coordinate: Coordinate, in game: inout Game) async throws {
-        try await Task.sleep(nanoseconds: speed.nanoSecondDelay)
-        logger.info("CPU fired at \(coordinate) player: \(owner.id) in game: \(game.gameID)")
-        game.fireAt(coordinate, target: owner)
-        try await saveAndSendGameState(game)
-    }
-    
-    private func setOpponentLastMessage(_ message: String, in game: Game) {
-        guard let opponent = game.opponentOf(owner) else {
-            return
-        }
-        
-        lastMessage[opponent] = message
     }
 }
 
