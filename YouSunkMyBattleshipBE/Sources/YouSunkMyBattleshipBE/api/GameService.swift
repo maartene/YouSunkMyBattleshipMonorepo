@@ -136,12 +136,12 @@ actor GameService {
             setOpponentLastMessage("Miss!", in: game)
         }
 
-        if game.hasWonGame(owner) == false {
-            try await processBotTurn(&game)
-            try await saveAndSendGameState(game)
-        } else {
+        if game.hasWonGame(owner) ?? false {
             lastMessage[owner] = "🎉 VICTORY! You sank the enemy fleet! 🎉"
             setOpponentLastMessage("💥 DEFEAT! Your opponent sank your fleet! 💥", in: game)
+            try await saveAndSendGameState(game)
+        } else {
+            try await processBotTurn(&game)
             try await saveAndSendGameState(game)
         }
     }
