@@ -12,6 +12,7 @@ import YouSunkMyBattleshipCommon
 
 @Suite(.tags(.`E2E tests`)) struct `Feature: Two Player Setup` {
     let repository = InmemoryGameRepository()
+    let spy = SpyContainer()
     let gameService1: GameService
     let gameService2: GameService
     let player1 = Player()
@@ -19,8 +20,8 @@ import YouSunkMyBattleshipCommon
     var gameID: String!
     
     init() async throws {
-        gameService1 = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player1)
-        gameService2 = GameService(repository: repository, sessionContainer: DummySendGameStateContainer(), owner: player2)
+        gameService1 = GameService(repository: repository, sessionContainer: spy, owner: player1)
+        gameService2 = GameService(repository: repository, sessionContainer: spy, owner: player2)
     }
     
     @Test mutating func `Scenario: Second player joins game`() async throws {
@@ -110,13 +111,13 @@ extension `Feature: Two Player Setup` {
     }
     
     private func `Then the game is in the play state`() async throws {
-        let game = try #require(await repository.getGame(id: "xyz789"))
-        #expect(game.state == .play)
+        let gameState = try #require(await spy.lastSendCallFor(player1))
+        #expect(gameState.state == .play)
     }
     
     private func `And Player 1 is the current player`() async throws {
-        let game = try #require(await repository.getGame(id: "xyz789"))
-        #expect(game.currentPlayer == player1)
+        let gameState = try #require(await spy.lastSendCallFor(player2))
+        #expect(gameState.currentPlayer == player1)
     }
 }
 
