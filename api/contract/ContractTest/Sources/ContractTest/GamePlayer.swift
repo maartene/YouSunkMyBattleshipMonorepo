@@ -141,7 +141,7 @@ final class GamePlayer {
             return
         }
         
-        guard currentGameState.value?.state == .placingShips else {
+        guard currentGameState.value?.state == .placingShips && currentGameState.value?.shipsToPlace.isEmpty == false else {
             return
         }
         

@@ -13,23 +13,26 @@ final class ContractTest: Sendable {
     
     let hostname: String
     let port: String
-    let useCPUOpponent: Bool
+    let mode: App.Mode
     
     let player1: GamePlayer
     var player2: GamePlayer!
     
-    init(hostname: String, port: String, useCPUOpponent: Bool) {
+    init(hostname: String, port: String, mode: App.Mode) {
         self.hostname = hostname
         self.port = port
-        self.useCPUOpponent = useCPUOpponent
-        self.player1 = GamePlayer(playerID: "Player_1", config: config, hostname: hostname, port: port, useCPUOpponent: useCPUOpponent)
+        self.mode = mode
+        self.player1 = GamePlayer(playerID: "Player_1", config: config, hostname: hostname, port: port, useCPUOpponent: mode == .VersusCPU)
     }
 
     func run() async throws {
-        if useCPUOpponent {
+        switch mode {
+        case .VersusCPU:
             try await runWithCPUPlayer()
-        } else {
+        case .TwoPlayer:
             try await run2Players()
+        case .Driver:
+            try await runDriver()
         }
     }
     
@@ -37,6 +40,29 @@ final class ContractTest: Sendable {
         while player1.state != .finished {
             try await player1.act()
             print(gameStateToString(owner: player1))
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        print("Game finished")
+    }
+    
+    func runDriver() async throws {
+        var gameID: String? = nil
+        print("Creating game")
+        while player1.currentGameState.value?.gameID == nil {
+            try await player1.act()
+            try await Task.sleep(nanoseconds: 100_000_000)
+            gameID = player1.currentGameState.value?.gameID
+        }
+        
+        print("Connect to game with GameID: \(gameID!)")
+        
+        while player1.currentGameState.value?.cells.count == 1 {
+            try await Task.sleep(nanoseconds: 100_000_000)
+        }
+        print("Player 2 joined the game.")
+        
+        while player1.state != .finished {
+            try await player1.act()
             try await Task.sleep(nanoseconds: 100_000_000)
         }
         print("Game finished")

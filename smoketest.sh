@@ -28,9 +28,9 @@ echo "Building contract tests"
 cd ./api/contract/ContractTest
 swift build --configuration release
 echo "Running contract tests in versus CPU mode"
-./.build/release/ContractTest --cpu
+./.build/release/ContractTest --mode cpu
 echo "Running contract tests in 2 player mode"
-./.build/release/ContractTest
+./.build/release/ContractTest --mode two-player
 cd ../../..
 echo "Cleanup"
 eval "$COMPOSE_CMD down"
