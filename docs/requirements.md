@@ -183,7 +183,26 @@ So that I can play against another human
 ### Scenario
 Feature: Two Player Setup
     Scenario: Second player joins game
-    Given Player 1 created game "xyz789"
-    ✅ When Player 2 joins game "xyz789"
-    ✅ Then both players are connected
-    ✅ And the game begins with Player 1's turn
+        Given Player 1 created game "xyz789"
+        ✅ When Player 2 joins game "xyz789"
+        ✅ Then both players are connected
+        ✅ And the game begins with Player 1's turn
+
+## Story 11: Play Complete PvP game
+As a player
+I want to play a full game against another player
+So that we can compete via API
+
+### Acceptance Criteria:
+1. Each player sees only their ships
+2. Turns alternate via API polling
+3. Both containers communicate via REST
+4. Victory notification to both players
+
+### Scenario
+Feature: Player vs Player Gameplay
+    Scenario: Players take turns via API
+        Given a PvP game is in progress
+        When Player 1 fires via their container
+        Then Player 2's container receives the shot
+        And Player 2 can take their turn

@@ -18,7 +18,7 @@ This repository contains a small Battleship game split into three parts:
 - `YouSunkMyBattleship/` — iOS app (Xcode workspace, app sources, tests, UI)
 - `YouSunkMyBattleshipBE/` — backend Swift package and Dockerfiles (service & infra)
 - `YouSunkMyBattleshipCommon/` — shared Swift package (DTOs, model)
-- `api/contract/ContractTest/` — small CLI program that drives the websocket api endpoint and validates that it conforms to the contract
+- `ContractTest/` — small CLI program that drives the websocket api endpoint and validates that it conforms to the contract
 - `WSDataProvider/` - mockable http and websocket client
 - `GameRepository/` - mockable MongoDB client
 - `docker-compose.yml` — Compose file to run the backend and supporting services
@@ -29,7 +29,52 @@ This repository contains a small Battleship game split into three parts:
 - Xcode (for building/running the iOS app and iOS tests)
 - Swift toolchain (for building/running backend and packages locally)
 
+## Architecture
+```
+┌────────────────────────┐                          ┌──────────────────────────┐                          ┌────────────────────────────┐
+│ Player 1               │                          │ Backend                  │                          │ Player 2                   │
+│                        │   createGame             │                          │                          │                            │
+│                        ├─────────────────────────►│                          │  GET /games              │                            │
+│                        │                          │                          │◄─────────────────────────┤                            │
+│                        │                          │                          │  join(gameID)            │                            │
+│                        │                          │                          │◄─────────────────────────┤                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │ placeShip (5x)           │                          │  placeShip (5x)          │                            │
+│                        ├─────────────────────────►│                          │◄─────────────────────────┤                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │ fireAt(coordinate) (3x)  │                          │ updated game state (3x)  │                            │
+│                        ├─────────────────────────►│                          ├─────────────────────────►│                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │ updated game state (3x)  │                          │ fireAt(coordinate) (3x)  │                            │
+│                        │◄─────────────────────────┤                          │◄─────────────────────────┤                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │ Lost!                    │                          │ Wont!                    │                            │
+│                        │◄─────────────────────────┤                          ├─────────────────────────►│                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │                          │                          │                          │                            │
+│                        │12345678901234567890123456│                          │12345678901234567890123456│                            │
+│                        │                          │                          │                          │                            │
+└────────────────────────┘                          └──────────────────────────┘                          └────────────────────────────┘
+```
+
 Getting started — quick steps
+
+
 
 1) Start the services with Docker Compose
 
@@ -48,7 +93,7 @@ Notes:
 The Contract Test package runs a set of quick checks against the running backend. Ensure the Compose stack is up before running it.
 
 ```bash
-cd api/contract/ContractTest
+cd ContractTest
 swift run
 ```
 
