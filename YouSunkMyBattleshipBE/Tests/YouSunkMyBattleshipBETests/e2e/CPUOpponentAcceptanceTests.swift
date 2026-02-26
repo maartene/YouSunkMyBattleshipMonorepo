@@ -50,7 +50,7 @@ extension `Feature: CPU Opponent` {
     }
     
     private func `Then I see "CPU fires at [coordinate]"`() async throws {
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         #expect(gameState.lastMessage == "CPU fires at B2, C2 and A1")
     }
     

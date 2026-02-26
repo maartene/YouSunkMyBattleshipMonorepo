@@ -61,7 +61,7 @@ extension `Feature: Ship Sinking Detection` {
     }
 
     func `And I see "You sank the enemy Destroyer!"`() async throws {
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         #expect(gameState.lastMessage == "You sank the enemy Destroyer!")
     }
 

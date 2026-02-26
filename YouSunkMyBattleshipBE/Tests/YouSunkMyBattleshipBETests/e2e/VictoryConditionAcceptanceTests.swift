@@ -50,7 +50,7 @@ extension `Feature: Victory Condition` {
     }
     
     func `Then I see "🎉 VICTORY! You sank the enemy fleet! 🎉"`() async throws {
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         #expect(gameState.lastMessage == "🎉 VICTORY! You sank the enemy fleet! 🎉")
     }
     

@@ -13,7 +13,7 @@ actor GameService {
     private let repository: GameRepository
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
-    private var lastMessage = "Play!"
+    private var lastMessage = [Player: String]()
     private let bot: Bot
     private var speed: GameSpeed = .slow
     private(set) var gameID: String = "A game"
@@ -51,7 +51,7 @@ actor GameService {
             cells: cells,
             shipsToDestroy: try game.shipsToDestroy(player: player),
             state: game.state,
-            lastMessage: lastMessage,
+            lastMessage: lastMessage[player, default: ""],
             currentPlayer: game.currentPlayer,
             shipsToPlace: game.playerBoards[player]?.shipsToPlace.map { $0.description } ?? [],
             gameID: game.gameID
@@ -78,6 +78,7 @@ actor GameService {
         self.speed = speed
         self.gameID = game.gameID
         logger.info("Created game: \(gameID) for player :\(owner.id)")
+        lastMessage[owner] = "Created game: \(gameID)"
         try await saveAndSendGameState(game)
     }
     
@@ -94,7 +95,8 @@ actor GameService {
         
         logger.info("Player \(owner.id) joined game: \(game.gameID)")
         
-        lastMessage = "\(owner.id) joined the game."
+        lastMessage[owner] = "You joined the game"
+        setOpponentLastMessage("\(owner.id) joined the game.", in: game)
         try await saveAndSendGameState(game)
     }
     
@@ -107,6 +109,11 @@ actor GameService {
         game.placeShip(coordinates, owner: owner)
         
         logger.info("Player \(owner.id) placed a ship \(coordinates) in game: \(game.gameID)")
+
+        if game.playerBoards[owner]?.shipsToPlace.isEmpty ?? false {
+            lastMessage[owner] = "Play!"
+        }
+        setOpponentLastMessage("Opponent placed a ship", in: game)
         
         try await saveAndSendGameState(game)
     }
@@ -121,7 +128,8 @@ actor GameService {
         
         logger.info("Player \(owner.id) loaded game: \(game.gameID)")
         
-        lastMessage = "\(owner.id) joined the game."
+        lastMessage[owner] = "Game loaded successfully"
+        setOpponentLastMessage("\(owner) loaded the game successfully", in: game)
         try await saveAndSendGameState(game)
     }
 
@@ -144,19 +152,25 @@ actor GameService {
         }
         
         switch opponentBoard.cells[coordinate.y][coordinate.x] {
-        case .hitShip: lastMessage = "Hit!"
+        case .hitShip:
+            lastMessage[owner] = "Hit!"
+            setOpponentLastMessage("Hit!", in: game)
         case .destroyedShip:
             let destroyedShip = opponentBoard.destroyedShips.first(where: {
                 $0.coordinates.contains(coordinate)
             })!
-            lastMessage = "You sank the enemy \(destroyedShip.ship.name)!"
-        default: lastMessage = "Miss!"
+            lastMessage[owner] = "You sank the enemy \(destroyedShip.ship.name)!"
+            setOpponentLastMessage("Your opponent sunk your \(destroyedShip.ship.name)", in: game)
+        default:
+            lastMessage[owner] = "Miss!"
+            setOpponentLastMessage("Miss!", in: game)
         }
 
         if opponentBoard.aliveShips.isEmpty == false {
             try await processBotTurn(&game)
         } else {
-            lastMessage = "🎉 VICTORY! You sank the enemy fleet! 🎉"
+            lastMessage[owner] = "🎉 VICTORY! You sank the enemy fleet! 🎉"
+            setOpponentLastMessage("💥 DEFEAT! Your opponent sank your fleet! 💥", in: game)
         }
 
         try await saveAndSendGameState(game)
@@ -174,14 +188,14 @@ actor GameService {
         }
         
         let botCoordinates = await self.bot.getNextMoves(board: ownerBoard)
-        lastMessage = getCPUFiresMessage(botCoordinates: botCoordinates)
+        lastMessage[owner] = getCPUFiresMessage(botCoordinates: botCoordinates)
 
         for botCoordinate in botCoordinates {
             try await cpuFire(at: botCoordinate, in: &game)
         }
 
         if game.playerBoards[owner]?.aliveShips.isEmpty ?? false {
-            lastMessage = "💥 DEFEAT! The CPU sank your fleet! 💥"
+            lastMessage[owner] = "💥 DEFEAT! The CPU sank your fleet! 💥"
         }
 
         await self.repository.setGame(game)
@@ -211,6 +225,14 @@ actor GameService {
         logger.info("CPU fired at \(coordinate) player: \(owner.id) in game: \(game.gameID)")
         game.fireAt(coordinate, target: owner)
         try await saveAndSendGameState(game)
+    }
+    
+    private func setOpponentLastMessage(_ message: String, in game: Game) {
+        guard let opponent = game.opponentOf(owner) else {
+            return
+        }
+        
+        lastMessage[opponent] = message
     }
 }
 

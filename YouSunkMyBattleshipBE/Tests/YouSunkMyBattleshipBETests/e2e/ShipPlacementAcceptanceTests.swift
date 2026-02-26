@@ -93,7 +93,7 @@ extension `Feature: Ship Placement` {
     }
         
     private func `And it shows the game is in play`() async throws {
-        let gameState = try #require(await spy.sendCalls.last)
+        let gameState = try #require(await spy.lastSendCallFor(player))
         #expect(gameState.state == .play)
         #expect(gameState.lastMessage == "Play!")
     }
