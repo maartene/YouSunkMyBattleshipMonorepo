@@ -29,6 +29,7 @@ cd ContractTest
 swift build --configuration release
 echo "Running contract tests in versus CPU mode"
 ./.build/release/ContractTest --mode cpu
+sleep 1s
 echo "Running contract tests in 2 player mode"
 ./.build/release/ContractTest --mode two-player
 cd ..
