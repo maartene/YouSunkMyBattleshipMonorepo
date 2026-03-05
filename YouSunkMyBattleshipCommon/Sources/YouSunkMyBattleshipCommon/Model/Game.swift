@@ -14,7 +14,7 @@ public struct Game {
     public private(set) var playerBoards = [Player: Board]()
     
     public init(gameID: String? = nil, player: Player, cpu: Bool = false) {
-        self.gameID = gameID ?? UUID().uuidString
+        self.gameID = gameID ?? "Game\(Int.random(in: 1...1_000_000))"
         self.playerBoards = [player: Board()]
         self.currentPlayer = player
         

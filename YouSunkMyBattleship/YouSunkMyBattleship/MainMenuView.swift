@@ -29,13 +29,15 @@ struct MainMenuView: View {
     
     var body: some View {
         VStack {
-            Text(player.id)
             if mainMenuViewModel.shouldShowRefreshMessage {
                 Button("Could not retrieve games. Try again") {
                     mainMenuViewModel.refreshGames()
                 }
             } else {
                 NavigationStack {
+                    Text(player.id)
+                        .font(.title2)
+                        .padding()
                     List(mainMenuViewModel.games) { game in
                         NavigationLink(stringValueFor(game)) {
                             GameView(viewModel: gameViewModel, withCPU: false, savedGame: game)
@@ -47,7 +49,7 @@ struct MainMenuView: View {
                     NavigationLink("New game (2 player)") {
                         GameView(viewModel: gameViewModel, withCPU: false, savedGame: nil)
                     }
-                    .navigationTitle("Main Menu")
+                    .navigationTitle("Available games")
                 }
             }
         }
