@@ -48,11 +48,8 @@ struct PlayerStatisticsView: View {
                 LabeledContent("# games played") {
                     Text(totalNumberOfGames.description).tag("totalGames")
                 }
-                LabeledContent("# games won / lost") {
-                    Text("\(totalWins) / \(totalLosses)")
-                }
-                LabeledContent("# games lost") {
-                    Text(totalLosses.description)
+                LabeledContent("# games won-lost") {
+                    Text("\(totalWins)-\(totalLosses)")
                 }
                 LabeledContent("Average win rate") {
                     Text(averageWinRate)
@@ -67,11 +64,10 @@ struct PlayerStatisticsView: View {
                     
                     LabeledContent("vs 👱") {
                         ProgressView(value: pvpWinRate) {
-                            Text("\(pvpWins)/\(totalNumberOfPvPGames)")
+                            Text("\(pvpWins)-4")
                         }
                     }
                 }
-                
             }
             Spacer()
         }
