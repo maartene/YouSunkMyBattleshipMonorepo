@@ -25,6 +25,10 @@ struct PlayerStatisticsView: View {
     var cpuWinRate: Double {
         Double(stats.cpuWins) / Double(stats.totalNumberOfCPUGames)
     }
+    var cpuLosses: Int {
+        stats.totalNumberOfCPUGames - stats.cpuWins
+    }
+    
     var pvpWinRate: Double {
         Double(pvpWins) / Double(totalNumberOfPvPGames)
     }
@@ -57,7 +61,7 @@ struct PlayerStatisticsView: View {
                 Section("Win rate breakdown") {
                     LabeledContent("vs 🤖") {
                         ProgressView(value: cpuWinRate) {
-                            Text("\(stats.cpuWins)/\(stats.totalNumberOfCPUGames)")
+                            Text("\(stats.cpuWins)-\(cpuLosses)")
                         }.tag("vsCPUWinRate")
                     }
                     
