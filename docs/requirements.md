@@ -206,3 +206,24 @@ Feature: Player vs Player Gameplay
         When Player 1 fires via their container
         Then Player 2's container receives the shot
         And Player 2 can take their turn
+
+
+## Story 12: Track Game History and Statistics
+AS a player
+I want to see my game history and stats
+SO that I can track my performance
+
+### Acceptance Criteria:
+1. Store completed games with outcome
+2. Display wins/losses/win rate
+3. Show games played vs CPU and PvP
+4. Persist stats across container restarts
+5. Hard Requirement: the game statistic must be running as a service in a separate container.
+
+### Scenario
+Feature: Game Statistics
+    Scenario: View player statistics
+        Given I have completed 10 games
+        When I request my statistics
+        Then I see my total win games, wins losses
+        And my win rate percentage is displayed
