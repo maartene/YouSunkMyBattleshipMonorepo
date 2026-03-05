@@ -11,21 +11,19 @@ import YouSunkMyBattleshipCommon
 struct PlayerStatisticsView: View {
     let stats: PlayerStats
     
-    let cpuWins = 4
-    let totalNumberOfCPUGames = 6
     let pvpWins = 5
     let totalNumberOfPvPGames = 9
     var totalNumberOfGames: Int {
         stats.totalNumberOfCPUGames + stats.totalNumberOfPvPGames
     }
     var totalWins: Int {
-        cpuWins + pvpWins
+        stats.cpuWins + pvpWins
     }
     var totalLosses: Int {
         totalNumberOfGames - totalWins
     }
     var cpuWinRate: Double {
-        Double(cpuWins) / Double(totalNumberOfCPUGames)
+        Double(stats.cpuWins) / Double(stats.totalNumberOfCPUGames)
     }
     var pvpWinRate: Double {
         Double(pvpWins) / Double(totalNumberOfPvPGames)
@@ -59,8 +57,8 @@ struct PlayerStatisticsView: View {
                 Section("Win rate breakdown") {
                     LabeledContent("vs 🤖") {
                         ProgressView(value: cpuWinRate) {
-                            Text("\(cpuWins)/\(totalNumberOfCPUGames)")
-                        }
+                            Text("\(stats.cpuWins)/\(stats.totalNumberOfCPUGames)")
+                        }.tag("vsCPUWinRate")
                     }
                     
                     LabeledContent("vs 👱") {

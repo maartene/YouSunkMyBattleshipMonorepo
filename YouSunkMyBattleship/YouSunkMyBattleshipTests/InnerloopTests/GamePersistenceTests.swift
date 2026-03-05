@@ -104,7 +104,7 @@ import YouSunkMyBattleshipCommon
             _ = try inspectedView.find(text: "Could not retrieve games. Try again")
         }
 
-        @Test func `when main menu is pulled, it tries to reload games`() async throws {
+        @Test func `when try again message is shown, it tries to reload games`() async throws {
             let mainMenuViewModel = MainMenuViewModelSpy()
             let view = MainMenuView(
                 mainMenuViewModel: mainMenuViewModel,

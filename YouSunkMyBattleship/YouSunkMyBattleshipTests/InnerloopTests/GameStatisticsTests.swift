@@ -29,6 +29,14 @@ import ViewInspector
             let totalNumberOfGames = try totalGamesView.text().string()
             #expect(totalNumberOfGames == "12")
         }
+        
+        @Test func `vs CPU progressbar should be filled at 80%`() throws {
+            let inspectedView = try view.inspect()
+            let totalGamesView = try inspectedView.find(viewWithTag: "vsCPUWinRate")
+            let vsCPU = try totalGamesView.progressView()
+            let fractionCompleted = try vsCPU.fractionCompleted()
+            #expect(fractionCompleted == 0.8)
+        }
     }
     
 }
