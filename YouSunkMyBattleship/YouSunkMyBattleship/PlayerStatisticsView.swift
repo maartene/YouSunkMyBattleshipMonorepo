@@ -7,9 +7,15 @@
 
 import SwiftUI
 import YouSunkMyBattleshipCommon
+import WSDataProvider
 
 struct PlayerStatisticsView: View {
     let stats: PlayerStats
+    
+    init(dataProvider: DataProvider) {
+        stats = Self.getStats(dataProvider: dataProvider) ?? PlayerStats(cpuWins: 0, totalNumberOfCPUGames: 0, pvpWins: 0, totalNumberOfPvPGames: 0)
+        print("received stats: \(stats)")
+    }
     
     let pvpWins = 5
     let totalNumberOfPvPGames = 9
@@ -49,10 +55,10 @@ struct PlayerStatisticsView: View {
                     Text(totalNumberOfGames.description).tag("totalGames")
                 }
                 LabeledContent("# games won-lost") {
-                    Text("\(totalWins)-\(totalLosses)")
+                    Text("\(totalWins)-\(totalLosses)").tag("totalGamesWonLost")
                 }
                 LabeledContent("Average win rate") {
-                    Text(averageWinRate)
+                    Text(averageWinRate).tag("averageWinRate")
                 }
                 
                 Section("Win rate breakdown") {
@@ -72,13 +78,22 @@ struct PlayerStatisticsView: View {
             Spacer()
         }
     }
+    
+    private static func getStats(dataProvider: DataProvider) -> PlayerStats? {
+        do {
+            guard let data = try dataProvider.syncGet(url: URL(string: "http://localhost:8081/statistics/\(player.id)")!) else {
+                NSLog("Endpoint did not return any data")
+                return nil
+            }
+            let stats = try JSONDecoder().decode(PlayerStats.self, from: data)
+            return stats
+        } catch {
+            NSLog("Error fetching game data: \(error)")
+            return nil
+        }
+    }
 }
 
 #Preview {
-    PlayerStatisticsView(stats: PlayerStats(
-        cpuWins: 4,
-        totalNumberOfCPUGames: 6,
-        pvpWins: 5,
-        totalNumberOfPvPGames: 9)
-    )
+    PlayerStatisticsView(dataProvider: DummyDataProvider())
 }

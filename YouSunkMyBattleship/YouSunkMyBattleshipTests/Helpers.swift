@@ -208,7 +208,9 @@ final class MockDataProvider: DataProvider {
     let dataToReceiveOnSend: Data
     private var onReceive: ((Data) -> Void)?
 
-    init(dataToReceiveOnSend: Data) {
+    var dataToReturnOnGet: Data? = nil
+    
+    init(dataToReceiveOnSend: Data = Data()) {
         self.dataToReceiveOnSend = dataToReceiveOnSend
     }
 
@@ -229,19 +231,23 @@ final class MockDataProvider: DataProvider {
     }
 
     func syncGet(url: URL) throws -> Data? {
-        var game3 = Game(gameID: "game3", player: player, cpu: false)
-        game3.join(Player())
-        var game4 = Game(gameID: "game4", player: Player(), cpu: false)
-        game4.join(Player())
-        
-        let savedGames = [
-            Game(gameID: "game1", player: player, cpu: true),
-            Game(gameID: "game2", player: Player(), cpu: false),
-            game3,
-            game4
-        ].map { SavedGame(from: $0) }
-
-        return try JSONEncoder().encode(savedGames)
+        if url.relativeString.contains("games") {
+            var game3 = Game(gameID: "game3", player: player, cpu: false)
+            game3.join(Player())
+            var game4 = Game(gameID: "game4", player: Player(), cpu: false)
+            game4.join(Player())
+            
+            let savedGames = [
+                Game(gameID: "game1", player: player, cpu: true),
+                Game(gameID: "game2", player: Player(), cpu: false),
+                game3,
+                game4
+            ].map { SavedGame(from: $0) }
+            
+            return try JSONEncoder().encode(savedGames)
+        } else {
+            return dataToReturnOnGet
+        }
     }
 }
 

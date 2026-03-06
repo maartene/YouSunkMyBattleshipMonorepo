@@ -9,6 +9,7 @@ import Testing
 import YouSunkMyBattleshipCommon
 import WSDataProvider
 import ViewInspector
+import Foundation
 
 @testable import YouSunkMyBattleship
 
@@ -18,19 +19,21 @@ import ViewInspector
     @Suite struct `View should show correct values` {
         let playerStatistics = PlayerStats(cpuWins: 4, totalNumberOfCPUGames: 5, pvpWins: 3, totalNumberOfPvPGames: 7)
         let view: PlayerStatisticsView
-        let inspectedView: InspectableView<ViewType.ClassifiedView>!
+        var inspectedView: InspectableView<ViewType.ClassifiedView>!
         
         init() {
-            self.view = PlayerStatisticsView(stats: playerStatistics)
+            let dataProvider = MockDataProvider()
+            dataProvider.dataToReturnOnGet = try? JSONEncoder().encode(playerStatistics)
+            
+            self.view = PlayerStatisticsView(dataProvider: dataProvider)
             do {
                 inspectedView = try view.inspect()
             } catch {
                 Issue.record("Failed to inspect view: \(error)")
-                inspectedView = nil
             }
         }
         
-        @Test func `total number of games played should be 12`() throws {
+        @Test func `total number of games played should be 12`() async throws {
             let totalGamesView = try inspectedView.find(viewWithTag: "totalGames")
             let totalNumberOfGames = try totalGamesView.text().string()
             #expect(totalNumberOfGames == "12")
