@@ -52,6 +52,21 @@ import Foundation
             let fractionLabel = try vsCPU.labelView()
             #expect(try fractionLabel.text().string() == "4-1")
         }
+        
+        @Test func `vs player progressbar should be filled at 80%`() throws {
+            let totalGamesView = try inspectedView.find(viewWithTag: "vsPlayerWinRate")
+            let vsCPU = try totalGamesView.progressView()
+            let fractionCompleted = try #require(try vsCPU.fractionCompleted())
+            #expect(abs(fractionCompleted - 0.42) < 0.1)
+        }
+        
+        @Test func `vs player progressbar should show win-loss as 3-4`() throws {
+            let totalGamesView = try inspectedView.find(viewWithTag: "vsPlayerWinRate")
+            let vsCPU = try totalGamesView.progressView()
+            let fractionLabel = try vsCPU.labelView()
+            #expect(try fractionLabel.text().string() == "3-4")
+        }
+        
     }
     
     @MainActor

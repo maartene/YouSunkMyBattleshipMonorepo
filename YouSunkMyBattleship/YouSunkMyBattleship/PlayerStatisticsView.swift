@@ -17,13 +17,11 @@ struct PlayerStatisticsView: View {
         print("received stats: \(stats)")
     }
     
-    let pvpWins = 5
-    let totalNumberOfPvPGames = 9
     var totalNumberOfGames: Int {
         stats.totalNumberOfCPUGames + stats.totalNumberOfPvPGames
     }
     var totalWins: Int {
-        stats.cpuWins + pvpWins
+        stats.cpuWins + stats.pvpWins
     }
     var totalLosses: Int {
         totalNumberOfGames - totalWins
@@ -36,8 +34,13 @@ struct PlayerStatisticsView: View {
     }
     
     var pvpWinRate: Double {
-        Double(pvpWins) / Double(totalNumberOfPvPGames)
+        Double(stats.pvpWins) / Double(stats.totalNumberOfPvPGames)
     }
+    
+    var pvpLosses: Int {
+        stats.totalNumberOfPvPGames - stats.pvpWins
+    }
+    
     var averageWinRate: String {
         let winRate = Double(totalWins) / Double(totalNumberOfGames) * 100
         let winRateString = String(format: "%.0f", winRate)
@@ -70,8 +73,8 @@ struct PlayerStatisticsView: View {
                     
                     LabeledContent("vs 👱") {
                         ProgressView(value: pvpWinRate) {
-                            Text("\(pvpWins)-4")
-                        }
+                            Text("\(stats.pvpWins)-\(pvpLosses)")
+                        }.tag("vsPlayerWinRate")
                     }
                 }
             }
