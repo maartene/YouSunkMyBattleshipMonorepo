@@ -54,4 +54,21 @@ import Foundation
         }
     }
     
+    @MainActor
+    @Test func `View tries to retrieve statistics`() async throws {
+        let dataProvider = DataProviderSpy()
+        _ = PlayerStatisticsView(dataProvider: dataProvider)
+        
+        #expect(dataProvider.getWasCalled(with: URL(string: "http://localhost:8081/statistics/\(player.id)")!))
+    }
+    
+    @MainActor
+    @Test func `Should be reachable from the main menu`() async throws {
+        let mainMenu = MainMenuView(mainMenuViewModel: MockMainMenuViewModel(), gameViewModel: DummyGameViewModel())
+        
+        let inspectedView = try mainMenu.inspect()
+        let link = try inspectedView.find(navigationLink: "📈 Statistics")
+
+        _ = try link.view(PlayerStatisticsView.self)
+    }
 }

@@ -43,10 +43,13 @@ struct MainMenuView: View {
                             GameView(viewModel: gameViewModel, withCPU: false, savedGame: game)
                         }
                     }
-                    NavigationLink("New game (vs CPU)") {
+                    NavigationLink("📈 Statistics") {
+                        PlayerStatisticsView(dataProvider: URLSessionDataProvider())
+                    }
+                    NavigationLink("🤖 New game (vs CPU)") {
                         GameView(viewModel: gameViewModel, withCPU: true, savedGame: nil)
                     }
-                    NavigationLink("New game (2 player)") {
+                    NavigationLink("👱 New game (2 player)") {
                         GameView(viewModel: gameViewModel, withCPU: false, savedGame: nil)
                     }
                     .navigationTitle("Available games")
@@ -83,7 +86,7 @@ final class ClientMainMenuViewModel: MainMenuViewModel {
 
     func refreshGames() {
         do {
-            let data = try dataProvider.syncGet(url: httpURL)
+            let data = try dataProvider.syncGet(url: gamesURL)
             let games = (try? JSONDecoder().decode([SavedGame].self, from: data ?? Data())) ?? []
             shouldShowRefreshMessage = false
             

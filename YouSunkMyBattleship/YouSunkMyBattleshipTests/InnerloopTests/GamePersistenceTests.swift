@@ -59,7 +59,7 @@ import YouSunkMyBattleshipCommon
 
         @Test func `when clicking on a new game versus CPU, no game to load is passed in`() async throws {
             let inspectedView = try view.inspect()
-            let link = try inspectedView.find(navigationLink: "New game (vs CPU)")
+            let link = try inspectedView.find(navigationLink: "🤖 New game (vs CPU)")
 
             let nextView = try link.view(GameView.self).actualView()
 
@@ -68,7 +68,7 @@ import YouSunkMyBattleshipCommon
         
         @Test func `when clicking on a new game versus CPU, the withCPU property is true`() async throws {
             let inspectedView = try view.inspect()
-            let link = try inspectedView.find(navigationLink: "New game (vs CPU)")
+            let link = try inspectedView.find(navigationLink: "🤖 New game (vs CPU)")
 
             let nextView = try link.view(GameView.self).actualView()
 
@@ -77,7 +77,7 @@ import YouSunkMyBattleshipCommon
         
         @Test func `when clicking on a new game versus player, no game to load is passed in`() async throws {
             let inspectedView = try view.inspect()
-            let link = try inspectedView.find(navigationLink: "New game (2 player)")
+            let link = try inspectedView.find(navigationLink: "👱 New game (2 player)")
 
             let nextView = try link.view(GameView.self).actualView()
 
@@ -86,7 +86,7 @@ import YouSunkMyBattleshipCommon
         
         @Test func `when clicking on a new game versus player, the withCPU property is false`() async throws {
             let inspectedView = try view.inspect()
-            let link = try inspectedView.find(navigationLink: "New game (2 player)")
+            let link = try inspectedView.find(navigationLink: "👱 New game (2 player)")
 
             let nextView = try link.view(GameView.self).actualView()
 

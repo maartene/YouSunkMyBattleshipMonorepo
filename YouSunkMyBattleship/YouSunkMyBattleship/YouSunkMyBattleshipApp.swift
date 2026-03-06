@@ -22,10 +22,12 @@ let player = {
 
 #if targetEnvironment(simulator)
 let wsURL = URL(string: "ws://localhost:8080/game/\(player.id)")!
-let httpURL = URL(string: "http://localhost:8080/games")!
+let gamesURL = URL(string: "http://localhost:8080/games")!
+let statsURL = URL(string: "http://localhost:8081/statistics/\(player.id)")!
 #else
 let wsURL = URL(string: "wss://service-ykxo8.ondigitalocean.app/game/\(player.id)")!
-let httpURL = URL(string: "https://service-ykxo8.ondigitalocean.app/games")!
+let gamesURL = URL(string: "https://service-ykxo8.ondigitalocean.app/games")!
+let statsURL = URL(string: "http://localhost:8081/statistics/\(player.id)")!
 #endif
 
 @main
