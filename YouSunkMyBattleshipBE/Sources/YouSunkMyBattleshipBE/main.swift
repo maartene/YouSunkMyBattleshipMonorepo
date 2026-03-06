@@ -4,7 +4,9 @@ import YouSunkMyBattleshipCommon
 
 let app = try await Application.make(.detect())
 
-let connectionString = ProcessInfo.processInfo.environment["CONNECTION_STRING"] ?? "mongodb://localhost:27017/game_database"
+let connectionString =
+    ProcessInfo.processInfo.environment["CONNECTION_STRING"]
+    ?? "mongodb://localhost:27017/game_database"
 
 let repository = try await MongoGameRepository(connectionString: connectionString)
 try configure(app, repository: repository)
@@ -14,7 +16,7 @@ func configure(_ app: Application, repository: GameRepository) throws {
     app.gameRepository = repository
     app.http.server.configuration.hostname = "0.0.0.0"
     let sendContainer = InmemorySessionContainer()
-    
+
     app.get { req in
         return "Health check OK"
     }
@@ -22,7 +24,8 @@ func configure(_ app: Application, repository: GameRepository) throws {
     app.webSocket("game", ":playerID") { req, ws in
         req.logger.info("Connection established.")
         let playerID = req.parameters.get("playerID")!
-        await setupWebSocketHandler(ws, playerID: playerID, sessionContainer: sendContainer, logger: req.logger)
+        await setupWebSocketHandler(
+            ws, playerID: playerID, sessionContainer: sendContainer, logger: req.logger)
     }
     app.get("games") { req in
         let games = await app.gameRepository?.all() ?? []
@@ -33,12 +36,17 @@ func configure(_ app: Application, repository: GameRepository) throws {
     }
 }
 
-func setupWebSocketHandler(_ ws: WebSocket, playerID: String, sessionContainer: SessionContainer, logger: Logger) async {
+func setupWebSocketHandler(
+    _ ws: WebSocket, playerID: String, sessionContainer: SessionContainer, logger: Logger
+) async {
     let player = Player(id: playerID)
-    await sessionContainer.register(sendFunction: { data in
-        ws.send(data, promise: nil)
-    }, for: player)
-    let gameService = GameService(repository: app.gameRepository!, sessionContainer: sessionContainer, owner: player, bot: RandomBot(), logger: logger)
+    await sessionContainer.register(
+        sendFunction: { data in
+            ws.send(data, promise: nil)
+        }, for: player)
+    let gameService = GameService(
+        repository: app.gameRepository!, sessionContainer: sessionContainer, owner: player,
+        bot: RandomBot(), logger: logger)
     ws.send("Welcome!".data(using: .utf8)!)
 
     ws.onBinary { ws, data in

@@ -23,14 +23,19 @@ services:
       - "8080:8080"
     depends_on:
       - database
-  # smoketest:
-  #   build:
-  #     context: .
-  #     dockerfile: ./infrastructure/contract_test/Dockerfile
-  #   image: yousunkmybattleship_smoketest:latest
-  #   restart: "no"
-  #   depends_on:
-  #     - service
+
+  statistics_backend:
+    build:
+      context: .
+      dockerfile: ./infrastructure/statistics_backend/Dockerfile
+    image: yousunkmybattleship_statistics_backend:latest
+    restart: "no"
+    environment:
+      - CONNECTION_STRING=mongodb://database:27017/game_database
+    ports:
+      - "8081:8081"
+    depends_on:
+      - database
 
 volumes:
   mongodb_data:
