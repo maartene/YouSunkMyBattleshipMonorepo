@@ -14,8 +14,8 @@ WORKDIR /app/StatisticsBackend
 # Use BuildKit cache mounts to persist SwiftPM and build caches between builds.
 # Requires Docker BuildKit: set DOCKER_BUILDKIT=1 when building.
 # Cache ids are explicit so different cache areas can be reused independently.
-RUN --mount=type=cache,id=swiftpm,target=/root/.swiftpm \
-    --mount=type=cache,id=swiftpm-cache,target=/root/.cache/swiftpm \
+RUN --mount=type=cache,id=swiftpm2,target=/root/.swiftpm \
+    --mount=type=cache,id=swiftpm-cache2,target=/root/.cache/swiftpm \
     swift package resolve
 
 # Now copy the full repository (sources). This happens after resolution so the
@@ -31,16 +31,16 @@ EXPOSE 8081
 # so the compiled executable exists in the final filesystem while still
 # reusing the cache across builds. Uses `--build-path` to direct SwiftPM
 # to write into the cache mount.
-RUN --mount=type=cache,id=swift-build,target=/cache/swift-build \
-    --mount=type=cache,id=swiftpm,target=/root/.swiftpm \
-    --mount=type=cache,id=swiftpm-cache,target=/root/.cache/swiftpm \
+RUN --mount=type=cache,id=swift-build2,target=/cache/swift-build \
+    --mount=type=cache,id=swiftpm2,target=/root/.swiftpm \
+    --mount=type=cache,id=swiftpm-cache2,target=/root/.cache/swiftpm \
     swift build --build-path /cache/swift-build && \
     cp -a /cache/swift-build/debug/StatisticsBackend ./StatisticsBackend
 
 # Run tests using the same cache build path (no need to copy again).
-RUN --mount=type=cache,id=swift-build,target=/cache/swift-build \
-    --mount=type=cache,id=swiftpm,target=/root/.swiftpm \
-    --mount=type=cache,id=swiftpm-cache,target=/root/.cache/swiftpm \
+RUN --mount=type=cache,id=swift-build2,target=/cache/swift-build \
+    --mount=type=cache,id=swiftpm2,target=/root/.swiftpm \
+    --mount=type=cache,id=swiftpm-cache2,target=/root/.cache/swiftpm \
     swift test --build-path /cache/swift-build
 
 CMD ["./StatisticsBackend"]
