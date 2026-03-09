@@ -8,12 +8,23 @@
 import YouSunkMyBattleshipCommon
 
 struct CalculateStatistics {
-    func calculateStatistics(_ games: [Game]) -> PlayerStats {
+    func calculateStatisticsFor(_ playerID: String, in games: [Game]) throws -> PlayerStats {
+        let player = games.flatMap { $0.playerBoards.keys }
+            .first { $0.id == playerID }
+        
+        guard let player else {
+            throw StatisticsBackendError.playerNotFound
+        }
+        
         let cpuGames = games.filter { $0.playerBoards.keys.contains(Player.cpu) }
         let cpuWins = cpuGames.count { game in
-            game.hasWonGame(.cpu) == false
+            game.hasWonGame(player) ?? false
         }
         
         return PlayerStats(cpuWins: cpuWins, totalNumberOfCPUGames: cpuGames.count, pvpWins: 0, totalNumberOfPvPGames: 0)
     }
+}
+
+enum StatisticsBackendError: Error {
+    case playerNotFound
 }

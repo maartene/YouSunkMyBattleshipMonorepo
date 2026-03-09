@@ -36,7 +36,7 @@ func configure(_ app: Application, repository: GameRepository) throws {
                 }
             }
                 
-        return CalculateStatistics().calculateStatistics(playerGames)
+        return try CalculateStatistics().calculateStatisticsFor(playerID, in: playerGames)
     }
 }
 
