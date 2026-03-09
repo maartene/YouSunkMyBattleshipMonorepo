@@ -36,6 +36,17 @@ import YouSunkMyBattleshipCommon
         }
     }
 
+    @Test func `should return the total number of played games against other player`() async throws {
+        try await withApp(configure: { app in try configure(app, repository: repository) }) { app in
+            try await app.testing().test(.GET, "/statistics/Player_1") { res in
+                let stats = try JSONDecoder().decode(PlayerStats.self, from: res.body)
+                
+                #expect(res.status == .ok)
+                #expect(stats.totalNumberOfPvPGames == 10)
+            }
+        }
+    }
+    
 }
 
 @Test func `read games from json`() async throws {

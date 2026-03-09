@@ -9,12 +9,20 @@ import YouSunkMyBattleshipCommon
 
 struct CalculateStatistics {
     func calculateStatisticsFor(_ player: Player, in games: [Game]) throws -> PlayerStats {
-        let cpuGames = games.filter { $0.playerBoards.keys.contains(Player.cpu) }
+        let finishedGames = games.filter { $0.hasFinished }
+        
+        let cpuGames = finishedGames.filter { $0.playerBoards.keys.contains(Player.cpu) }
         let cpuWins = cpuGames.count { game in
             game.hasWonGame(player) ?? false
         }
         
-        return PlayerStats(cpuWins: cpuWins, totalNumberOfCPUGames: cpuGames.count, pvpWins: 0, totalNumberOfPvPGames: 0)
+        let pvpGames = finishedGames.filter { $0.opponentOf(player) != Player.cpu }
+        
+        return PlayerStats(
+            cpuWins: cpuWins,
+            totalNumberOfCPUGames: cpuGames.count,
+            pvpWins: 0,
+            totalNumberOfPvPGames: pvpGames.count)
     }
 }
 
