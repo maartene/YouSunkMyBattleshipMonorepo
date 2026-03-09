@@ -24,11 +24,7 @@ func configure(_ app: Application, repository: GameRepository) throws {
     app.get("statistics", ":playerID") { req in
         let playerID = req.parameters.get("playerID")!
         let games = await repository.all()
-        
-        for game in games {
-            print(game.playerBoards.keys.sorted(by: { $0.id < $1.id}), game.hasFinished, game.hasWonGame(.cpu) ?? "other player")
-        }
-        
+
         guard let player = games.getPlayer(id: playerID) else {
             throw StatisticsBackendError.playerNotFound
         }
@@ -39,12 +35,6 @@ func configure(_ app: Application, repository: GameRepository) throws {
             }
                 
         return try CalculateStatistics().calculateStatisticsFor(player, in: playerGames)
-    }
-}
-
-extension Player: CustomStringConvertible {
-    public var description: String {
-        id
     }
 }
 
