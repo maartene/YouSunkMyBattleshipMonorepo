@@ -26,7 +26,7 @@ func configure(_ app: Application, repository: GameRepository) throws {
         let games = await repository.all()
         
         for game in games {
-            print(game.playerBoards.keys.sorted(by: { $0.id < $1.id}), game.hasFinished)
+            print(game.playerBoards.keys.sorted(by: { $0.id < $1.id}), game.hasFinished, game.hasWonGame(.cpu) ?? "other player")
         }
         
         let playerGames = games
