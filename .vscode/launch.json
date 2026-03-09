@@ -59,6 +59,26 @@
             "target": "StatisticsBackend",
             "configuration": "release",
             "preLaunchTask": "swift: Build Release StatisticsBackend (StatisticsBackend)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:YouSunkMyBattleship}/ContractTest",
+            "name": "Debug ContractTest (ContractTest)",
+            "target": "ContractTest",
+            "configuration": "debug",
+            "preLaunchTask": "swift: Build Debug ContractTest (ContractTest)"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:YouSunkMyBattleship}/ContractTest",
+            "name": "Release ContractTest (ContractTest)",
+            "target": "ContractTest",
+            "configuration": "release",
+            "preLaunchTask": "swift: Build Release ContractTest (ContractTest)"
         }
     ]
 }

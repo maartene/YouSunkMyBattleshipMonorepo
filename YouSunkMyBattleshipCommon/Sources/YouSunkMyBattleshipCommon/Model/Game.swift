@@ -72,7 +72,11 @@ public struct Game {
     }
     
     public var hasFinished: Bool {
-        guard playerBoards.count == 2 else {
+        guard canJoin == false else {
+            return false
+        }
+        
+        guard playerBoards.keys.allSatisfy( { player in isDonePlacingShips(player) == true }) else {
             return false
         }
         
@@ -80,6 +84,10 @@ public struct Game {
     }
     
     public func hasWonGame(_ player: Player) -> Bool? {
+        guard hasFinished else {
+            return nil
+        }
+        
         guard let opponent = opponentOf(player) else {
             return nil
         }

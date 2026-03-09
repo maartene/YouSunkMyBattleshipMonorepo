@@ -38,4 +38,10 @@ extension Array where Element == Game {
         flatMap { $0.playerBoards.keys }
         .first { $0.id == id }
     }
+    
+    func withPlayer(_ player: Player) -> [Game] {
+        filter { game in
+            game.playerBoards.keys.contains(player)
+        }
+    }
 }

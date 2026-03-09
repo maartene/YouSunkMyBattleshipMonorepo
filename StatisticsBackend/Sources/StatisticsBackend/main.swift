@@ -29,11 +29,8 @@ func configure(_ app: Application, repository: GameRepository) throws {
             throw StatisticsBackendError.playerNotFound
         }
         
-        let playerGames = games
-            .filter { game in
-                game.playerBoards.keys.contains(player)
-            }
-                
+        let playerGames = games.withPlayer(player)
+        
         return try CalculateStatistics().calculateStatisticsFor(player, in: playerGames)
     }
 }

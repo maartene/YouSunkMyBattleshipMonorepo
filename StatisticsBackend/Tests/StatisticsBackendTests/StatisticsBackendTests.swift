@@ -42,7 +42,7 @@ import YouSunkMyBattleshipCommon
                 let stats = try JSONDecoder().decode(PlayerStats.self, from: res.body)
                 
                 #expect(res.status == .ok)
-                #expect(stats.totalNumberOfPvPGames == 10)
+                #expect(stats.totalNumberOfPvPGames == 6)
             }
         }
     }
