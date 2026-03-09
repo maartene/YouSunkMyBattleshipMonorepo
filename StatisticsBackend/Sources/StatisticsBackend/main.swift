@@ -29,14 +29,16 @@ func configure(_ app: Application, repository: GameRepository) throws {
             print(game.playerBoards.keys.sorted(by: { $0.id < $1.id}), game.hasFinished, game.hasWonGame(.cpu) ?? "other player")
         }
         
+        guard let player = games.getPlayer(id: playerID) else {
+            throw StatisticsBackendError.playerNotFound
+        }
+        
         let playerGames = games
             .filter { game in
-                game.playerBoards.keys.contains { player in
-                    player.id == playerID
-                }
+                game.playerBoards.keys.contains(player)
             }
                 
-        return try CalculateStatistics().calculateStatisticsFor(playerID, in: playerGames)
+        return try CalculateStatistics().calculateStatisticsFor(player, in: playerGames)
     }
 }
 
