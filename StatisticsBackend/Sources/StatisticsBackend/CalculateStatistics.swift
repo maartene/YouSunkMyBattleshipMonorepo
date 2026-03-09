@@ -17,11 +17,14 @@ struct CalculateStatistics {
         }
         
         let pvpGames = finishedGames.filter { $0.opponentOf(player) != Player.cpu }
+        let pvpWins = pvpGames.count { game in
+            game.hasWonGame(player) ?? false
+        }
         
         return PlayerStats(
             cpuWins: cpuWins,
             totalNumberOfCPUGames: cpuGames.count,
-            pvpWins: 0,
+            pvpWins: pvpWins,
             totalNumberOfPvPGames: pvpGames.count)
     }
 }
