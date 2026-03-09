@@ -20,7 +20,33 @@ func configure(_ app: Application, repository: GameRepository) throws {
     app.get { req in
         return "Health check OK"
     }
+    
+    app.get("statistics", ":playerID") { req in
+        let playerID = req.parameters.get("playerID")!
+        let games = await repository.all()
+        
+        for game in games {
+            print(game.playerBoards.keys.sorted(by: { $0.id < $1.id}), game.hasFinished)
+        }
+        
+        let playerGames = games
+            .filter { game in
+                game.playerBoards.keys.contains { player in
+                    player.id == playerID
+                }
+            }
+                
+        return CalculateStatistics().calculateStatistics(playerGames)
+    }
 }
+
+extension Player: CustomStringConvertible {
+    public var description: String {
+        id
+    }
+}
+
+extension PlayerStats: @retroactive Content { }
 
 struct GameRepositoryKey: StorageKey {
     typealias Value = GameRepository

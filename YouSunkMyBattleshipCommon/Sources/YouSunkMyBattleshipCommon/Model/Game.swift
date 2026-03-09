@@ -71,6 +71,14 @@ public struct Game {
         playerBoards[player]?.shipsToPlace.isEmpty
     }
     
+    public var hasFinished: Bool {
+        guard playerBoards.count == 2 else {
+            return false
+        }
+        
+        return playerBoards.values.contains { $0.aliveShips.isEmpty }
+    }
+    
     public func hasWonGame(_ player: Player) -> Bool? {
         guard let opponent = opponentOf(player) else {
             return nil

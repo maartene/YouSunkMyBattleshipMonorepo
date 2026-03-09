@@ -5,7 +5,7 @@
 //  Created by Maarten Engels on 05/03/2026.
 //
 
-public struct PlayerStats: Codable {
+public struct PlayerStats: Codable, Sendable {
     public let cpuWins: Int
     public let totalNumberOfCPUGames: Int
     public let pvpWins: Int
