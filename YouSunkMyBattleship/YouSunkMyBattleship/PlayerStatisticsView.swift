@@ -50,7 +50,7 @@ struct PlayerStatisticsView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
-            Text("📈 Player123456")
+            Text("📈 \(player.id)")
                 .font(.largeTitle)
                 .padding()
             Form {
