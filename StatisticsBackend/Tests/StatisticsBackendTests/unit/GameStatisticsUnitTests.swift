@@ -4,7 +4,7 @@ import YouSunkMyBattleshipCommon
 
 @testable import StatisticsBackend
 
-@Suite struct CalculateStatisticsUnitTests {
+@Suite(.tags(.`Unit tests`)) struct CalculateStatisticsUnitTests {
     let repository = MockGameRepository()
     @Test func `server health check`() async throws {
         try await withApp(configure: { app in try configure(app, repository: repository) }) { app in

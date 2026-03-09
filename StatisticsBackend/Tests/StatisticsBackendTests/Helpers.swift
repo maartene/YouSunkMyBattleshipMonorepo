@@ -1,6 +1,7 @@
 import Foundation
 import GameRepository
 import YouSunkMyBattleshipCommon
+import Testing
 
 final class MockGameRepository: GameRepository {
     let games: [String: Game]
@@ -23,4 +24,14 @@ final class MockGameRepository: GameRepository {
     func all() async -> [Game] {
         return Array(games.values)
     }
+}
+
+func notImplemented() {
+    Issue.record("Not implemented")
+}
+
+extension Tag {
+    @Tag static var `E2E tests`: Self
+    @Tag static var `Unit tests`: Self
+    @Tag static var `Integration tests`: Self
 }
