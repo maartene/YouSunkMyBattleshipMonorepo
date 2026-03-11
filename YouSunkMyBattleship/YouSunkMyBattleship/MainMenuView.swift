@@ -39,9 +39,14 @@ struct MainMenuView: View {
                         .font(.title2)
                         .padding()
                     List(mainMenuViewModel.games) { game in
-                        NavigationLink(stringValueFor(game)) {
+                        NavigationLink(destination: {
                             GameView(viewModel: gameViewModel, withCPU: false, savedGame: game)
-                        }
+                        }, label: {
+                            VStack(alignment: .leading) {
+                                Text(stringValueFor(game)).font(.headline)
+                                Text(game.players.joined(separator: ","))
+                            }
+                        })
                     }
                     NavigationLink("📈 Statistics") {
                         PlayerStatisticsView(dataProvider: URLSessionDataProvider())

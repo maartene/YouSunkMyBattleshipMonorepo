@@ -31,6 +31,12 @@ import YouSunkMyBattleshipCommon
             _ = try inspectedView.find(text: "game3")
         }
         
+        @Test func `the view shows the players that are part of a game`() async throws {
+            let inspectedView = try view.inspect()
+
+            _ = try inspectedView.find(text: "\(player.id),CPU")
+        }
+        
         @Test func `the view does not show games that cannot be joined nor continued by this player`() async throws {
             let inspectedView = try view.inspect()
             
