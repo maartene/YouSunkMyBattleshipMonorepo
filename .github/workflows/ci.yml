@@ -286,6 +286,6 @@ jobs:
 
       - name: Lint Dockerfiles
         run: |
-          hadolint infrastructure/service/Dockerfile
+          hadolint infrastructure/games_backend/Dockerfile
           hadolint infrastructure/statistics_backend/Dockerfile
           hadolint infrastructure/database/Dockerfile
