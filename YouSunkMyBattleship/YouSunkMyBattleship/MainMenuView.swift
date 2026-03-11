@@ -90,9 +90,13 @@ final class ClientMainMenuViewModel: MainMenuViewModel {
             let games = (try? JSONDecoder().decode([SavedGame].self, from: data ?? Data())) ?? []
             shouldShowRefreshMessage = false
             
-            self.games = games.filter { game in
-                game.players.contains(player.id) || game.canJoin
-            }
+            self.games = games
+                .filter { game in
+                    game.players.contains(player.id) || game.canJoin
+                }
+                .filter { game in
+                    game.isFinished == false
+                }
             
         } catch {
             shouldShowRefreshMessage = true

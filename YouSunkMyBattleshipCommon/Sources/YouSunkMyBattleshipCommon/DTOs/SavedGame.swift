@@ -11,6 +11,14 @@ public struct SavedGame: Codable {
     public let gameID: String
     public let players: [String]
     public let canJoin: Bool
+    public let isFinished: Bool
+    
+    public init(gameID: String, players: [String], canJoin: Bool, isFinished: Bool) {
+        self.gameID = gameID
+        self.players = players
+        self.canJoin = canJoin
+        self.isFinished = isFinished
+    }
     
     public init(from game: Game) {
         self.gameID = game.gameID
@@ -18,6 +26,7 @@ public struct SavedGame: Codable {
             .map { $0.key }
             .map { $0.id }
         self.canJoin = game.canJoin
+        self.isFinished = game.hasFinished
     }
 }
 

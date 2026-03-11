@@ -36,6 +36,12 @@ import YouSunkMyBattleshipCommon
             
             #expect((try? inspectedView.find(text: "game4")) == nil)
         }
+        
+        @Test func `the view does not show finished games`() async throws {
+            let inspectedView = try view.inspect()
+            
+            #expect((try? inspectedView.find(text: "game5")) == nil)
+        }
 
         @Test func `the view tries to load a list of games that are in progress`() throws {
             let dataProvider = DataProviderSpy()

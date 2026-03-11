@@ -237,12 +237,14 @@ final class MockDataProvider: DataProvider {
             var game4 = Game(gameID: "game4", player: Player(), cpu: false)
             game4.join(Player())
             
-            let savedGames = [
+            var savedGames = [
                 Game(gameID: "game1", player: player, cpu: true),
                 Game(gameID: "game2", player: Player(), cpu: false),
                 game3,
                 game4
             ].map { SavedGame(from: $0) }
+            
+            savedGames.append(SavedGame(gameID: "game5", players: [player.id, Player.cpu.id], canJoin: false, isFinished: true))
             
             return try JSONEncoder().encode(savedGames)
         } else {
