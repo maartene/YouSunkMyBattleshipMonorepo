@@ -11,11 +11,11 @@ services:
     volumes:
       - mongodb_data:/data/db
 
-  service:
+  games_backend:
     build:
       context: .
-      dockerfile: ./infrastructure/service/Dockerfile
-    image: yousunkmybattleship_service:latest
+      dockerfile: ./infrastructure/games_backend/Dockerfile
+    image: yousunkmybattleship_games_backend:latest
     restart: "no"
     environment:
       - CONNECTION_STRING=mongodb://database:27017/game_database
