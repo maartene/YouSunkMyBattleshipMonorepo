@@ -38,6 +38,9 @@ struct MainMenuView: View {
                     Text(player.id)
                         .font(.title2)
                         .padding()
+                    Text("Available games")
+                        .font(.title)
+                        .padding()
                     List(mainMenuViewModel.games) { game in
                         NavigationLink(destination: {
                             GameView(viewModel: gameViewModel, withCPU: false, savedGame: game)
@@ -47,6 +50,8 @@ struct MainMenuView: View {
                                 Text(game.players.joined(separator: ","))
                             }
                         })
+                    }.onAppear {
+                        self.mainMenuViewModel.refreshGames()
                     }
                     NavigationLink("📈 Statistics") {
                         PlayerStatisticsView(dataProvider: URLSessionDataProvider())
@@ -57,7 +62,7 @@ struct MainMenuView: View {
                     NavigationLink("👱 New game (2 player)") {
                         GameView(viewModel: gameViewModel, withCPU: false, savedGame: nil)
                     }
-                    .navigationTitle("Available games")
+                    .navigationTitle("You Sunk My 🚢🚢🚢🚢")
                 }
             }
         }
