@@ -7,6 +7,7 @@ This repository contains a small Battleship game split into three parts:
 - `YouSunkMyBattleship` — the iOS client application (UI, UI flow tests)
 - `YouSunkMyBattleshipBE` — the backend service (Swift server, game logic and integration tests)
 - `YouSunkMyBattleshipCommon` — shared/common library used by both. This can be considered the `API contract` and `domain model` layers.
+- `StatisticsBackend` - the backend service that provides data on win/loss ratios for players
 
 **Project Goals**
 - Provide a minimal, test-driven Battleship implementation demonstrating clean architecture and good tooling.
@@ -16,7 +17,8 @@ This repository contains a small Battleship game split into three parts:
 **Repository Structure (top-level)**
 
 - `YouSunkMyBattleship/` — iOS app (Xcode workspace, app sources, tests, UI)
-- `YouSunkMyBattleshipBE/` — backend Swift package and Dockerfiles (service & infra)
+- `YouSunkMyBattleshipBE/` — backend Swift package for actual gameplay (service)
+- `StatisticsBackend` - backend Swift package for win/loss collection (service)
 - `YouSunkMyBattleshipCommon/` — shared Swift package (DTOs, model)
 - `ContractTest/` — small CLI program that drives the websocket api endpoint and validates that it conforms to the contract
 - `WSDataProvider/` - mockable http and websocket client
@@ -61,7 +63,7 @@ This repository contains a small Battleship game split into three parts:
 │                        │                          │                          │                          │                            │
 │                        │                          │                          │                          │                            │
 │                        │                          │                          │                          │                            │
-│                        │ Lost!                    │                          │ Wont!                    │                            │
+│                        │ Lost!                    │                          │ Won!                     │                            │
 │                        │◄─────────────────────────┤                          ├─────────────────────────►│                            │
 │                        │                          │                          │                          │                            │
 │                        │                          │                          │                          │                            │
